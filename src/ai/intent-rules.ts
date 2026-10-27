@@ -111,6 +111,16 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
  */
 export function resolvePricePerSqmTomanFromMessage(message: string): number | null {
   const text = normalizePersianText(message);
+  const wordAmount = text.match(/متری\s*(یک|یه)\s*و\s*نیم\s*(میلیارد|میلیون|هزار)/);
+  if (wordAmount) {
+    const multiplier = wordAmount[2] === 'میلیارد'
+      ? 1_000_000_000
+      : wordAmount[2] === 'میلیون'
+        ? 1_000_000
+        : 1_000;
+    return Math.round(1.5 * multiplier);
+  }
+
   const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?\s*متری)/);
   if (!match) return null;
 
