@@ -63,6 +63,15 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     return { intent: 'sell', rentalMode: null };
   }
 
+  if (
+    mentionsPrice &&
+    !mentionsNightlyPrice &&
+    !mentionsMonthlyPrice &&
+    /(?:می ?خوام|می ?خواهم|می ?خوایم|می ?خواهیم).{0,50}(?:بگیرم|بگیریم)/.test(text)
+  ) {
+    return { intent: 'buy', rentalMode: null };
+  }
+
   if (/(?:می ?خوام\s*(?:بخرم|خرید)|می ?خواهم\s*(?:بخرم|خرید)|دنبال\s*خرید|برای\s*خرید|قصد\s*خرید|بخرم|بخریم)/.test(text)) {
     return { intent: 'buy', rentalMode: null };
   }
