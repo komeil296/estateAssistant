@@ -317,6 +317,14 @@ export class AiService {
       const landConstructionRequest = isLandForVillaConstructionRequest(message);
       const explicitIntent = intentResolution.intent ?? (landConstructionRequest ? 'buy' : null);
       result.intent = explicitIntent;
+
+      // Offered/wanted property types describe an exchange only. Never trust the
+      // model to populate these fields for ordinary purchase, sale, or rental requests.
+      if (explicitIntent !== 'exchange') {
+        result.offeredPropertyType = null;
+        result.wantedPropertyType = null;
+      }
+
       if (intentResolution.rentalMode) {
         result.rentalMode = intentResolution.rentalMode;
       }
