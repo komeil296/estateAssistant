@@ -45,6 +45,8 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
 {
   "intent": null,
   "propertyType": null,
+  "offeredPropertyType": null,
+  "wantedPropertyType": null,
   "rentalMode": null,
   "location": { "province": null, "city": null, "neighborhood": null },
   "area": { "targetSqm": null, "minSqm": null, "maxSqm": null },
@@ -65,7 +67,8 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
   "stay": {
     "checkInDate": null,
     "checkOutDate": null,
-    "guests": null
+    "guests": null,
+    "nights": null
   },
   "missingInformation": [],
   "clarificationQuestion": null
@@ -194,6 +197,19 @@ export class AiService {
       if (result.wantedPropertyType === undefined) result.wantedPropertyType = null;
       if (!Array.isArray(result.missingInformation)) {
         result.missingInformation = [];
+      }
+      if (explicitIntent === 'exchange') {
+        result.propertyType = null;
+        const missing = result.missingInformation as string[];
+        if (result.offeredPropertyType == null && !missing.includes('offeredPropertyType')) {
+          missing.push('offeredPropertyType');
+        }
+        if (result.wantedPropertyType == null && !missing.includes('wantedPropertyType')) {
+          missing.push('wantedPropertyType');
+        }
+        if (missing.includes('offeredPropertyType') || missing.includes('wantedPropertyType')) {
+          result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
+        }
       }
       if (explicitIntent === null) {
         const missing = result.missingInformation as string[];
