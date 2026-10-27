@@ -122,10 +122,10 @@ export function resolveLandUseFromMessage(
 ): 'residential' | 'commercial' | 'agricultural' | 'industrial' | 'construction' | null {
   const text = normalizePersianText(message);
 
-  if (/(?:کاربری\s*)?مسکونی/.test(text)) return 'residential';
-  if (/(?:کاربری\s*)?تجاری/.test(text)) return 'commercial';
-  if (/(?:کاربری\s*)?(?:کشاورزی|زراعی)/.test(text)) return 'agricultural';
-  if (/(?:کاربری\s*)?صنعتی/.test(text)) return 'industrial';
+  if (/(?:کاربری\s*مسکونی|زمین.{0,25}مسکونی|مسکونی.{0,25}زمین)/.test(text)) return 'residential';
+  if (/(?:کاربری\s*تجاری|زمین.{0,25}تجاری|تجاری.{0,25}زمین)/.test(text)) return 'commercial';
+  if (/(?:کاربری\s*(?:کشاورزی|زراعی)|زمین.{0,25}(?:کشاورزی|زراعی)|(?:کشاورزی|زراعی).{0,25}زمین)/.test(text)) return 'agricultural';
+  if (/(?:کاربری\s*صنعتی|زمین.{0,25}صنعتی|صنعتی.{0,25}زمین)/.test(text)) return 'industrial';
   if (/زمین.{0,45}(?:برای\s*)?(?:ساخت|ساختن)\s*ویلا/.test(text)) return 'construction';
 
   return null;
