@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export type PropertyType = 'land' | 'apartment' | 'villa';
 export type RentalMode = 'monthly' | 'short_term';
@@ -52,19 +52,39 @@ export class SearchAreaDto {
 }
 
 export class SearchBudgetDto {
-  @ApiProperty({ example: 100000000000, nullable: true, description: 'حداکثر بودجه کل به ریال' })
+  @ApiProperty({
+    example: 100000000000,
+    nullable: true,
+    description: 'حداکثر بودجه کل به ریال',
+  })
   maxTotalPriceRial!: number | null;
 
-  @ApiProperty({ example: 350000000, nullable: true, description: 'حداکثر قیمت هر مترمربع به ریال' })
+  @ApiProperty({
+    example: 350000000,
+    nullable: true,
+    description: 'حداکثر قیمت هر مترمربع به ریال',
+  })
   maxPricePerSqmRial!: number | null;
 
-  @ApiProperty({ example: 5000000000, nullable: true, description: 'حداکثر ودیعه به ریال' })
+  @ApiProperty({
+    example: 5000000000,
+    nullable: true,
+    description: 'حداکثر ودیعه به ریال',
+  })
   maxDepositRial!: number | null;
 
-  @ApiProperty({ example: 150000000, nullable: true, description: 'حداکثر اجاره ماهانه به ریال' })
+  @ApiProperty({
+    example: 150000000,
+    nullable: true,
+    description: 'حداکثر اجاره ماهانه به ریال',
+  })
   maxRentMonthlyRial!: number | null;
 
-  @ApiProperty({ example: 50000000, nullable: true, description: 'حداکثر اجاره هر شب به ریال' })
+  @ApiProperty({
+    example: 50000000,
+    nullable: true,
+    description: 'حداکثر اجاره هر شب به ریال',
+  })
   maxRentNightlyRial!: number | null;
 }
 
@@ -80,6 +100,25 @@ export class SearchRequirementsDto {
 
   @ApiProperty({ example: true, nullable: true })
   hasView!: boolean | null;
+}
+
+export class SearchStayDto {
+  @ApiProperty({
+    example: '2026-11-10',
+    nullable: true,
+    description: 'تاریخ ورود به شکل YYYY-MM-DD',
+  })
+  checkInDate!: string | null;
+
+  @ApiProperty({
+    example: '2026-11-13',
+    nullable: true,
+    description: 'تاریخ خروج به شکل YYYY-MM-DD',
+  })
+  checkOutDate!: string | null;
+
+  @ApiProperty({ example: 4, nullable: true, description: 'تعداد مهمانان' })
+  guests!: number | null;
 }
 
 /**
@@ -108,10 +147,13 @@ export class SearchRequestDto {
   @ApiProperty({ type: SearchRequirementsDto })
   requirements!: SearchRequirementsDto;
 
-  @ApiProperty({ type: [String], example: ['check_in_date', 'check_out_date'] })
+  @ApiProperty({ type: SearchStayDto })
+  stay!: SearchStayDto;
+
+  @ApiProperty({ type: [String], example: ['checkInDate', 'checkOutDate'] })
   missingInformation!: string[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     nullable: true,
     example: 'برای چه تاریخی می‌خواهید اقامت داشته باشید؟',
   })
@@ -180,6 +222,23 @@ function requireEnum<T extends string>(
   throw new BadRequestException(`مقدار فیلد ${field} معتبر نیست.`);
 }
 
+function requireDateOrNull(value: unknown, field: string): string | null {
+  if (value === null) {
+    return null;
+  }
+  if (
+    typeof value === 'string' &&
+    /^\\d{4}-\\d{2}-\\d{2}$/.test(value) &&
+    !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) &&
+    new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value
+  ) {
+    return value;
+  }
+  throw new BadRequestException(
+    `فیلد ${field} باید تاریخ معتبر با قالب YYYY-MM-DD یا null باشد.`,
+  );
+}
+
 /**
  * Validate untrusted model output before it is used to construct a property
  * search. This function does not verify that locations or properties exist.
@@ -190,6 +249,7 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
   const area = requireRecord(root.area, 'area');
   const budget = requireRecord(root.budget, 'budget');
   const requirements = requireRecord(root.requirements, 'requirements');
+  const stay = requireRecord(root.stay, 'stay');
 
   if (
     !Array.isArray(root.missingInformation) ||
@@ -279,6 +339,11 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
         'requirements.hasView',
       ),
     },
+    stay: {
+      checkInDate: requireDateOrNull(stay.checkInDate, 'stay.checkInDate'),
+      checkOutDate: requireDateOrNull(stay.checkOutDate, 'stay.checkOutDate'),
+      guests: requireNullableNumber(stay.guests, 'stay.guests'),
+    },
     missingInformation: root.missingInformation as string[],
     clarificationQuestion,
   };
@@ -291,6 +356,14 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
     throw new BadRequestException(
       'حداقل متراژ نمی‌تواند از حداکثر متراژ بیشتر باشد.',
     );
+  }
+
+  if (
+    validated.stay.checkInDate !== null &&
+    validated.stay.checkOutDate !== null &&
+    validated.stay.checkInDate >= validated.stay.checkOutDate
+  ) {
+    throw new BadRequestException('تاریخ خروج باید بعد از تاریخ ورود باشد.');
   }
 
   return validated;
