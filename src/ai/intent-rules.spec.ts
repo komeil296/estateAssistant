@@ -4,6 +4,7 @@ import {
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
+  resolvePropertyTermsFromMessage,
 } from './intent-rules';
 
 describe('resolveIntentFromMessage', () => {
@@ -69,5 +70,27 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
     ['یه ویلا می‌خوام', null],
   ] as const)('%s', (message, expected) => {
     expect(resolveRentalBudgetTomanFromMessage(message)).toEqual(expected);
+  });
+});
+
+
+describe('resolvePropertyTermsFromMessage', () => {
+  it.each([
+    ['زمین شهرکی می‌خوام', { isInTownship: true, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: null }],
+    ['ویلای شهرکی با ویو ابدی کوه و دریا', { isInTownship: true, hasMountainView: true, hasSeaView: true, viewProtectionClaim: true, deedEra: null }],
+    ['سند شاهنشاهی دارد', { isInTownship: null, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: 'pre_revolution' }],
+    ['یه آپارتمان با چشم‌انداز دریا', { isInTownship: null, hasMountainView: null, hasSeaView: true, viewProtectionClaim: null, deedEra: null }],
+    ['ویلای معمولی', { isInTownship: null, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: null }],
+  ])('%s', (message, expected) => {
+    expect(resolvePropertyTermsFromMessage(message)).toEqual(expected);
+  });
+});
+
+describe('lease-out direction phrases', () => {
+  it('recognizes an instruction to advertise the owner’s villa for rent', () => {
+    expect(resolveIntentFromMessage('ویلای من رو برای تعطیلات نوروز شبی ۱۰ میلیون اجاره بده')).toEqual({
+      intent: 'lease_out',
+      rentalMode: 'short_term',
+    });
   });
 });
