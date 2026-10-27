@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export type PropertyType = 'land' | 'apartment' | 'villa';
 export type RentalMode = 'monthly' | 'short_term';
-export type CustomerIntent = 'buy' | 'sell' | 'rent' | 'lease_out';
+export type CustomerIntent = 'buy' | 'sell' | 'rent' | 'lease_out' | 'exchange';
 export type DocumentType =
   | 'six_dang'
   | 'three_dang'
@@ -19,6 +19,7 @@ const CUSTOMER_INTENTS: CustomerIntent[] = [
   'sell',
   'rent',
   'lease_out',
+  'exchange',
 ];
 const DOCUMENT_TYPES: DocumentType[] = [
   'six_dang',
@@ -122,6 +123,9 @@ export class SearchStayDto {
 
   @ApiProperty({ example: 4, nullable: true, description: 'تعداد مهمانان' })
   guests!: number | null;
+
+  @ApiProperty({ example: 3, nullable: true, description: 'تعداد شب اقامت؛ مثلاً ۴ روز معمولاً برابر با ۳ شب است' })
+  nights!: number | null;
 }
 
 /**
@@ -132,8 +136,14 @@ export class SearchRequestDto {
   @ApiProperty({ enum: CUSTOMER_INTENTS, nullable: true, example: null })
   intent!: CustomerIntent | null;
 
-  @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'villa' })
+  @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'villa', description: 'نوع ملک مورد جست‌وجو در خرید/اجاره؛ برای معاوضه از wantedPropertyType استفاده کن' })
   propertyType!: PropertyType | null;
+
+  @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'villa', description: 'نوع ملکی که مشتری در معاوضه ارائه می‌کند' })
+  offeredPropertyType!: PropertyType | null;
+
+  @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'apartment', description: 'نوع ملکی که مشتری در معاوضه می‌خواهد دریافت کند' })
+  wantedPropertyType!: PropertyType | null;
 
   @ApiProperty({ enum: RENTAL_MODES, nullable: true, example: 'short_term' })
   rentalMode!: RentalMode | null;
@@ -281,6 +291,18 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
       'propertyType',
       true,
     ),
+    offeredPropertyType: requireEnum(
+      root.offeredPropertyType,
+      PROPERTY_TYPES,
+      'offeredPropertyType',
+      true,
+    ),
+    wantedPropertyType: requireEnum(
+      root.wantedPropertyType,
+      PROPERTY_TYPES,
+      'wantedPropertyType',
+      true,
+    ),
     rentalMode: requireEnum(
       root.rentalMode,
       RENTAL_MODES,
@@ -350,6 +372,7 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
       checkInDate: requireDateOrNull(stay.checkInDate, 'stay.checkInDate'),
       checkOutDate: requireDateOrNull(stay.checkOutDate, 'stay.checkOutDate'),
       guests: requireNullableNumber(stay.guests, 'stay.guests'),
+      nights: requireNullableNumber(stay.nights, 'stay.nights'),
     },
     missingInformation: root.missingInformation as string[],
     clarificationQuestion,
