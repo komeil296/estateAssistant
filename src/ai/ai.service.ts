@@ -200,7 +200,9 @@ export class AiService {
       }
 
       return validateSearchRequest(result);
-    } catch {
+    } catch (error) {
+      console.error('parseSearchRequest error:', error);
+
       throw new ServiceUnavailableException(
         'مدل نتوانست درخواست را به ساختار استاندارد تبدیل کند. متن درخواست را ساده‌تر کن و دوباره امتحان کن.',
       );
