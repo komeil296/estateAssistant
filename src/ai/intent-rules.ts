@@ -204,7 +204,7 @@ export function resolveSolarHijriCheckInDateFromMessage(
   };
   const monthPattern = Object.keys(monthNames).join('|');
   const match = text.match(
-    new RegExp('(?:تاریخ\\s*)?(?:برای\\s*)?(\\d{1,2})\\s*(?:ام\\s*)?(' + monthPattern + ')(?:\\s*(\\d{4}))?'),
+    new RegExp('(\\d{1,2})\\s*(?:ام\\s*)?(' + monthPattern + ')(?:\\s*(\\d{4}))?'),
   );
   if (!match) return null;
 
