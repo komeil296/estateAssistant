@@ -113,7 +113,48 @@ export class AiService {
       const result = parsed as {
         budget: Record<string, unknown>;
         requirements?: Record<string, unknown>;
+        intent?: unknown;
+        missingInformation?: unknown;
+        clarificationQuestion?: unknown;
       };
+
+      // Do not let the model infer a transaction type from a property description.
+      // Resolve clear intent from the original user message; otherwise ask a question.
+      const normalizedIntentMessage = message
+        .replace(/[ي]/g, 'ی')
+        .replace(/[ك]/g, 'ک')
+        .replace(/‌/g, ' ')
+        .toLowerCase();
+
+      const explicitIntent: 'buy' | 'sell' | 'rent' | 'lease_out' | null =
+        /(?:اجاره\s*(?:بدهم|بدم|بدهیم|بدیم|بدھم)|اجاره\s*دادن|مستأجر\s*(?:می‌خواهم|میخوام))/.test(normalizedIntentMessage)
+          ? 'lease_out'
+          : /(?:بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش|فروش\s*ملک)/.test(normalizedIntentMessage)
+            ? 'sell'
+            : /(?:بخرم|بخریم|برای\s*خرید|قصد\s*خرید|خرید\s*ملک)/.test(normalizedIntentMessage)
+              ? 'buy'
+              : /(?:اجاره\s*(?:کنم|بگیرم|بگیریم)|اجاره\s*ماهانه|اجاره\s*کوتاه.?مدت|اجاره\s*روزانه|اقامت\s*برای\s*\d+\s*شب|برای\s*\d+\s*شب|شبی\s*حداکثر)/.test(normalizedIntentMessage)
+                ? 'rent'
+                : null;
+
+      result.intent = explicitIntent;
+      if (!Array.isArray(result.missingInformation)) {
+        result.missingInformation = [];
+      }
+      if (explicitIntent === null) {
+        const missing = result.missingInformation as string[];
+        if (!missing.includes('intent')) {
+          missing.push('intent');
+        }
+        result.clarificationQuestion = 'قصد خرید، فروش یا اجاره دارید؟';
+      } else {
+        result.missingInformation = (result.missingInformation as string[]).filter(
+          (field) => field !== 'intent',
+        );
+        if (result.clarificationQuestion === 'قصد خرید، فروش یا اجاره دارید؟') {
+          result.clarificationQuestion = null;
+        }
+      }
 
       // The model sometimes confuses physical proximity to the sea with a sea view.
       // Resolve these two independent filters deterministically from the user's wording.
