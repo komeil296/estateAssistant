@@ -96,8 +96,10 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     };
   }
 
-  // A quoted nightly or monthly amount in a customer's request is treated as a rental budget.
-  if (mentionsNightlyPrice || /(?:برای\s*)?\d+\s*(?:شب|روز)/.test(text)) {
+  // An explicit stay duration implies a short-term rental, including Persian number words.
+  // Explicit buy/sell/exchange intents above take precedence over this duration signal.
+  const mentionsStayDuration = /(?:برای\\s*)?(?:\\d+|یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\\s*(?:شب|روز)/.test(text);
+  if (mentionsNightlyPrice || mentionsStayDuration) {
     return { intent: 'rent', rentalMode: 'short_term' };
   }
   if (mentionsMonthlyPrice) return { intent: 'rent', rentalMode: 'monthly' };
