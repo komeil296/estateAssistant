@@ -266,35 +266,42 @@ function normalizePlaceText(value: string): string {
     .replace(/[ك]/g, 'ک')
     .replace(/[ۀة]/g, 'ه')
     .replace(/[أإآ]/g, 'ا')
-    .replace(/[‌\u200c]/g, '')
-    .replace(/[\s\-ـ_،,؛;.!؟?()\[\]{}]/g, '')
+    .replace(/[‌\u200c]/g, ' ')
+    .replace(/[\-ـ_،,؛;.!؟?()\[\]{}]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
     .toLowerCase();
 }
 
 /**
  * Resolve known aliases from the original message after model extraction.
- * Longest aliases are checked first to avoid matching a short name inside a
- * longer place name. Only exact catalog matches are applied.
+ * Match whole words/phrases so a locality such as «لیه» cannot match inside
+ * an unrelated word such as «نقلیه». Prefer the longest explicit place name.
  */
 export function normalizeKnownLocation<T extends {
   location?: { city?: unknown; neighborhood?: unknown; province?: unknown };
 }>(result: T, originalMessage: string): T {
   if (!result.location || typeof result.location !== 'object') return result;
 
-  const normalizedMessage = normalizePlaceText(originalMessage);
+  const normalizedMessage = ` ${normalizePlaceText(originalMessage)} `;
   const matches = PLACE_CATALOG
     .flatMap((entry) => entry.aliases.map((alias) => ({
       entry,
       alias,
       normalizedAlias: normalizePlaceText(alias),
     })))
-    .filter((item) => item.normalizedAlias.length >= 3 &&
-      normalizedMessage.includes(item.normalizedAlias))
+    .filter((item) =>
+      item.normalizedAlias.length >= 3 &&
+      normalizedMessage.includes(` ${item.normalizedAlias} `),
+    )
     .sort((a, b) => {
+      if (a.normalizedAlias.length !== b.normalizedAlias.length) {
+        return b.normalizedAlias.length - a.normalizedAlias.length;
+      }
       if (a.entry.kind !== b.entry.kind) {
         return a.entry.kind === 'locality' ? -1 : 1;
       }
-      return b.normalizedAlias.length - a.normalizedAlias.length;
+      return 0;
     });
 
   const match = matches[0];
@@ -302,7 +309,10 @@ export function normalizeKnownLocation<T extends {
 
   if (match.entry.kind === 'city') {
     result.location.city = match.entry.canonical;
-    // Keep a separately extracted locality if it is not simply the city alias.
+    // A city match should not leave a model-invented neighborhood behind.
+    if (typeof result.location.neighborhood === 'string') {
+      result.location.neighborhood = null;
+    }
     return result;
   }
 
