@@ -2,7 +2,10 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { SearchRequestDto, validateSearchRequest } from './dto/search-request.dto';
+import {
+  SearchRequestDto,
+  validateSearchRequest,
+} from './dto/search-request.dto';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای پیدا کردن و اجاره اقامتگاه در ایران هستی.
@@ -23,14 +26,14 @@ const SEARCH_EXTRACTION_PROMPT = `
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
 intent: buy, sell, rent, lease_out
-propertyType: land, apartment, villa, یا null
-rentalMode: monthly, short_term, یا null
+propertyType: land, apartment, villa، یا null
+rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
 قیمت‌ها باید عدد صحیح ریال باشند. اگر کاربر مبلغ را به تومان گفته، آن را در ۱۰ ضرب کن.
 استان، شهر و محله را از هم جدا نگه دار. اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
-برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن و اگر تاریخ ورود یا خروج یا تعداد مهمانان برای درخواست ضروری است و معلوم نیست، در missingInformation ثبت کن.
+برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن. تاریخ ورود و خروج را با قالب YYYY-MM-DD و تعداد نفرات را در stay.guests ثبت کن. اگر مشخص نیستند null بگذار و در صورت نیاز نام فیلد را در missingInformation بیاور.
 ساختار دقیق:
 {
   "intent": "buy",
@@ -50,6 +53,11 @@ documentType: six_dang, three_dang, official, end_user, other, unknown، یا nu
     "documentType": null,
     "landUse": null,
     "hasView": null
+  },
+  "stay": {
+    "checkInDate": null,
+    "checkOutDate": null,
+    "guests": null
   },
   "missingInformation": [],
   "clarificationQuestion": null
