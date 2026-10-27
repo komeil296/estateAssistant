@@ -114,6 +114,7 @@ export class AiService {
         budget: Record<string, unknown>;
         requirements?: Record<string, unknown>;
         intent?: unknown;
+        rentalMode?: unknown;
         missingInformation?: unknown;
         clarificationQuestion?: unknown;
       };
@@ -138,6 +139,52 @@ export class AiService {
                 : null;
 
       result.intent = explicitIntent;
+
+      // Normalize model-generated rental mode variants to the API contract.
+      // Unknown values become null rather than causing the whole request to fail.
+      const rawRentalMode =
+        typeof result.rentalMode === 'string'
+          ? result.rentalMode
+              .trim()
+              .toLowerCase()
+              .replace(/[ي]/g, 'ی')
+              .replace(/[ك]/g, 'ک')
+              .replace(/[\s-]+/g, '_')
+          : '';
+      const monthlyRentalModes = new Set([
+        'monthly',
+        'long_term',
+        'longterm',
+        'monthly_rent',
+        'اجاره_ماهانه',
+        'ماهانه',
+        'بلندمدت',
+        'بلند_مدت',
+      ]);
+      const shortTermRentalModes = new Set([
+        'short_term',
+        'shortterm',
+        'daily',
+        'nightly',
+        'temporary',
+        'short_term_rental',
+        'اجاره_کوتاه_مدت',
+        'کوتاه_مدت',
+        'روزانه',
+        'شبانه',
+        'موقت',
+      ]);
+
+      if (explicitIntent !== 'rent') {
+        result.rentalMode = null;
+      } else if (monthlyRentalModes.has(rawRentalMode)) {
+        result.rentalMode = 'monthly';
+      } else if (shortTermRentalModes.has(rawRentalMode)) {
+        result.rentalMode = 'short_term';
+      } else {
+        result.rentalMode = null;
+      }
+
       if (!Array.isArray(result.missingInformation)) {
         result.missingInformation = [];
       }
