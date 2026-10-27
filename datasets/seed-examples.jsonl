@@ -49,3 +49,4 @@
 {"id":"feature-008","split":"domain","text":"اقامتگاه می‌خوام ولی ورود حیوان خانگی ممنوع باشه","expected":{"features":[{"id":"policy.pets","value":false}]},"category":"accommodation_policy"}
 {"id":"feature-009","split":"domain","text":"یه هتل برای دو شب می‌خوام","expected":{"features":[{"id":"accommodation.type","value":"hotel"}]},"category":"accommodation_type"}
 {"id":"feature-010","split":"domain","text":"یه سوئیت برای سه شب می‌خوام","expected":{"features":[{"id":"accommodation.type","value":"suite"}]},"category":"accommodation_type"}
+{"id":"feature-011","split":"domain","text":"یه کلبه سوئیسی برای دو شب تو رامسر می‌خوام","expected":{"intent":"rent","propertyType":null,"rentalMode":"short_term","location":{"city":"رامسر"},"stay":{"nights":2},"features":[{"id":"accommodation.type","value":"swiss_cottage"},{"id":"accommodation.style","value":["swiss"]}]},"category":"short_term_rent_accommodation_type"}
