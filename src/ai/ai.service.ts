@@ -6,6 +6,7 @@ import {
   SearchRequestDto,
   validateSearchRequest,
 } from './dto/search-request.dto';
+import { normalizeKnownLocation } from './location-catalog';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای جست‌وجوی خرید، فروش، اجاره و واگذاری املاک و اقامتگاه در ایران هستی.
