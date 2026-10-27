@@ -8,7 +8,7 @@ import {
 } from './dto/search-request.dto';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
-تو یک دستیار فارسی‌زبان برای پیدا کردن و اجاره اقامتگاه در ایران هستی.
+تو یک دستیار فارسی‌زبان برای جست‌وجوی خرید، فروش، اجاره و واگذاری املاک و اقامتگاه در ایران هستی.
 
 قواعد پاسخ‌گویی:
 - فقط فارسی روان، طبیعی و ساده بنویس. از واژه‌های نامأنوس و ترجمه‌های تحت‌اللفظی پرهیز کن.
@@ -25,7 +25,7 @@ const SEARCH_EXTRACTION_PROMPT = `
 درخواست مشتری را به یک شیء JSON مطابق ساختار زیر تبدیل کن. فقط JSON معتبر برگردان.
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
-intent: buy, sell, rent, lease_out
+intent: buy, sell, rent, lease_out، یا null
 propertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
@@ -34,12 +34,12 @@ documentType: six_dang, three_dang, official, end_user, other, unknown، یا nu
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 در requirements.nearSea فقط نزدیکی فیزیکی ملک به دریا یا ساحل را ثبت کن: «نزدیک دریا»، «نزدیک ساحل» و «پیاده تا ساحل» یعنی nearSea=true. اگر چنین شرطی گفته نشده، nearSea=null بگذار. «ویوی دریا» یا «چشم‌انداز دریا» به معنی requirements.hasView=true است و به‌تنهایی nearSea را true نکن؛ نزدیکی به دریا و چشم‌انداز دو شرط مستقل‌اند. اگر فقط نزدیکی به دریا گفته شده، hasView باید null باشد؛ اگر فقط چشم‌انداز دریا گفته شده، nearSea باید null باشد. فقط وقتی هر دو شرط صریحاً گفته شده‌اند، هر دو را true بگذار. اگر کاربر گفت «داخل شهر»، آن را به nearSea یا hasView تعبیر نکن.
 شهر را اگر در متن ذکر شده استخراج کن. محله را فقط وقتی کاربر نام محله‌ای را گفته استخراج کن؛ نبودن محله به‌تنهایی اطلاعات ناقص نیست و نباید در missingInformation قرار بگیرد. location.city را هم فقط وقتی واقعاً نام شهر از متن مشخص نیست در missingInformation قرار بده. برای «داخل شهر رامسر» city=«رامسر» ثبت کن و neighborhood را null بگذار.
-اگر کاربر قصد خرید دارد و درباره ملک یا بودجه اطلاعات بیشتری نداده، intent=buy را فقط وقتی صریحاً خرید گفته شده تنظیم کن؛ در غیر این صورت intent را بر اساس متن تعیین کن و چیزی را حدس نزن.
+intent را فقط بر اساس قصد معامله‌ای که کاربر صریحاً بیان کرده تعیین کن: buy یعنی کاربر می‌خواهد ملک بخرد، sell یعنی می‌خواهد ملک خودش را بفروشد، rent یعنی می‌خواهد ملکی را اجاره کند، و lease_out یعنی می‌خواهد ملک خودش را اجاره بدهد. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
 برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن. تاریخ ورود و خروج را با قالب YYYY-MM-DD و تعداد نفرات را در stay.guests ثبت کن. اگر مشخص نیستند null بگذار و در صورت نیاز نام فیلد را در missingInformation بیاور.
 ساختار دقیق:
 {
-  "intent": "buy",
+  "intent": null,
   "propertyType": null,
   "rentalMode": null,
   "location": { "province": null, "city": null, "neighborhood": null },
