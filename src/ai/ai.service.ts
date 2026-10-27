@@ -226,6 +226,62 @@ export class AiService {
         }
       }
 
+      // Keep missingInformation focused on actionable questions, not optional property filters.
+      const actionableFields = new Set([
+        'intent',
+        'location.city',
+        'propertyType',
+        'stay.checkInDate',
+        'stay.checkOutDate',
+        'stay.guests',
+        'offeredPropertyType',
+        'wantedPropertyType',
+      ]);
+      let actionableMissing = (result.missingInformation as string[])
+        .filter((field) => actionableFields.has(field));
+
+      if (explicitIntent === null && !actionableMissing.includes('intent')) {
+        actionableMissing.push('intent');
+      }
+      if (result.location?.city == null && !actionableMissing.includes('location.city')) {
+        actionableMissing.push('location.city');
+      }
+      if (
+        explicitIntent !== 'exchange' &&
+        result.propertyType == null &&
+        !actionableMissing.includes('propertyType')
+      ) {
+        actionableMissing.push('propertyType');
+      }
+      if (explicitIntent === 'rent' && result.rentalMode === 'short_term') {
+        for (const field of ['stay.checkInDate', 'stay.checkOutDate', 'stay.guests']) {
+          const key = field.split('.')[1];
+          if (result.stay?.[key] == null && !actionableMissing.includes(field)) {
+            actionableMissing.push(field);
+          }
+        }
+      }
+      if (explicitIntent === 'exchange') {
+        if (result.offeredPropertyType == null && !actionableMissing.includes('offeredPropertyType')) {
+          actionableMissing.push('offeredPropertyType');
+        }
+        if (result.wantedPropertyType == null && !actionableMissing.includes('wantedPropertyType')) {
+          actionableMissing.push('wantedPropertyType');
+        }
+      }
+      result.missingInformation = [...new Set(actionableMissing)];
+
+      if (explicitIntent === null) {
+        result.clarificationQuestion = 'قصد خرید، فروش، اجاره یا معاوضه دارید؟';
+      } else if (
+        explicitIntent === 'exchange' &&
+        (result.offeredPropertyType == null || result.wantedPropertyType == null)
+      ) {
+        result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
+      } else if (result.location?.city == null && !result.clarificationQuestion) {
+        result.clarificationQuestion = 'در کدام شهر یا منطقه دنبال ملک هستید؟';
+      }
+
       // The model sometimes confuses physical proximity to the sea with a sea view.
       // Resolve these two independent filters deterministically from the user's wording.
       if (
