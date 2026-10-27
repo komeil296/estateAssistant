@@ -43,6 +43,7 @@ describe('resolvePricePerSqmTomanFromMessage', () => {
   it.each([
     ['زمین دارم، متری ۲۰ میلیون', 20_000_000],
     ['زمین متری 2 میلیارد', 2_000_000_000],
+    ['زمین دارم، متری یک و نیم میلیارد', 1_500_000_000],
     ['زمین دارم', null],
   ])('%s', (message, expected) => {
     expect(resolvePricePerSqmTomanFromMessage(message)).toBe(expected);
