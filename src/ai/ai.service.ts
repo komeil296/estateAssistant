@@ -7,6 +7,7 @@ import {
   validateSearchRequest,
 } from './dto/search-request.dto';
 import { normalizeKnownLocation } from './location-catalog';
+import { resolveAccommodationFeaturesFromMessage } from './accommodation-feature-resolver';
 import {
   isLandForVillaConstructionRequest,
   resolveIntentFromMessage,
@@ -42,7 +43,7 @@ offeredPropertyType: land, apartment, villa، یا null
 wantedPropertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
-فیلدهای دامنه‌ای requirements: isInTownship، hasMountainView، hasSeaView، viewProtectionClaim، deedEra.
+فیلدهای دامنه‌ای requirements: isInTownship، hasMountainView، hasSeaView، viewProtectionClaim، deedEra.\nویژگی‌های اقامتگاه را در features به‌صورت آرایه‌ای از اشیای {id,value} استخراج کن. شناسه‌ها باید از فرهنگ استاندارد باشند؛ ویژگی‌هایی که کاربر صریحاً نخواسته را اضافه نکن و از نوع اقامتگاه امکانات را حدس نزن. مثال شناسه‌ها: amenity.pool، amenity.jacuzzi، food.breakfast.price، bathroom.types، connectivity.wifi، amenity.parking، view.types، accommodation.type. مقادیر چندگزینه‌ای باید آرایه رشته‌ای با مقادیر استاندارد باشند. اگر ویژگی مشخصی گفته نشده، در features قرار نده.
 «زمین/ویلای شهرکی» یعنی isInTownship=true. «ویو ابدی» یعنی viewProtectionClaim=true و فقط ادعای آگهی درباره حفظ چشم‌انداز است، نه تضمین حقوقی. «دید یا ویوی کوه» یعنی hasMountainView=true؛ «دید یا ویوی دریا» یعنی hasSeaView=true. «سند شاهنشاهی» یعنی deedEra=pre_revolution؛ این عبارت به‌تنهایی اعتبار حقوقی سند را ثابت نمی‌کند. اگر اشاره نشده، null بگذار.
 برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
 استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. عبارت‌هایی مثل «نزدیک دریا»، «ویو دریا»، «دید کوه» و «شهرکی» ویژگی یا شرط ملک هستند، نه نام شهر؛ هرگز آن‌ها را در location.city قرار نده. اگر نام شهر گفته نشده، location.city=null بگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
@@ -273,7 +274,7 @@ export class AiService {
         result.location.city = null;
       }
 
-      // Resolve high-confidence intent patterns from the original Persian message.
+      // Use deterministic feature extraction so explicit user preferences are not lost\n      // when the local model omits or mislabels the features array.\n      result.features = resolveAccommodationFeaturesFromMessage(message);\n\n      // Resolve high-confidence intent patterns from the original Persian message.
       // This keeps core domain rules deterministic and independently testable.
       const intentResolution = resolveIntentFromMessage(message);
       const landConstructionRequest = isLandForVillaConstructionRequest(message);
