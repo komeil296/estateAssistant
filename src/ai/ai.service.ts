@@ -13,6 +13,7 @@ import {
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
+  resolvePropertyTermsFromMessage,
 } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
@@ -39,6 +40,8 @@ offeredPropertyType: land, apartment, villa، یا null
 wantedPropertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
+فیلدهای دامنه‌ای requirements: isInTownship، hasMountainView، hasSeaView، viewProtectionClaim، deedEra.
+«زمین/ویلای شهرکی» یعنی isInTownship=true. «ویو ابدی» یعنی viewProtectionClaim=true و فقط ادعای آگهی درباره حفظ چشم‌انداز است، نه تضمین حقوقی. «دید یا ویوی کوه» یعنی hasMountainView=true؛ «دید یا ویوی دریا» یعنی hasSeaView=true. «سند شاهنشاهی» یعنی deedEra=pre_revolution؛ این عبارت به‌تنهایی اعتبار حقوقی سند را ثابت نمی‌کند. اگر اشاره نشده، null بگذار.
 برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
 استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
@@ -68,7 +71,12 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
     "documentType": null,
     "landUse": null,
     "nearSea": null,
-    "hasView": null
+    "hasView": null,
+    "isInTownship": null,
+    "hasMountainView": null,
+    "hasSeaView": null,
+    "viewProtectionClaim": null,
+    "deedEra": null
   },
   "stay": {
     "checkInDate": null,
@@ -299,6 +307,12 @@ export class AiService {
         result.clarificationQuestion = 'در کدام شهر یا منطقه دنبال ملک هستید؟';
       }
 
+      if (!result.requirements || typeof result.requirements !== 'object' || Array.isArray(result.requirements)) {
+        result.requirements = {};
+      }
+      const propertyTerms = resolvePropertyTermsFromMessage(message);
+      Object.assign(result.requirements, propertyTerms);
+
       // The model sometimes confuses physical proximity to the sea with a sea view.
       // Resolve these two independent filters deterministically from the user's wording.
       if (
@@ -321,7 +335,9 @@ export class AiService {
           /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:دریا|ساحل)/.test(normalizedMessage) ||
           /(?:دریا|ساحل)\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(normalizedMessage);
 
-        result.requirements.nearSea = mentionsNearSea ? true : null;
+        const negatesNearSea =
+          /(?:ولی|اما|البته)?\\s*(?:نزدیک\\s*(?:به\\s*)?(?:دریا|ساحل)|نزدیکی\\s*(?:به\\s*)?(?:دریا|ساحل)|نزدیک\\s*ساحل\\s*بودن)\\s*(?:مهم\\s*نیست|اهمیت\\s*ندارد|نمی\\s*خوام|نمی\\s*خواهم|لازم\\s*نیست)/.test(normalizedMessage);
+        result.requirements.nearSea = mentionsNearSea && !negatesNearSea ? true : null;
         result.requirements.hasView = mentionsSeaView ? true : null;
       }
 
