@@ -195,6 +195,26 @@ export function resolveNightsFromMessage(message: string): number | null {
 }
 
 
+/** Resolve a single explicit property type from colloquial Persian. */
+export function resolvePropertyTypeFromMessage(
+  message: string,
+): 'land' | 'apartment' | 'villa' | null {
+  const text = normalizePersianText(message);
+
+  // In a land-for-construction request, the searched property is the land, not the future villa.
+  if (/زمین/.test(text) && /(?:برای\s*)?(?:ساخت|ساختن)\s*ویلا/.test(text)) {
+    return 'land';
+  }
+
+  const mentionedTypes = [
+    { type: 'land' as const, pattern: /زمین|قطعه\s*زمین/ },
+    { type: 'apartment' as const, pattern: /آپارتمان|واحد\s*(?:مسکونی)?/ },
+    { type: 'villa' as const, pattern: /ویلا|ویلای/ },
+  ].filter(({ pattern }) => pattern.test(text));
+
+  return mentionedTypes.length === 1 ? mentionedTypes[0].type : null;
+}
+
 export interface PropertyTerms {
   isInTownship: boolean | null;
   hasMountainView: boolean | null;
@@ -207,7 +227,7 @@ export interface PropertyTerms {
 export function resolvePropertyTermsFromMessage(message: string): PropertyTerms {
   const text = normalizePersianText(message);
   const isInTownship = /(?:زمین|ویلا|ویلای|ملک)?\s*(?:شهرکی|داخل\s*(?:یک\s*)?شهرک|توی\s*(?:یک\s*)?شهرک|داخل\s*شهرک)/.test(text);
-  const hasMountainView = /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*(?:ابدی\s*)?(?:به\s*)?کوه|کوه\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text);
+  const hasMountainView = /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*(?:ابدی\s*)?(?:به\s*)?کوه|کوه\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text) || /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*ابدی\s*(?:دریا\s*و\s*کوه|کوه\s*و\s*دریا)/.test(text);
   const hasSeaView = /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:ابدی\s*)?(?:به\s*)?دریا|دریا\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text) || /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*ابدی\s*کوه\s*و\s*دریا/.test(text);
   const viewProtectionClaim = /(?:ویو\s*ابدی|دید\s*ابدی|چشم\s*انداز\s*ابدی)/.test(text);
   const deedEra = /(?:سند\s*)?(?:شاهنشاهی|قبل\s*از\s*انقلاب|پیش\s*از\s*انقلاب)/.test(text)
