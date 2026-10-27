@@ -254,6 +254,7 @@ export class AiService {
         budget: Record<string, unknown>;
         requirements: Record<string, unknown>;
         stay: Record<string, unknown>;
+        features: Array<{ id: string; value: string | boolean | number | string[] }>;
         intent: unknown;
         propertyType: unknown;
         offeredPropertyType: unknown;
