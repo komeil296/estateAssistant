@@ -290,7 +290,7 @@ export function normalizeKnownLocation<T extends {
     })))
     .filter((item) => item.normalizedAlias.length >= 3 &&
       normalizedMessage.includes(item.normalizedAlias))
-    .sort((a, b) => b.normalizedAlias.length - a.normalizedAlias.length);
+    .sort((a, b) => {\n      if (a.entry.kind !== b.entry.kind) {\n        return a.entry.kind === 'locality' ? -1 : 1;\n      }\n      return b.normalizedAlias.length - a.normalizedAlias.length;\n    });
 
   const match = matches[0];
   if (!match) return result;
