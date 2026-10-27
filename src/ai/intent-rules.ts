@@ -149,15 +149,23 @@ export function resolveRentalBudgetTomanFromMessage(
   message: string,
 ): { mode: ResolvedRentalMode; amountToman: number } | null {
   const text = normalizePersianText(message);
+  const numberWords: Record<string, number> = {
+    یک: 1, یه: 1, یك: 1, دو: 2, سه: 3, چهار: 4, پنج: 5,
+    شش: 6, شیش: 6, هفت: 7, هشت: 8, نه: 9, ده: 10,
+    یازده: 11, دوازده: 12, سیزده: 13, چهارده: 14, پانزده: 15,
+    شانزده: 16, هفده: 17, هجده: 18, نوزده: 19, بیست: 20,
+    سی: 30, چهل: 40, پنجاه: 50, شصت: 60, هفتاد: 70,
+    هشتاد: 80, نود: 90, صد: 100,
+  };
   const match = text.match(
-    /(?:شبی|هر\s*شب|شبانه|ماهی|ماهانه|هر\s*ماه)\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومن|تومان|ریال)?/,
+    /(?:شبی|هر\s*شب|شبانه|ماهی|ماهانه|هر\s*ماه)\s*(\d+(?:[.,]\d+)?|یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده|یازده|دوازده|سیزده|چهارده|پانزده|شانزده|هفده|هجده|نوزده|بیست|سی|چهل|پنجاه|شصت|هفتاد|هشتاد|نود|صد)\s*(میلیارد|میلیون|هزار|تومن|تومان|ریال)?/,
   );
   if (!match) return null;
 
   const mode: ResolvedRentalMode = /(?:شبی|هر\s*شب|شبانه)/.test(match[0])
     ? 'short_term'
     : 'monthly';
-  const amount = Number(match[1].replace(',', '.'));
+  const amount = numberWords[match[1]] ?? Number(match[1].replace(',', '.'));
   if (!Number.isFinite(amount) || amount <= 0) return null;
 
   const unit = match[2];
