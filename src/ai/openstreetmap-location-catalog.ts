@@ -144,6 +144,7 @@ export function normalizeLocationFromOsm<T extends LocationResult>(
       canonical: (place.nameFa || place.name || '').trim(),
       normalizedCanonical: normalizeText((place.nameFa || place.name || '').trim()),
       matchedLength: matchedNames[0].length,
+      coverageHints: place.coverageHints ?? [],
     }];
   }).filter((candidate) => candidate.canonical.length > 0)
     .sort((a, b) => b.matchedLength - a.matchedLength);
@@ -159,7 +160,8 @@ export function normalizeLocationFromOsm<T extends LocationResult>(
 
     // Without an explicit city, only accept a name if it resolves to one
     // canonical label across the loaded coverage; otherwise it is ambiguous.
-    if (!requiredCoverage && distinct.length !== 1) return null;
+    const matchedCoverageAreas = new Set(matches.flatMap((candidate) => candidate.coverageHints));
+    if (!requiredCoverage && (distinct.length !== 1 || matchedCoverageAreas.size > 1)) return null;
     return distinct[0];
   };
 
