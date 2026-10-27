@@ -11,6 +11,8 @@ export type DocumentType =
   | 'end_user'
   | 'other'
   | 'unknown';
+export type DeedEra = 'pre_revolution' | 'post_revolution' | 'unknown';
+const DEED_ERAS: DeedEra[] = ['pre_revolution', 'post_revolution', 'unknown'];
 
 const PROPERTY_TYPES: PropertyType[] = ['land', 'apartment', 'villa'];
 const RENTAL_MODES: RentalMode[] = ['monthly', 'short_term'];
@@ -104,6 +106,21 @@ export class SearchRequirementsDto {
 
   @ApiProperty({ example: true, nullable: true, description: 'داشتن چشم‌انداز؛ مستقل از فاصله تا دریا' })
   hasView!: boolean | null;
+
+  @ApiProperty({ example: true, nullable: true, description: 'قرار داشتن ملک داخل شهرک' })
+  isInTownship!: boolean | null;
+
+  @ApiProperty({ example: true, nullable: true, description: 'چشم‌انداز کوه' })
+  hasMountainView!: boolean | null;
+
+  @ApiProperty({ example: true, nullable: true, description: 'چشم‌انداز دریا' })
+  hasSeaView!: boolean | null;
+
+  @ApiProperty({ example: true, nullable: true, description: 'ادعای آگهی درباره حفظ چشم‌انداز در بلندمدت؛ نه تضمین حقوقی' })
+  viewProtectionClaim!: boolean | null;
+
+  @ApiProperty({ enum: DEED_ERAS, nullable: true, description: 'دوره زمانی سند؛ سند شاهنشاهی به پیش از انقلاب اشاره دارد' })
+  deedEra!: DeedEra | null;
 }
 
 export class SearchStayDto {
@@ -367,6 +384,11 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
         requirements.hasView,
         'requirements.hasView',
       ),
+      isInTownship: requireNullableBoolean(requirements.isInTownship, 'requirements.isInTownship'),
+      hasMountainView: requireNullableBoolean(requirements.hasMountainView, 'requirements.hasMountainView'),
+      hasSeaView: requireNullableBoolean(requirements.hasSeaView, 'requirements.hasSeaView'),
+      viewProtectionClaim: requireNullableBoolean(requirements.viewProtectionClaim, 'requirements.viewProtectionClaim'),
+      deedEra: requireEnum(requirements.deedEra, DEED_ERAS, 'requirements.deedEra', true),
     },
     stay: {
       checkInDate: requireDateOrNull(stay.checkInDate, 'stay.checkInDate'),
