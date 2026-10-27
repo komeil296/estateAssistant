@@ -7,6 +7,7 @@ import {
   validateSearchRequest,
 } from './dto/search-request.dto';
 import { normalizeKnownLocation } from './location-catalog';
+import { normalizeLocationFromOsm } from './openstreetmap-location-catalog';
 import { resolveAccommodationFeaturesFromMessage } from './accommodation-feature-resolver';
 import {
   isLandForVillaConstructionRequest,
@@ -627,6 +628,7 @@ export class AiService {
       // This prevents historical names such as «سخت‌سر» and «شهسوار» from
       // being treated as unrelated places, and maps localities to their city.
       normalizeKnownLocation(result, message);
+      normalizeLocationFromOsm(result, message);
 
       return validateSearchRequest(result);
     } catch (error) {
