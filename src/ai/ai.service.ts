@@ -2,6 +2,7 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { SearchRequestDto, validateSearchRequest } from './dto/search-request.dto';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای پیدا کردن و اجاره اقامتگاه در ایران هستی.
@@ -10,18 +11,93 @@ const REAL_ESTATE_SYSTEM_PROMPT = `
 - فقط فارسی روان، طبیعی و ساده بنویس. از واژه‌های نامأنوس و ترجمه‌های تحت‌اللفظی پرهیز کن.
 - منظور کاربر را دقیق رعایت کن: «دریا» با «دریاچه» فرق دارد؛ این دو را جایگزین هم نکن.
 - پاسخ را کوتاه و کاربردی نگه دار. معمولاً ۲ تا ۴ جمله کافی است.
-- اگر کاربر برای اجاره اقامتگاه درخواست داد، اطلاعاتی را که خودش گفته دوباره نپرس.
+- اطلاعاتی را که کاربر گفته دوباره نپرس.
 - فقط مهم‌ترین اطلاعاتِ هنوز نامشخص را بپرس؛ در هر نوبت حداکثر دو سؤال.
-- برای جست‌وجوی مناسب معمولاً مقصد یا شهر، تاریخ ورود و خروج، تعداد نفرات و بودجه مهم‌اند. اگر بعضی از این موارد معلوم نیستند، مرحله‌ای بپرس.
-- اگر کاربر هنوز تاریخ مشخصی ندارد، لازم نیست همه جزئیات را یک‌باره بپرسی.
+- برای اجاره کوتاه‌مدت معمولاً مقصد، تاریخ ورود و خروج، تعداد نفرات و بودجه مهم‌اند.
 - ادعا نکن که اقامتگاه واقعی پیدا کرده‌ای، موجودی را بررسی کرده‌ای یا رزرو انجام داده‌ای، مگر ابزار مربوطه واقعاً این کار را انجام داده باشد.
-- اگر درخواست مبهم است، با یک سؤال روشن‌کننده شروع کن؛ کاربر را بابت فارسی یا نگارش متن سرزنش نکن.
 - هیچ‌وقت درباره امکانات، قیمت یا موجودی یک اقامتگاه مشخص حدس نزن.
+`.trim();
+
+const SEARCH_EXTRACTION_PROMPT = `
+درخواست مشتری را به یک شیء JSON مطابق ساختار زیر تبدیل کن. فقط JSON معتبر برگردان.
+هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
+مقادیر مجاز:
+intent: buy, sell, rent, lease_out
+propertyType: land, apartment, villa, یا null
+rentalMode: monthly, short_term, یا null
+documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
+قیمت‌ها باید عدد صحیح ریال باشند. اگر کاربر مبلغ را به تومان گفته، آن را در ۱۰ ضرب کن.
+استان، شهر و محله را از هم جدا نگه دار. اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن.
+«حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
+بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
+برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن و اگر تاریخ ورود یا خروج یا تعداد مهمانان برای درخواست ضروری است و معلوم نیست، در missingInformation ثبت کن.
+ساختار دقیق:
+{
+  "intent": "buy",
+  "propertyType": null,
+  "rentalMode": null,
+  "location": { "province": null, "city": null, "neighborhood": null },
+  "area": { "targetSqm": null, "minSqm": null, "maxSqm": null },
+  "budget": {
+    "maxTotalPriceRial": null,
+    "maxPricePerSqmRial": null,
+    "maxDepositRial": null,
+    "maxRentMonthlyRial": null,
+    "maxRentNightlyRial": null
+  },
+  "requirements": {
+    "bedrooms": null,
+    "documentType": null,
+    "landUse": null,
+    "hasView": null
+  },
+  "missingInformation": [],
+  "clarificationQuestion": null
+}
 `.trim();
 
 @Injectable()
 export class AiService {
   async chat(message: string) {
+    const data = await this.callOllama([
+      { role: 'system', content: REAL_ESTATE_SYSTEM_PROMPT },
+      { role: 'user', content: message },
+    ]);
+
+    return {
+      reply: data.message?.content ?? '',
+    };
+  }
+
+  async parseSearchRequest(message: string): Promise<SearchRequestDto> {
+    const data = await this.callOllama(
+      [
+        { role: 'system', content: SEARCH_EXTRACTION_PROMPT },
+        { role: 'user', content: message },
+      ],
+      true,
+    );
+
+    const content = data.message?.content;
+    if (!content) {
+      throw new ServiceUnavailableException(
+        'مدل خروجی قابل استفاده‌ای برای درخواست جست‌وجو تولید نکرد.',
+      );
+    }
+
+    try {
+      return validateSearchRequest(JSON.parse(content) as unknown);
+    } catch {
+      throw new ServiceUnavailableException(
+        'مدل نتوانست درخواست را به ساختار استاندارد تبدیل کند. متن درخواست را ساده‌تر کن و دوباره امتحان کن.',
+      );
+    }
+  }
+
+  private async callOllama(
+    messages: Array<{ role: 'system' | 'user'; content: string }>,
+    jsonFormat = false,
+  ): Promise<{ message?: { content?: string } }> {
     let response: Response;
 
     try {
@@ -32,13 +108,11 @@ export class AiService {
         },
         body: JSON.stringify({
           model: 'persian-realtor',
-          messages: [
-            { role: 'system', content: REAL_ESTATE_SYSTEM_PROMPT },
-            { role: 'user', content: message },
-          ],
+          messages,
           stream: false,
+          ...(jsonFormat ? { format: 'json' } : {}),
           options: {
-            temperature: 0.2,
+            temperature: jsonFormat ? 0 : 0.2,
             num_ctx: 4096,
           },
         }),
@@ -56,10 +130,8 @@ export class AiService {
       );
     }
 
-    const data: { message?: { content?: string } } = await response.json();
-
-    return {
-      reply: data.message?.content ?? '',
+    return (await response.json()) as {
+      message?: { content?: string };
     };
   }
 }
