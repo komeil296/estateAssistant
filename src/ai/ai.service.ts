@@ -14,6 +14,7 @@ import {
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
+  resolvePropertyTypeFromMessage,
 } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
@@ -312,6 +313,13 @@ export class AiService {
       }
       const propertyTerms = resolvePropertyTermsFromMessage(message);
       Object.assign(result.requirements, propertyTerms);
+
+      // Use deterministic property type extraction when the model leaves a single explicit type blank.
+      // Exchange is excluded because its offered and wanted property types are handled separately.
+      if (explicitIntent !== 'exchange' && result.propertyType == null) {
+        const propertyType = resolvePropertyTypeFromMessage(message);
+        if (propertyType !== null) result.propertyType = propertyType;
+      }
 
       // The model sometimes confuses physical proximity to the sea with a sea view.
       // Resolve these two independent filters deterministically from the user's wording.
