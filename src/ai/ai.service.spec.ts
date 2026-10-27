@@ -173,6 +173,34 @@ describe('AiService', () => {
     expect(result.stay.checkInDate).toBeNull();
   });
 
+  it('does not confuse a sea view with physical proximity to the sea', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'villa',
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      requirements: { nearSea: true, hasView: true },
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('یه ویلا با ویوی دریا تو رامسر می‌خوام');
+
+    expect(result.requirements.hasView).toBe(true);
+    expect(result.requirements.nearSea).toBeNull();
+    expect(result.features).toContainEqual({
+      id: 'view.types',
+      value: ['sea'],
+    });
+    expect(result.features).not.toContainEqual({
+      id: 'location.near_sea',
+      value: true,
+    });
+  });
+
   it('returns deterministic accommodation features alongside the search request', async () => {
     const modelOutput = {
       intent: null,
