@@ -98,7 +98,10 @@ export class SearchRequirementsDto {
   @ApiProperty({ example: 'residential', nullable: true })
   landUse!: string | null;
 
-  @ApiProperty({ example: true, nullable: true })
+  @ApiProperty({ example: true, nullable: true, description: 'نزدیکی ملک به دریا یا ساحل؛ مستقل از چشم‌انداز' })
+  nearSea!: boolean | null;
+
+  @ApiProperty({ example: true, nullable: true, description: 'داشتن چشم‌انداز؛ مستقل از فاصله تا دریا' })
   hasView!: boolean | null;
 }
 
@@ -333,6 +336,10 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
       landUse: requireNullableString(
         requirements.landUse,
         'requirements.landUse',
+      ),
+      nearSea: requireNullableBoolean(
+        requirements.nearSea,
+        'requirements.nearSea',
       ),
       hasView: requireNullableBoolean(
         requirements.hasView,
