@@ -11,6 +11,7 @@ import {
   isLandForVillaConstructionRequest,
   resolveIntentFromMessage,
   resolveNightsFromMessage,
+  resolveSolarHijriCheckInDateFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
@@ -341,6 +342,38 @@ export class AiService {
       const resolvedNights = resolveNightsFromMessage(message);
       if (resolvedNights !== null) result.stay.nights = resolvedNights;
       if (result.stay.nights === undefined) result.stay.nights = null;
+
+      // Resolve Solar Hijri dates from the original message; do not trust a
+      // model-generated Gregorian date when the user explicitly gave a Persian date.
+      const resolvedCheckInDate = resolveSolarHijriCheckInDateFromMessage(message);
+      if (resolvedCheckInDate !== null) {
+        result.stay.checkInDate = resolvedCheckInDate;
+      }
+
+      // A known check-in date plus an explicit number of nights fully determines
+      // check-out. Never ask the user for a date they have already implied.
+      if (
+        typeof result.stay.checkInDate === 'string' &&
+        /^\\d{4}-\\d{2}-\\d{2}$/.test(result.stay.checkInDate) &&
+        typeof result.stay.nights === 'number' &&
+        Number.isInteger(result.stay.nights) &&
+        result.stay.nights >= 0
+      ) {
+        const checkInTimestamp = Date.parse(`${result.stay.checkInDate}T00:00:00Z`);
+        if (Number.isFinite(checkInTimestamp)) {
+          result.stay.checkOutDate = new Date(
+            checkInTimestamp + result.stay.nights * 24 * 60 * 60 * 1000,
+          ).toISOString().slice(0, 10);
+        }
+      }
+      if (
+        result.stay.checkInDate != null &&
+        result.stay.checkOutDate != null &&
+        typeof result.clarificationQuestion === 'string' &&
+        /تاریخ\\s*(?:خروج|ورود)|(?:خروج|ورود)\\s*را\\s*مشخص/.test(result.clarificationQuestion)
+      ) {
+        result.clarificationQuestion = null;
+      }
       if (result.offeredPropertyType === undefined) result.offeredPropertyType = null;
       if (result.wantedPropertyType === undefined) result.wantedPropertyType = null;
       if (!Array.isArray(result.missingInformation)) {
@@ -404,7 +437,15 @@ export class AiService {
       if (explicitIntent === 'rent' && result.rentalMode === 'short_term') {
         for (const field of ['stay.checkInDate', 'stay.checkOutDate', 'stay.guests']) {
           const key = field.split('.')[1];
-          if (result.stay?.[key] == null && !actionableMissing.includes(field)) {
+          const checkoutDerivable =
+            key === 'checkOutDate' &&
+            result.stay?.checkInDate != null &&
+            typeof result.stay?.nights === 'number';
+          if (
+            result.stay?.[key] == null &&
+            !checkoutDerivable &&
+            !actionableMissing.includes(field)
+          ) {
             actionableMissing.push(field);
           }
         }
