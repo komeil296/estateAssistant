@@ -134,11 +134,11 @@ export class AiService {
         .toLowerCase();
 
       const explicitIntent: 'buy' | 'sell' | 'rent' | 'lease_out' | null =
-        /(?:اجاره\s*(?:بدهم|بدم|بدهیم|بدیم|بدھم)|اجاره\s*دادن|مستأجر\s*(?:می‌خواهم|میخوام))/.test(normalizedIntentMessage)
+        /(?:اجاره\s*(?:بدهم|بدم|بدهیم|بدیم|بدھم)|اجاره\s*دادن|ملکم\s*رو\s*اجاره|ملکم\s*را\s*اجاره|مستأجر\s*(?:می‌خواهم|میخوام))/.test(normalizedIntentMessage)
           ? 'lease_out'
-          : /(?:بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش|فروش\s*ملک)/.test(normalizedIntentMessage)
+          : /(?:بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش|فروش\s*ملک|می‌خوام\s*بفروشم|میخوام\s*بفروشم)/.test(normalizedIntentMessage)
             ? 'sell'
-            : /(?:بخرم|بخریم|برای\s*خرید|قصد\s*خرید|خرید\s*ملک)/.test(normalizedIntentMessage)
+            : /(?:بخرم|بخریم|برای\s*خرید|قصد\s*خرید|خرید\s*ملک|دنبال\s*خرید|می‌خوام\s*خرید|میخوام\s*خرید|می‌خواهم\s*خرید|میخواهم\s*خرید|خریدن)/.test(normalizedIntentMessage)
               ? 'buy'
               : /(?:اجاره\s*(?:کنم|بگیرم|بگیریم)|اجاره\s*ماهانه|اجاره\s*کوتاه.?مدت|اجاره\s*روزانه|اقامت\s*برای\s*\d+\s*شب|برای\s*\d+\s*شب|شبی\s*حداکثر)/.test(normalizedIntentMessage)
                 ? 'rent'
