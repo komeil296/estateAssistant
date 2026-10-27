@@ -92,6 +92,35 @@ describe('AiService', () => {
     expect(result.location.neighborhood).toBeNull();
   });
 
+  it('defaults a land search to purchase and extracts explicit residential land use', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'land',
+      location: { province: null, city: 'رامسر', neighborhood: null, street: null },
+      area: { targetSqm: 350, minSqm: 300, maxSqm: 400 },
+      requirements: { landUse: null },
+      missingInformation: ['intent'],
+      clarificationQuestion: 'قصد خرید، فروش یا اجاره دارید؟',
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'سلام دنبال زمین با کاربری مسکونی هستم سمت بلوار طالقانی رامسر بین 300 تا 400 متر',
+    );
+
+    expect(result.intent).toBe('buy');
+    expect(result.missingInformation).not.toContain('intent');
+    expect(result.clarificationQuestion).toBeNull();
+    expect(result.requirements.landUse).toBe('residential');
+    expect(result.location.city).toBe('رامسر');
+    expect(result.location.street).toBe('بلوار طالقانی');
+    expect(result.area.minSqm).toBe(300);
+    expect(result.area.maxSqm).toBe(400);
+  });
+
   it('preserves offered and wanted property types for an exchange request', async () => {
     const modelOutput = {
       intent: 'exchange',
