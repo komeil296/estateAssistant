@@ -112,6 +112,11 @@ export class AiService {
       }
 
       const result = parsed as {
+        location?: {
+          city?: unknown;
+          neighborhood?: unknown;
+          province?: unknown;
+        };
         budget: Record<string, unknown>;
         requirements?: Record<string, unknown>;
         intent?: unknown;
