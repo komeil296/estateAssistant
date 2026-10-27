@@ -282,6 +282,35 @@ export class AiService {
       // when the local model omits or mislabels the features array.
       result.features = resolveAccommodationFeaturesFromMessage(message);
 
+      // A specific lodging category (e.g. swiss_cottage or hotel) is not an apartment.
+      // Prefer a broad property type only when the user's wording explicitly supports it.
+      const explicitPropertyType = resolvePropertyTypeFromMessage(message);
+      const accommodationType = result.features.find(
+        (feature) => feature.id === 'accommodation.type',
+      )?.value;
+      const specificLodgingTypes = new Set([
+        'suite',
+        'hotel',
+        'motel',
+        'forest_cottage',
+        'swiss_cottage',
+        'glass_cottage',
+        'traditional_lodging',
+        'eco_lodge',
+        'rural_house',
+      ]);
+      const hasSpecificLodgingType =
+        typeof accommodationType === 'string' &&
+        specificLodgingTypes.has(accommodationType);
+
+      if (explicitPropertyType !== null) {
+        // Deterministic explicit wording beats a contradictory model classification.
+        result.propertyType = explicitPropertyType;
+      } else if (hasSpecificLodgingType) {
+        // Keep the precise lodging category in features; do not invent "apartment".
+        result.propertyType = null;
+      }
+
       // Resolve high-confidence intent patterns from the original Persian message.
       // This keeps core domain rules deterministic and independently testable.
       const intentResolution = resolveIntentFromMessage(message);
@@ -433,6 +462,17 @@ export class AiService {
       ]);
       let actionableMissing = (result.missingInformation as string[])
         .filter((field) => actionableFields.has(field));
+
+      // A specific accommodation type can satisfy the lodging-category requirement
+      // even when the broad propertyType intentionally remains null.
+      const hasAccommodationType = result.features.some(
+        (feature) =>
+          feature.id === 'accommodation.type' &&
+          typeof feature.value === 'string',
+      );
+      if (hasAccommodationType) {
+        actionableMissing = actionableMissing.filter((field) => field !== 'propertyType');
+      }
 
       // Drop model-suggested missing fields that deterministic rules have now resolved.
       if (result.stay?.checkInDate != null) {
