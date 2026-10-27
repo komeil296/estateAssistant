@@ -393,16 +393,16 @@ export function normalizeKnownLocation<T extends {
     result.location.province = 'مازندران';
   }
 
-  if (cityMatch) {
-    result.location.neighborhood = null;
-    result.location.street = null;
-  } else {
-    if (localityMatch && (!resolvedCity || localityMatch.entry.city === resolvedCity)) {
-      result.location.neighborhood = localityMatch.entry.canonical;
-    }
-    if (streetMatch && (!resolvedCity || streetMatch.entry.city === resolvedCity)) {
-      result.location.street = streetMatch.entry.canonical;
-    }
+  // Clear any model-invented place details, then populate only names that
+  // were explicitly matched in the original message.
+  result.location.neighborhood = null;
+  result.location.street = null;
+
+  if (localityMatch && (!resolvedCity || localityMatch.entry.city === resolvedCity)) {
+    result.location.neighborhood = localityMatch.entry.canonical;
+  }
+  if (streetMatch && (!resolvedCity || streetMatch.entry.city === resolvedCity)) {
+    result.location.street = streetMatch.entry.canonical;
   }
 
   return result;
