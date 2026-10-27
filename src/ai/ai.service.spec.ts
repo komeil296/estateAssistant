@@ -68,6 +68,38 @@ describe('AiService', () => {
     expect(result.missingInformation).not.toContain('propertyType');
   });
 
+  it('clears wanted and offered property types for a short-stay request', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: null,
+      offeredPropertyType: null,
+      wantedPropertyType: 'apartment',
+      rentalMode: null,
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      stay: { checkInDate: null, checkOutDate: null, guests: null, nights: 2 },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'یه کلبه سوئیسی برای دو شب تو رامسر می‌خوام',
+    );
+
+    expect(result.intent).toBe('rent');
+    expect(result.rentalMode).toBe('short_term');
+    expect(result.wantedPropertyType).toBeNull();
+    expect(result.offeredPropertyType).toBeNull();
+    expect(result.features).toContainEqual({
+      id: 'accommodation.type',
+      value: 'swiss_cottage',
+    });
+  });
+
   it('preserves villa as the broad type when the user explicitly asks for a villa-style Swiss cottage', async () => {
     const modelOutput = {
       intent: null,
