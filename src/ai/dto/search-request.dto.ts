@@ -1,0 +1,297 @@
+import { BadRequestException } from '@nestjs/common';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export type PropertyType = 'land' | 'apartment' | 'villa';
+export type RentalMode = 'monthly' | 'short_term';
+export type CustomerIntent = 'buy' | 'sell' | 'rent' | 'lease_out';
+export type DocumentType =
+  | 'six_dang'
+  | 'three_dang'
+  | 'official'
+  | 'end_user'
+  | 'other'
+  | 'unknown';
+
+const PROPERTY_TYPES: PropertyType[] = ['land', 'apartment', 'villa'];
+const RENTAL_MODES: RentalMode[] = ['monthly', 'short_term'];
+const CUSTOMER_INTENTS: CustomerIntent[] = [
+  'buy',
+  'sell',
+  'rent',
+  'lease_out',
+];
+const DOCUMENT_TYPES: DocumentType[] = [
+  'six_dang',
+  'three_dang',
+  'official',
+  'end_user',
+  'other',
+  'unknown',
+];
+
+export class SearchLocationDto {
+  @ApiProperty({ example: 'مازندران', nullable: true })
+  province!: string | null;
+
+  @ApiProperty({ example: 'رامسر', nullable: true })
+  city!: string | null;
+
+  @ApiProperty({ example: 'سادات‌شهر', nullable: true })
+  neighborhood!: string | null;
+}
+
+export class SearchAreaDto {
+  @ApiProperty({ example: 300, nullable: true })
+  targetSqm!: number | null;
+
+  @ApiProperty({ example: 200, nullable: true })
+  minSqm!: number | null;
+
+  @ApiProperty({ example: 400, nullable: true })
+  maxSqm!: number | null;
+}
+
+export class SearchBudgetDto {
+  @ApiProperty({ example: 100000000000, nullable: true, description: 'حداکثر بودجه کل به ریال' })
+  maxTotalPriceRial!: number | null;
+
+  @ApiProperty({ example: 350000000, nullable: true, description: 'حداکثر قیمت هر مترمربع به ریال' })
+  maxPricePerSqmRial!: number | null;
+
+  @ApiProperty({ example: 5000000000, nullable: true, description: 'حداکثر ودیعه به ریال' })
+  maxDepositRial!: number | null;
+
+  @ApiProperty({ example: 150000000, nullable: true, description: 'حداکثر اجاره ماهانه به ریال' })
+  maxRentMonthlyRial!: number | null;
+
+  @ApiProperty({ example: 50000000, nullable: true, description: 'حداکثر اجاره هر شب به ریال' })
+  maxRentNightlyRial!: number | null;
+}
+
+export class SearchRequirementsDto {
+  @ApiProperty({ example: 2, nullable: true })
+  bedrooms!: number | null;
+
+  @ApiProperty({ enum: DOCUMENT_TYPES, nullable: true })
+  documentType!: DocumentType | null;
+
+  @ApiProperty({ example: 'residential', nullable: true })
+  landUse!: string | null;
+
+  @ApiProperty({ example: true, nullable: true })
+  hasView!: boolean | null;
+}
+
+/**
+ * Canonical search contract shared by model extraction, API filtering, and
+ * training examples. Prices are integer Rials; unknown values are null.
+ */
+export class SearchRequestDto {
+  @ApiProperty({ enum: CUSTOMER_INTENTS, example: 'rent' })
+  intent!: CustomerIntent;
+
+  @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'villa' })
+  propertyType!: PropertyType | null;
+
+  @ApiProperty({ enum: RENTAL_MODES, nullable: true, example: 'short_term' })
+  rentalMode!: RentalMode | null;
+
+  @ApiProperty({ type: SearchLocationDto })
+  location!: SearchLocationDto;
+
+  @ApiProperty({ type: SearchAreaDto })
+  area!: SearchAreaDto;
+
+  @ApiProperty({ type: SearchBudgetDto })
+  budget!: SearchBudgetDto;
+
+  @ApiProperty({ type: SearchRequirementsDto })
+  requirements!: SearchRequirementsDto;
+
+  @ApiProperty({ type: [String], example: ['check_in_date', 'check_out_date'] })
+  missingInformation!: string[];
+
+  @ApiPropertyOptional({
+    nullable: true,
+    example: 'برای چه تاریخی می‌خواهید اقامت داشته باشید؟',
+  })
+  clarificationQuestion!: string | null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function requireRecord(
+  value: unknown,
+  field: string,
+): Record<string, unknown> {
+  if (!isRecord(value)) {
+    throw new BadRequestException(`فیلد ${field} باید یک شیء معتبر باشد.`);
+  }
+  return value;
+}
+
+function requireNullableString(
+  value: unknown,
+  field: string,
+): string | null {
+  if (value === null || typeof value === 'string') {
+    return value;
+  }
+  throw new BadRequestException(`فیلد ${field} باید متن یا null باشد.`);
+}
+
+function requireNullableNumber(
+  value: unknown,
+  field: string,
+): number | null {
+  if (
+    value === null ||
+    (typeof value === 'number' && Number.isFinite(value) && value >= 0)
+  ) {
+    return value;
+  }
+  throw new BadRequestException(`فیلد ${field} باید عدد نامنفی یا null باشد.`);
+}
+
+function requireNullableBoolean(
+  value: unknown,
+  field: string,
+): boolean | null {
+  if (value === null || typeof value === 'boolean') {
+    return value;
+  }
+  throw new BadRequestException(`فیلد ${field} باید true، false یا null باشد.`);
+}
+
+function requireEnum<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+  field: string,
+  nullable = false,
+): T | null {
+  if (nullable && value === null) {
+    return null;
+  }
+  if (typeof value === 'string' && allowed.includes(value as T)) {
+    return value as T;
+  }
+  throw new BadRequestException(`مقدار فیلد ${field} معتبر نیست.`);
+}
+
+/**
+ * Validate untrusted model output before it is used to construct a property
+ * search. This function does not verify that locations or properties exist.
+ */
+export function validateSearchRequest(value: unknown): SearchRequestDto {
+  const root = requireRecord(value, 'searchRequest');
+  const location = requireRecord(root.location, 'location');
+  const area = requireRecord(root.area, 'area');
+  const budget = requireRecord(root.budget, 'budget');
+  const requirements = requireRecord(root.requirements, 'requirements');
+
+  if (
+    !Array.isArray(root.missingInformation) ||
+    !root.missingInformation.every((item) => typeof item === 'string')
+  ) {
+    throw new BadRequestException(
+      'فیلد missingInformation باید آرایه‌ای از متن‌ها باشد.',
+    );
+  }
+
+  const clarificationQuestion = root.clarificationQuestion;
+  if (
+    clarificationQuestion !== null &&
+    typeof clarificationQuestion !== 'string'
+  ) {
+    throw new BadRequestException(
+      'فیلد clarificationQuestion باید متن یا null باشد.',
+    );
+  }
+
+  const validated: SearchRequestDto = {
+    intent: requireEnum(root.intent, CUSTOMER_INTENTS, 'intent') as CustomerIntent,
+    propertyType: requireEnum(
+      root.propertyType,
+      PROPERTY_TYPES,
+      'propertyType',
+      true,
+    ),
+    rentalMode: requireEnum(
+      root.rentalMode,
+      RENTAL_MODES,
+      'rentalMode',
+      true,
+    ),
+    location: {
+      province: requireNullableString(location.province, 'location.province'),
+      city: requireNullableString(location.city, 'location.city'),
+      neighborhood: requireNullableString(
+        location.neighborhood,
+        'location.neighborhood',
+      ),
+    },
+    area: {
+      targetSqm: requireNullableNumber(area.targetSqm, 'area.targetSqm'),
+      minSqm: requireNullableNumber(area.minSqm, 'area.minSqm'),
+      maxSqm: requireNullableNumber(area.maxSqm, 'area.maxSqm'),
+    },
+    budget: {
+      maxTotalPriceRial: requireNullableNumber(
+        budget.maxTotalPriceRial,
+        'budget.maxTotalPriceRial',
+      ),
+      maxPricePerSqmRial: requireNullableNumber(
+        budget.maxPricePerSqmRial,
+        'budget.maxPricePerSqmRial',
+      ),
+      maxDepositRial: requireNullableNumber(
+        budget.maxDepositRial,
+        'budget.maxDepositRial',
+      ),
+      maxRentMonthlyRial: requireNullableNumber(
+        budget.maxRentMonthlyRial,
+        'budget.maxRentMonthlyRial',
+      ),
+      maxRentNightlyRial: requireNullableNumber(
+        budget.maxRentNightlyRial,
+        'budget.maxRentNightlyRial',
+      ),
+    },
+    requirements: {
+      bedrooms: requireNullableNumber(
+        requirements.bedrooms,
+        'requirements.bedrooms',
+      ),
+      documentType: requireEnum(
+        requirements.documentType,
+        DOCUMENT_TYPES,
+        'requirements.documentType',
+        true,
+      ),
+      landUse: requireNullableString(
+        requirements.landUse,
+        'requirements.landUse',
+      ),
+      hasView: requireNullableBoolean(
+        requirements.hasView,
+        'requirements.hasView',
+      ),
+    },
+    missingInformation: root.missingInformation as string[],
+    clarificationQuestion,
+  };
+
+  if (
+    validated.area.minSqm !== null &&
+    validated.area.maxSqm !== null &&
+    validated.area.minSqm > validated.area.maxSqm
+  ) {
+    throw new BadRequestException(
+      'حداقل متراژ نمی‌تواند از حداکثر متراژ بیشتر باشد.',
+    );
+  }
+
+  return validated;
+}
