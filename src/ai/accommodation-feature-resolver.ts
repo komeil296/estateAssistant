@@ -31,7 +31,14 @@ export function resolveAccommodationFeaturesFromMessage(
     }
   };
 
-  // Accommodation style.
+  // Explicit short-stay accommodation types. Specific cottage types below take precedence over broad mentions such as "ویلا".
+  if (/ویلا/.test(text)) add('accommodation.type', 'villa');
+  if (/سوئیت|سوییت|سوییت/.test(text)) add('accommodation.type', 'suite');
+  if (/هتل/.test(text)) add('accommodation.type', 'hotel');
+  if (/متل/.test(text)) add('accommodation.type', 'motel');
+  if (/خانه\s*روستایی|خانه\s*روستا/.test(text)) add('accommodation.type', 'rural_house');
+
+  // Specific accommodation styles/types override a broad "villa" mention.
   if (/کلبه\s*سوئیسی|کلبه\s*سوییسی/.test(text)) {
     add('accommodation.type', 'swiss_cottage');
     add('accommodation.style', ['swiss']);
@@ -154,7 +161,12 @@ export function resolveAccommodationFeaturesFromMessage(
   else if (/نظافت.{0,10}(?:در\s*صورت\s*درخواست|با\s*درخواست)/.test(text)) add('service.housekeeping', 'on_request');
   if (/پذیرش\s*(?:۲۴|24)\s*ساعته|پذیرش\s*شبانه\s*روزی/.test(text)) add('service.reception', '24_hour');
   else if (/ورود\s*بدون\s*میزبان|تحویل\s*کلید\s*بدون\s*حضور/.test(text)) add('service.reception', 'self_check_in');
-  if (/حیوان\s*خانگی|پت\s*فرندلی/.test(text)) add('policy.pets');
+  // Pet policy is explicit and supports both permission and prohibition.
+  if (/بدون\s*حیوان\s*خانگی|ورود\s*(?:حیوان|حیوانات)\s*(?:ممنوع|غیرمجاز)|حیوان\s*خانگی\s*(?:ممنوع|مجاز\s*نیست)|اجازه\s*(?:ورود|همراه\s*داشتن)\s*(?:حیوان|پت)\s*(?:ندارد|نیست)|پت\s*ممنوع/.test(text)) {
+    add('policy.pets', false);
+  } else if (/حیوان\s*خانگی|پت\s*فرندلی|اجازه\s*(?:ورود|همراه\s*داشتن)\s*(?:حیوان|پت)|با\s*حیوان\s*خانگی|همراه\s*داشتن\s*(?:پت|حیوان)/.test(text)) {
+    add('policy.pets', true);
+  }
   if (/برگزاری\s*مراسم|جشن|مهمانی/.test(text)) add('policy.events');
 
   return [...features.entries()].map(([id, value]) => ({ id, value }));
