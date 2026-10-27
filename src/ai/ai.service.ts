@@ -7,6 +7,7 @@ import {
   validateSearchRequest,
 } from './dto/search-request.dto';
 import { normalizeKnownLocation } from './location-catalog';
+import { resolveIntentFromMessage } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای جست‌وجوی خرید، فروش، اجاره و واگذاری املاک و اقامتگاه در ایران هستی.
@@ -26,16 +27,18 @@ const SEARCH_EXTRACTION_PROMPT = `
 درخواست مشتری را به یک شیء JSON مطابق ساختار زیر تبدیل کن. فقط JSON معتبر برگردان.
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
-intent: buy, sell, rent, lease_out، یا null
+intent: buy, sell, rent, lease_out, exchange، یا null
 propertyType: land, apartment, villa، یا null
+offeredPropertyType: land, apartment, villa، یا null
+wantedPropertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
 برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
-استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مثل ۳ شب مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
+استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 در requirements.nearSea فقط نزدیکی فیزیکی ملک به دریا یا ساحل را ثبت کن: «نزدیک دریا»، «نزدیک ساحل» و «پیاده تا ساحل» یعنی nearSea=true. اگر چنین شرطی گفته نشده، nearSea=null بگذار. «ویوی دریا» یا «چشم‌انداز دریا» به معنی requirements.hasView=true است و به‌تنهایی nearSea را true نکن؛ نزدیکی به دریا و چشم‌انداز دو شرط مستقل‌اند. اگر فقط نزدیکی به دریا گفته شده، hasView باید null باشد؛ اگر فقط چشم‌انداز دریا گفته شده، nearSea باید null باشد. فقط وقتی هر دو شرط صریحاً گفته شده‌اند، هر دو را true بگذار. اگر کاربر گفت «داخل شهر»، آن را به nearSea یا hasView تعبیر نکن.
 شهر را اگر در متن ذکر شده استخراج کن. محله را فقط وقتی کاربر نام محله‌ای را گفته استخراج کن؛ نبودن محله به‌تنهایی اطلاعات ناقص نیست و نباید در missingInformation قرار بگیرد. location.city را هم فقط وقتی واقعاً نام شهر از متن مشخص نیست در missingInformation قرار بده. برای «داخل شهر رامسر» city=«رامسر» ثبت کن و neighborhood را null بگذار.
-intent را فقط بر اساس قصد معامله‌ای که کاربر صریحاً بیان کرده تعیین کن: buy یعنی کاربر می‌خواهد ملک بخرد، sell یعنی می‌خواهد ملک خودش را بفروشد، rent یعنی می‌خواهد ملکی را اجاره کند، و lease_out یعنی می‌خواهد ملک خودش را اجاره بدهد. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
+intent را با توجه به کل جمله، نقش مشتری و قواعد بازار تعیین کن: buy یعنی خرید، sell یعنی فروش، rent یعنی اجاره گرفتن، lease_out یعنی اجاره دادن ملک خود، و exchange یعنی تهاتر/معاوضه. عبارت «ملک دارم» همراه با نرخ شبی/ماهی یعنی معمولاً lease_out؛ «ملک دارم» همراه با قیمت متری یا قیمت کل، یا پرسش «می‌خوام ببینم چند می‌ارزه» یعنی sell؛ نرخ شبی در درخواست ملک یعنی rent با rentalMode=short_term؛ نرخ ماهی در درخواست ملک یعنی rent با rentalMode=monthly. «تهاتر» و «معاوضه» یعنی exchange. در exchange، نوع ملک ارائه‌شده را در offeredPropertyType و نوع ملک درخواستی را در wantedPropertyType بگذار و propertyType را null قرار بده. برای سایر موارد مبهم حدس نزن. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
 برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن. تاریخ ورود و خروج را با قالب YYYY-MM-DD و تعداد نفرات را در stay.guests ثبت کن. اگر مشخص نیستند null بگذار و در صورت نیاز نام فیلد را در missingInformation بیاور.
 ساختار دقیق:
@@ -120,31 +123,23 @@ export class AiService {
         budget: Record<string, unknown>;
         requirements?: Record<string, unknown>;
         intent?: unknown;
+        propertyType?: unknown;
+        offeredPropertyType?: unknown;
+        wantedPropertyType?: unknown;
         rentalMode?: unknown;
+        stay?: Record<string, unknown>;
         missingInformation?: unknown;
         clarificationQuestion?: unknown;
       };
 
-      // Do not let the model infer a transaction type from a property description.
-      // Resolve clear intent from the original user message; otherwise ask a question.
-      const normalizedIntentMessage = message
-        .replace(/[ي]/g, 'ی')
-        .replace(/[ك]/g, 'ک')
-        .replace(/‌/g, ' ')
-        .toLowerCase();
-
-      const explicitIntent: 'buy' | 'sell' | 'rent' | 'lease_out' | null =
-        /(?:اجاره\s*(?:بدهم|بدم|بدهیم|بدیم|بدھم)|اجاره\s*دادن|ملکم\s*رو\s*اجاره|ملکم\s*را\s*اجاره|مستأجر\s*(?:می‌خواهم|میخوام))/.test(normalizedIntentMessage)
-          ? 'lease_out'
-          : /(?:بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش|فروش\s*ملک|می‌خوام\s*بفروشم|میخوام\s*بفروشم)/.test(normalizedIntentMessage)
-            ? 'sell'
-            : /(?:بخرم|بخریم|برای\s*خرید|قصد\s*خرید|خرید\s*ملک|دنبال\s*خرید|می‌خوام\s*خرید|میخوام\s*خرید|می‌خواهم\s*خرید|میخواهم\s*خرید|خریدن)/.test(normalizedIntentMessage)
-              ? 'buy'
-              : /(?:اجاره\s*(?:کنم|بگیرم|بگیریم)|اجاره\s*ماهانه|اجاره\s*کوتاه.?مدت|اجاره\s*روزانه|اقامت\s*برای\s*\d+\s*شب|برای\s*\d+\s*شب|شبی\s*حداکثر)/.test(normalizedIntentMessage)
-                ? 'rent'
-                : null;
-
+      // Resolve high-confidence intent patterns from the original Persian message.
+      // This keeps core domain rules deterministic and independently testable.
+      const intentResolution = resolveIntentFromMessage(message);
+      const explicitIntent = intentResolution.intent;
       result.intent = explicitIntent;
+      if (intentResolution.rentalMode) {
+        result.rentalMode = intentResolution.rentalMode;
+      }
 
       // Normalize model-generated rental mode variants to the API contract.
       // Unknown values become null rather than causing the whole request to fail.
@@ -181,7 +176,7 @@ export class AiService {
         'موقت',
       ]);
 
-      if (explicitIntent !== 'rent') {
+      if (explicitIntent !== 'rent' && explicitIntent !== 'lease_out') {
         result.rentalMode = null;
       } else if (monthlyRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'monthly';
@@ -191,6 +186,12 @@ export class AiService {
         result.rentalMode = null;
       }
 
+      if (!result.stay || typeof result.stay !== 'object' || Array.isArray(result.stay)) {
+        result.stay = {};
+      }
+      if (result.stay.nights === undefined) result.stay.nights = null;
+      if (result.offeredPropertyType === undefined) result.offeredPropertyType = null;
+      if (result.wantedPropertyType === undefined) result.wantedPropertyType = null;
       if (!Array.isArray(result.missingInformation)) {
         result.missingInformation = [];
       }
