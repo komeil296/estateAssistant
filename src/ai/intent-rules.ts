@@ -98,7 +98,7 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
 
   // An explicit stay duration implies a short-term rental, including Persian number words.
   // Explicit buy/sell/exchange intents above take precedence over this duration signal.
-  const mentionsStayDuration = /(?:برای\\s*)?(?:\\d+|یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\\s*(?:شب|روز)/.test(text);
+  const mentionsStayDuration = /(?:برای\s*)?(?:\d+|یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\s*(?:شب|روز)/.test(text);
   if (mentionsNightlyPrice || mentionsStayDuration) {
     return { intent: 'rent', rentalMode: 'short_term' };
   }
