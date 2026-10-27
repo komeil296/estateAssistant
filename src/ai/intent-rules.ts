@@ -76,7 +76,9 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
 
   // Domain rule: a quoted nightly or monthly amount in a customer's request
   // is treated as a rental budget; ownership above changes the role to landlord.
-  if (mentionsNightlyPrice) return { intent: 'rent', rentalMode: 'short_term' };
+  if (mentionsNightlyPrice || /(?:برای\s*)?\d+\s*(?:شب|روز)/.test(text)) {
+    return { intent: 'rent', rentalMode: 'short_term' };
+  }
   if (mentionsMonthlyPrice) return { intent: 'rent', rentalMode: 'monthly' };
 
   return { intent: null, rentalMode: null };
