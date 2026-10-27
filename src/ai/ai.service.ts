@@ -12,6 +12,7 @@ import {
   resolveIntentFromMessage,
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
+  resolveRentalBudgetTomanFromMessage,
 } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
@@ -143,10 +144,19 @@ export class AiService {
       // Resolve high-confidence intent patterns from the original Persian message.
       // This keeps core domain rules deterministic and independently testable.
       const intentResolution = resolveIntentFromMessage(message);
-      const explicitIntent = intentResolution.intent;
+      const landConstructionRequest = isLandForVillaConstructionRequest(message);
+      const explicitIntent = intentResolution.intent ?? (landConstructionRequest ? 'buy' : null);
       result.intent = explicitIntent;
       if (intentResolution.rentalMode) {
         result.rentalMode = intentResolution.rentalMode;
+      }
+
+      if (landConstructionRequest) {
+        result.propertyType = 'land';
+        if (!result.requirements || typeof result.requirements !== 'object' || Array.isArray(result.requirements)) {
+          result.requirements = {};
+        }
+        result.requirements.landUse = 'construction';
       }
 
       // Normalize model-generated rental mode variants to the API contract.
@@ -320,6 +330,18 @@ export class AiService {
       const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);
       if (pricePerSqmToman !== null) {
         result.budget.maxPricePerSqmRial = pricePerSqmToman;
+      }
+
+      // Use explicit nightly/monthly amounts from the original message instead of
+      // relying on the model to populate the correct budget field.
+      const rentalBudget = resolveRentalBudgetTomanFromMessage(message);
+      if (rentalBudget !== null) {
+        result.rentalMode = rentalBudget.mode;
+        if (rentalBudget.mode === 'short_term') {
+          result.budget.maxRentNightlyRial = rentalBudget.amountToman;
+        } else {
+          result.budget.maxRentMonthlyRial = rentalBudget.amountToman;
+        }
       }
 
       const budgetFields = [
