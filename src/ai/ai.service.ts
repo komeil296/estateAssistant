@@ -87,6 +87,7 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
     "guests": null,
     "nights": null
   },
+  "features": [],
   "missingInformation": [],
   "clarificationQuestion": null
 }
@@ -221,6 +222,7 @@ export class AiService {
           viewProtectionClaim: nullableBoolean(rawRequirements.viewProtectionClaim),
           deedEra: nullableDeedEra(rawRequirements.deedEra),
         },
+        features: [] as Array<{ id: string; value: string | boolean | number | string[] }>,
         stay: {
           checkInDate:
             typeof rawCheckInDate === 'string' &&
