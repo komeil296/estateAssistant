@@ -1,4 +1,9 @@
-import {\n  isLandForVillaConstructionRequest,\n  resolveIntentFromMessage,\n  resolveNightsFromMessage,\n  resolvePricePerSqmTomanFromMessage,\n} from './intent-rules';
+import {
+  isLandForVillaConstructionRequest,
+  resolveIntentFromMessage,
+  resolveNightsFromMessage,
+  resolvePricePerSqmTomanFromMessage,
+} from './intent-rules';
 
 describe('resolveIntentFromMessage', () => {
   it.each([
