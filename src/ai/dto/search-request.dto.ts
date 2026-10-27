@@ -149,6 +149,23 @@ export class SearchStayDto {
  * Canonical search contract shared by model extraction, API filtering, and
  * training examples. Prices are integer Rials; unknown values are null.
  */
+
+export class SearchFeatureDto {
+  @ApiProperty({ example: 'amenity.pool', description: 'شناسه استاندارد ویژگی اقامتگاه' })
+  id!: string;
+
+  @ApiProperty({
+    oneOf: [
+      { type: 'string' },
+      { type: 'boolean' },
+      { type: 'number' },
+      { type: 'array', items: { type: 'string' } },
+    ],
+    description: 'مقدار صریح استخراج‌شده از درخواست کاربر',
+  })
+  value!: string | boolean | number | string[];
+}
+
 export class SearchRequestDto {
   @ApiProperty({ enum: CUSTOMER_INTENTS, nullable: true, example: null })
   intent!: CustomerIntent | null;
@@ -179,6 +196,9 @@ export class SearchRequestDto {
 
   @ApiProperty({ type: SearchStayDto })
   stay!: SearchStayDto;
+
+  @ApiProperty({ type: [SearchFeatureDto], description: 'ویژگی‌های اقامتگاه که کاربر صریحاً درخواست کرده است' })
+  features!: SearchFeatureDto[];
 
   @ApiProperty({ type: [String], example: ['checkInDate', 'checkOutDate'] })
   missingInformation!: string[];
@@ -396,6 +416,29 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
       guests: requireNullableNumber(stay.guests, 'stay.guests'),
       nights: requireNullableNumber(stay.nights, 'stay.nights'),
     },
+    features: (() => {
+      const rawFeatures = root.features;
+      if (rawFeatures === undefined || rawFeatures === null) return [];
+      if (!Array.isArray(rawFeatures)) {
+        throw new BadRequestException('فیلد features باید آرایه باشد.');
+      }
+      return rawFeatures.map((item, index) => {
+        const feature = requireRecord(item, `features[${index}]`);
+        if (typeof feature.id !== 'string' || feature.id.trim() === '') {
+          throw new BadRequestException(`شناسه features[${index}].id معتبر نیست.`);
+        }
+        const featureValue = feature.value;
+        if (
+          typeof featureValue !== 'string' &&
+          typeof featureValue !== 'boolean' &&
+          !(typeof featureValue === 'number' && Number.isFinite(featureValue)) &&
+          !(Array.isArray(featureValue) && featureValue.every((v) => typeof v === 'string'))
+        ) {
+          throw new BadRequestException(`مقدار features[${index}].value معتبر نیست.`);
+        }
+        return { id: feature.id, value: featureValue as string | boolean | number | string[] };
+      });
+    })(),
     missingInformation: root.missingInformation as string[],
     clarificationQuestion,
   };
