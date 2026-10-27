@@ -29,7 +29,7 @@ intent: buy, sell, rent, lease_out
 propertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
 documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
-قیمت‌ها باید عدد صحیح ریال باشند. اگر کاربر مبلغ را به تومان گفته، آن را در ۱۰ ضرب کن.
+برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
 استان، شهر و محله را از هم جدا نگه دار. اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
@@ -94,7 +94,39 @@ export class AiService {
     }
 
     try {
-      return validateSearchRequest(JSON.parse(content) as unknown);
+      const parsed = JSON.parse(content) as unknown;
+      if (
+        typeof parsed !== 'object' ||
+        parsed === null ||
+        Array.isArray(parsed) ||
+        typeof (parsed as { budget?: unknown }).budget !== 'object' ||
+        (parsed as { budget?: unknown }).budget === null ||
+        Array.isArray((parsed as { budget: unknown }).budget)
+      ) {
+        throw new Error('ساختار خروجی مدل معتبر نیست.');
+      }
+
+      const result = parsed as {
+        budget: Record<string, unknown>;
+      };
+      const budgetFields = [
+        'maxTotalPriceRial',
+        'maxPricePerSqmRial',
+        'maxDepositRial',
+        'maxRentMonthlyRial',
+        'maxRentNightlyRial',
+      ];
+
+      // Model output uses Toman as an intermediate unit. Convert centrally
+      // so a model arithmetic mistake cannot silently change the API unit.
+      for (const field of budgetFields) {
+        const amount = result.budget[field];
+        if (amount !== null && typeof amount === 'number' && Number.isFinite(amount)) {
+          result.budget[field] = amount * 10;
+        }
+      }
+
+      return validateSearchRequest(result);
     } catch {
       throw new ServiceUnavailableException(
         'مدل نتوانست درخواست را به ساختار استاندارد تبدیل کند. متن درخواست را ساده‌تر کن و دوباره امتحان کن.',
