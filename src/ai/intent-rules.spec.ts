@@ -5,6 +5,7 @@ import {
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
+  resolvePropertyTypeFromMessage,
 } from './intent-rules';
 
 describe('resolveIntentFromMessage', () => {
@@ -74,10 +75,25 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
 });
 
 
+describe('resolvePropertyTypeFromMessage', () => {
+  it.each([
+    ['یه زمین دارم، متری ۲۰ میلیون', 'land'],
+    ['زمین دارم، متری ۲ میلیارد', 'land'],
+    ['ویلای من رو برای تعطیلات نوروز شبی ۱۰ میلیون اجاره بده', 'villa'],
+    ['یه ویلا با ویو ابدی می‌خوام', 'villa'],
+    ['یه زمین برای ساخت ویلا می‌خوام', 'land'],
+    ['ملک می‌خوام', null],
+    ['زمین و ویلا می‌خوام', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolvePropertyTypeFromMessage(message)).toBe(expected);
+  });
+});
+
 describe('resolvePropertyTermsFromMessage', () => {
   it.each([
     ['زمین شهرکی می‌خوام', { isInTownship: true, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: null }],
     ['ویلای شهرکی با ویو ابدی کوه و دریا', { isInTownship: true, hasMountainView: true, hasSeaView: true, viewProtectionClaim: true, deedEra: null }],
+    ['ویلای شهرکی با ویو ابدی دریا و کوه، سند شاهنشاهی', { isInTownship: true, hasMountainView: true, hasSeaView: true, viewProtectionClaim: true, deedEra: 'pre_revolution' }],
     ['سند شاهنشاهی دارد', { isInTownship: null, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: 'pre_revolution' }],
     ['یه آپارتمان با چشم‌انداز دریا', { isInTownship: null, hasMountainView: null, hasSeaView: true, viewProtectionClaim: null, deedEra: null }],
     ['ویلای معمولی', { isInTownship: null, hasMountainView: null, hasSeaView: null, viewProtectionClaim: null, deedEra: null }],
