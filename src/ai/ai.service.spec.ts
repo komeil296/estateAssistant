@@ -68,6 +68,30 @@ describe('AiService', () => {
     expect(result.missingInformation).not.toContain('propertyType');
   });
 
+  it('keeps a boulevard in location.street instead of neighborhood', async () => {
+    const modelOutput = {
+      intent: 'buy',
+      propertyType: 'land',
+      location: { province: null, city: 'رامسر', neighborhood: null, street: null },
+      area: { targetSqm: null, minSqm: 300, maxSqm: 400 },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'زمین مسکونی بین ۳۰۰ تا ۴۰۰ متر سمت بلوار طالقانی رامسر می‌خواهم',
+    );
+
+    expect(result.location.city).toBe('رامسر');
+    expect(result.location.street).toBe('بلوار طالقانی');
+    expect(result.location.neighborhood).toBeNull();
+  });
+
   it('preserves offered and wanted property types for an exchange request', async () => {
     const modelOutput = {
       intent: 'exchange',
