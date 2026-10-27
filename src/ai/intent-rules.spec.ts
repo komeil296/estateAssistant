@@ -1,4 +1,4 @@
-import { resolveIntentFromMessage } from './intent-rules';
+import { resolveIntentFromMessage, resolveNightsFromMessage } from './intent-rules';
 
 describe('resolveIntentFromMessage', () => {
   it.each([
@@ -15,5 +15,18 @@ describe('resolveIntentFromMessage', () => {
     ['یه ویلا با ویوی دریا تو رامسر می‌خوام', null, null],
   ] as const)('%s', (message, intent, rentalMode) => {
     expect(resolveIntentFromMessage(message)).toEqual({ intent, rentalMode });
+  });
+});
+
+
+describe('resolveNightsFromMessage', () => {
+  it.each([
+    ['برای ۴ روز یه ویلا می‌خوام', 3],
+    ['برای 4 روز ویلا می‌خوام', 3],
+    ['۳ شب و ۴ روز', 3],
+    ['برای سه شب ویلا می‌خوام', 3],
+    ['برای ۴ شب ویلا می‌خوام', 4],
+  ])('%s', (message, nights) => {
+    expect(resolveNightsFromMessage(message)).toBe(nights);
   });
 });
