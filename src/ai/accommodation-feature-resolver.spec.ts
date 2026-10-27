@@ -20,11 +20,20 @@ describe('resolveAccommodationFeaturesFromMessage', () => {
     );
   });
 
-  it('recognizes the short-stay accommodation categories', () => {
-    expect(resolveAccommodationFeaturesFromMessage('کلبه جنگلی برای دو شب می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'forest_cottage' });
+  it('recognizes the short-stay accommodation categories without inferring an environment', () => {
+    const forestCottage = resolveAccommodationFeaturesFromMessage('کلبه جنگلی برای دو شب می‌خوام');
+    expect(forestCottage).toContainEqual({ id: 'accommodation.type', value: 'forest_cottage' });
+    expect(forestCottage).toContainEqual({ id: 'accommodation.style', value: ['forest'] });
+    expect(forestCottage).not.toContainEqual({ id: 'location.environment', value: ['forest'] });
+
     expect(resolveAccommodationFeaturesFromMessage('یه متل تمیز می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'motel' });
-    expect(resolveAccommodationFeaturesFromMessage('خانه روستایی برای اقامت می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'rural_house' });
+
+    const ruralHouse = resolveAccommodationFeaturesFromMessage('خانه روستایی برای آخر هفته می‌خوام');
+    expect(ruralHouse).toContainEqual({ id: 'accommodation.type', value: 'rural_house' });
+    expect(ruralHouse).not.toContainEqual({ id: 'location.environment', value: ['rural'] });
+
     expect(resolveAccommodationFeaturesFromMessage('یه ویلای کلبه سوئیسی می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'swiss_cottage' });
+    expect(resolveAccommodationFeaturesFromMessage('کلبه جنگلی در محیط جنگلی می‌خوام')).toContainEqual({ id: 'location.environment', value: ['forest'] });
   });
 
   it('distinguishes a sea view from physical proximity to the sea', () => {
