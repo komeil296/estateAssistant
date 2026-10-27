@@ -41,6 +41,9 @@ export class SearchLocationDto {
 
   @ApiProperty({ example: 'سادات‌شهر', nullable: true })
   neighborhood!: string | null;
+
+  @ApiProperty({ example: 'بلوار طالقانی', nullable: true, description: 'خیابان، بلوار یا کوچه‌ای که کاربر صریحاً نام برده است' })
+  street!: string | null;
 }
 
 export class SearchAreaDto {
@@ -353,6 +356,10 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
         location.neighborhood,
         'location.neighborhood',
       ),
+      street:
+        location.street === undefined
+          ? null
+          : requireNullableString(location.street, 'location.street'),
     },
     area: {
       targetSqm: requireNullableNumber(area.targetSqm, 'area.targetSqm'),
