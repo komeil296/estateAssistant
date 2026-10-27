@@ -10,6 +10,7 @@ describe('resolveIntentFromMessage', () => {
     ['زمین دارم، می‌خوام ببینم چند می‌ارزه', 'sell', null],
     ['دنبال خرید یه ویلا هستم', 'buy', null],
     ['یه ویلا دارم، می‌خوام تهاتر کنم با آپارتمان', 'exchange', null],
+    ['برای ۴ روز یه ویلا می‌خوام', 'rent', 'short_term'],
     ['یه ویلا با ویوی دریا تو رامسر می‌خوام', null, null],
   ] as const)('%s', (message, intent, rentalMode) => {
     expect(resolveIntentFromMessage(message)).toEqual({ intent, rentalMode });
