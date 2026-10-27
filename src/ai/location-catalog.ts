@@ -307,6 +307,9 @@ export function normalizeKnownLocation<T extends {
   const match = matches[0];
   if (!match) return result;
 
+  // This curated catalog currently contains places in Mazandaran province.
+  result.location.province = 'مازندران';
+
   if (match.entry.kind === 'city') {
     result.location.city = match.entry.canonical;
     // A city match should not leave a model-invented neighborhood behind.
