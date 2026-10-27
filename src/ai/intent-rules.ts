@@ -180,6 +180,73 @@ export function isLandForVillaConstructionRequest(message: string): boolean {
     && /(?:می ?خوام|می ?خواهم|دنبال|لازم\s*دارم)/.test(text);
 }
 
+/** Convert a Persian Solar Hijri month/day in the user's message to a Gregorian ISO date.
+ * If the year is omitted, choose the next future occurrence of that date.
+ */
+export function resolveSolarHijriCheckInDateFromMessage(
+  message: string,
+  referenceDate = new Date(),
+): string | null {
+  const text = normalizePersianText(message);
+  const monthNames: Record<string, number> = {
+    فروردین: 1,
+    اردیبهشت: 2,
+    خرداد: 3,
+    تیر: 4,
+    مرداد: 5,
+    شهریور: 6,
+    مهر: 7,
+    آبان: 8,
+    آذر: 9,
+    دی: 10,
+    بهمن: 11,
+    اسفند: 12,
+  };
+  const monthPattern = Object.keys(monthNames).join('|');
+  const match = text.match(
+    new RegExp('(?:تاریخ\\s*)?(?:برای\\s*)?(\\d{1,2})\\s*(?:ام\\s*)?(' + monthPattern + ')(?:\\s*(\\d{4}))?'),
+  );
+  if (!match) return null;
+
+  const day = Number(match[1]);
+  const month = monthNames[match[2]];
+  const requestedYear = match[3] ? Number(match[3]) : null;
+  if (day < 1 || day > 31) return null;
+
+  const formatter = new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+  const today = new Date(Date.UTC(
+    referenceDate.getUTCFullYear(),
+    referenceDate.getUTCMonth(),
+    referenceDate.getUTCDate(),
+  ));
+  const start = requestedYear === null
+    ? today
+    : new Date(Date.UTC(referenceDate.getUTCFullYear() - 2, 0, 1));
+  const end = requestedYear === null
+    ? new Date(today.getTime() + 800 * 24 * 60 * 60 * 1000)
+    : new Date(Date.UTC(referenceDate.getUTCFullYear() + 4, 0, 1));
+
+  for (let timestamp = start.getTime(); timestamp <= end.getTime(); timestamp += 24 * 60 * 60 * 1000) {
+    const date = new Date(timestamp);
+    const parts = formatter.formatToParts(date);
+    const part = (type: string) => parts.find((item) => item.type === type)?.value;
+    if (
+      Number(part('month')) === month &&
+      Number(part('day')) === day &&
+      (requestedYear === null || Number(part('year')) === requestedYear) &&
+      (requestedYear !== null || date.getTime() >= today.getTime())
+    ) {
+      return date.toISOString().slice(0, 10);
+    }
+  }
+  return null;
+}
+
 export function resolveNightsFromMessage(message: string): number | null {
   const text = normalizePersianText(message);
   const explicitNights = text.match(/(\d+)\s*شب/);
