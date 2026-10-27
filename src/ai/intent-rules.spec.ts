@@ -1,6 +1,7 @@
 import {
   isLandForVillaConstructionRequest,
   resolveIntentFromMessage,
+  resolveLandUseFromMessage,
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
@@ -18,6 +19,11 @@ describe('resolveIntentFromMessage', () => {
     ['زمین دارم، می‌خوام ببینم چند می‌ارزه', null, null],
     ['یه زمین برای ساخت ویلا می‌خوام', 'buy', null],
     ['دنبال خرید یه ویلا هستم', 'buy', null],
+    ['دنبال زمین با کاربری مسکونی هستم', 'buy', null],
+    ['زمین می‌خوام برای اجاره', 'rent', null],
+    ['دنبال زمین برای تهاتر هستم', 'exchange', null],
+    ['دنبال ویلا هستم', null, null],
+    ['دنبال آپارتمان هستم', null, null],
     ['یه ویلا می‌خوام بگیرم، ۸ میلیارد هم دارم', 'buy', null],
     ['یه ویلا دارم، می‌خوام تهاتر کنم با آپارتمان', 'exchange', null],
     ['برای ۴ روز یه ویلا می‌خوام', 'rent', 'short_term'],
@@ -29,6 +35,19 @@ describe('resolveIntentFromMessage', () => {
   });
 });
 
+
+describe('resolveLandUseFromMessage', () => {
+  it.each([
+    ['زمین با کاربری مسکونی می‌خواهم', 'residential'],
+    ['زمین تجاری می‌خواهم', 'commercial'],
+    ['زمین کشاورزی می‌خواهم', 'agricultural'],
+    ['زمین صنعتی می‌خواهم', 'industrial'],
+    ['یه زمین برای ساخت ویلا می‌خوام', 'construction'],
+    ['دنبال زمین هستم', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolveLandUseFromMessage(message)).toBe(expected);
+  });
+});
 
 describe('resolveNightsFromMessage', () => {
   it.each([

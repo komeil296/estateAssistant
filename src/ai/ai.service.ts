@@ -12,6 +12,7 @@ import { resolveAccommodationFeaturesFromMessage } from './accommodation-feature
 import {
   isLandForVillaConstructionRequest,
   resolveIntentFromMessage,
+  resolveLandUseFromMessage,
   resolveNightsFromMessage,
   resolveSolarHijriCheckInDateFromMessage,
   resolvePricePerSqmTomanFromMessage,
@@ -52,7 +53,7 @@ documentType: six_dang, three_dang, official, end_user, other, unknown، یا nu
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 در requirements.nearSea فقط نزدیکی فیزیکی ملک به دریا یا ساحل را ثبت کن: «نزدیک دریا»، «نزدیک ساحل» و «پیاده تا ساحل» یعنی nearSea=true. اگر چنین شرطی گفته نشده، nearSea=null بگذار. «ویوی دریا» یا «چشم‌انداز دریا» به معنی requirements.hasView=true است و به‌تنهایی nearSea را true نکن؛ نزدیکی به دریا و چشم‌انداز دو شرط مستقل‌اند. اگر فقط نزدیکی به دریا گفته شده، hasView باید null باشد؛ اگر فقط چشم‌انداز دریا گفته شده، nearSea باید null باشد. فقط وقتی هر دو شرط صریحاً گفته شده‌اند، هر دو را true بگذار. اگر کاربر گفت «داخل شهر»، آن را به nearSea یا hasView تعبیر نکن.
 شهر را اگر در متن ذکر شده استخراج کن. محله را فقط وقتی کاربر نام محله‌ای را گفته استخراج کن؛ نبودن محله به‌تنهایی اطلاعات ناقص نیست و نباید در missingInformation قرار بگیرد. location.city را هم فقط وقتی واقعاً نام شهر از متن مشخص نیست در missingInformation قرار بده. برای «داخل شهر رامسر» city=«رامسر» ثبت کن و neighborhood را null بگذار.
-intent را با توجه به کل جمله، نقش مشتری و قواعد بازار تعیین کن: buy یعنی خرید، sell یعنی فروش، rent یعنی اجاره گرفتن، lease_out یعنی اجاره دادن ملک خود، و exchange یعنی تهاتر/معاوضه. عبارت «ملک دارم» همراه با نرخ شبی/ماهی یعنی معمولاً lease_out؛ «ملک دارم» همراه با قیمت متری یا قیمت کل، یا پرسش «می‌خوام ببینم چند می‌ارزه» یعنی sell؛ نرخ شبی در درخواست ملک یعنی rent با rentalMode=short_term؛ نرخ ماهی در درخواست ملک یعنی rent با rentalMode=monthly. «تهاتر» و «معاوضه» یعنی exchange. در exchange، نوع ملک ارائه‌شده را در offeredPropertyType و نوع ملک درخواستی را در wantedPropertyType بگذار و propertyType را null قرار بده. برای سایر موارد مبهم حدس نزن. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. وجود عبارت «می‌خوام» یا «می‌خواهم» به‌تنهایی به معنی خرید نیست. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
+intent را با توجه به کل جمله، نقش مشتری و قواعد بازار تعیین کن: buy یعنی خرید، sell یعنی فروش، rent یعنی اجاره گرفتن، lease_out یعنی اجاره دادن ملک خود، و exchange یعنی تهاتر/معاوضه. عبارت «ملک دارم» همراه با نرخ شبی/ماهی یعنی معمولاً lease_out؛ «ملک دارم» همراه با قیمت متری یا قیمت کل، یا پرسش «می‌خوام ببینم چند می‌ارزه» یعنی sell؛ نرخ شبی در درخواست ملک یعنی rent با rentalMode=short_term؛ نرخ ماهی در درخواست ملک یعنی rent با rentalMode=monthly. «تهاتر» و «معاوضه» یعنی exchange. در exchange، نوع ملک ارائه‌شده را در offeredPropertyType و نوع ملک درخواستی را در wantedPropertyType بگذار و propertyType را null قرار بده. برای سایر موارد مبهم حدس نزن. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ برای زمین در صورت نبودن قصد صریح فروش، اجاره یا تهاتر، buy را پیش‌فرض بگیر؛ برای ویلا و آپارتمان قصد مبهم را null بگذار. وجود عبارت «می‌خوام» یا «می‌خواهم» به‌تنهایی به معنی خرید نیست. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
 برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن. تاریخ ورود و خروج را با قالب YYYY-MM-DD و تعداد نفرات را در stay.guests ثبت کن. اگر مشخص نیستند null بگذار و در صورت نیاز نام فیلد را در missingInformation بیاور.
 ساختار دقیق:
@@ -338,6 +339,12 @@ export class AiService {
           result.requirements = {};
         }
         result.requirements.landUse = 'construction';
+      }
+
+      // Explicit land-use wording overrides the generic construction inference.
+      const explicitLandUse = resolveLandUseFromMessage(message);
+      if (explicitLandUse !== null) {
+        result.requirements.landUse = explicitLandUse;
       }
 
       // Normalize model-generated rental mode variants to the API contract.

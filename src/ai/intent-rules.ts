@@ -104,7 +104,31 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   }
   if (mentionsMonthlyPrice) return { intent: 'rent', rentalMode: 'monthly' };
 
+  // In the local real-estate market, an unqualified search for land is presumed
+  // to be a purchase request. Explicit rent, sale, and exchange patterns above win.
+  // Villa and apartment searches remain ambiguous unless their intent is explicit.
+  if (
+    /زمین/.test(text) &&
+    /(?:دنبال|می ?خوام|می ?خواهم|می ?خوایم|می ?خواهیم|لازم\s*دارم|نیاز\s*دارم)/.test(text)
+  ) {
+    return { intent: 'buy', rentalMode: null };
+  }
+
   return { intent: null, rentalMode: null };
+}
+
+export function resolveLandUseFromMessage(
+  message: string,
+): 'residential' | 'commercial' | 'agricultural' | 'industrial' | 'construction' | null {
+  const text = normalizePersianText(message);
+
+  if (/(?:کاربری\s*مسکونی|زمین.{0,25}مسکونی|مسکونی.{0,25}زمین)/.test(text)) return 'residential';
+  if (/(?:کاربری\s*تجاری|زمین.{0,25}تجاری|تجاری.{0,25}زمین)/.test(text)) return 'commercial';
+  if (/(?:کاربری\s*(?:کشاورزی|زراعی)|زمین.{0,25}(?:کشاورزی|زراعی)|(?:کشاورزی|زراعی).{0,25}زمین)/.test(text)) return 'agricultural';
+  if (/(?:کاربری\s*صنعتی|زمین.{0,25}صنعتی|صنعتی.{0,25}زمین)/.test(text)) return 'industrial';
+  if (/زمین.{0,45}(?:برای\s*)?(?:ساخت|ساختن)\s*ویلا/.test(text)) return 'construction';
+
+  return null;
 }
 
 /**
