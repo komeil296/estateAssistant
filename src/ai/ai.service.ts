@@ -12,6 +12,7 @@ import { resolveAccommodationFeaturesFromMessage } from './accommodation-feature
 import {
   isLandForVillaConstructionRequest,
   resolveIntentFromMessage,
+  resolveLandUseFromMessage,
   resolveNightsFromMessage,
   resolveSolarHijriCheckInDateFromMessage,
   resolvePricePerSqmTomanFromMessage,
@@ -338,6 +339,12 @@ export class AiService {
           result.requirements = {};
         }
         result.requirements.landUse = 'construction';
+      }
+
+      // Explicit land-use wording overrides the generic construction inference.
+      const explicitLandUse = resolveLandUseFromMessage(message);
+      if (explicitLandUse !== null) {
+        result.requirements.landUse = explicitLandUse;
       }
 
       // Normalize model-generated rental mode variants to the API contract.
