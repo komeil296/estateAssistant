@@ -246,7 +246,7 @@ export class AiService {
         }
       }
 
-      return validateSearchRequest(result);
+      // Resolve city/locality aliases from the curated regional catalog.\n      // This prevents historical names such as «سخت‌سر» and «شهسوار» from\n      // being treated as unrelated places, and maps localities to their city.\n      normalizeKnownLocation(result, message);\n\n      return validateSearchRequest(result);
     } catch (error) {
       console.error('parseSearchRequest error:', error);
 
