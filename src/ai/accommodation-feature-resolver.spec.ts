@@ -20,6 +20,13 @@ describe('resolveAccommodationFeaturesFromMessage', () => {
     );
   });
 
+  it('recognizes the short-stay accommodation categories', () => {
+    expect(resolveAccommodationFeaturesFromMessage('کلبه جنگلی برای دو شب می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'forest_cottage' });
+    expect(resolveAccommodationFeaturesFromMessage('یه متل تمیز می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'motel' });
+    expect(resolveAccommodationFeaturesFromMessage('خانه روستایی برای اقامت می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'rural_house' });
+    expect(resolveAccommodationFeaturesFromMessage('یه ویلای کلبه سوئیسی می‌خوام')).toContainEqual({ id: 'accommodation.type', value: 'swiss_cottage' });
+  });
+
   it('distinguishes a sea view from physical proximity to the sea', () => {
     const viewOnly = resolveAccommodationFeaturesFromMessage('ویلایی با ویوی دریا می‌خوام');
     expect(viewOnly).toContainEqual({ id: 'view.types', value: ['sea'] });
@@ -34,6 +41,11 @@ describe('resolveAccommodationFeaturesFromMessage', () => {
     expect(
       resolveAccommodationFeaturesFromMessage('سرویس ایرانی و فرنگی داشته باشه و سرویس اشتراکی نباشه'),
     ).toContainEqual({ id: 'bathroom.types', value: ['iranian', 'western'] });
+  });
+
+  it('extracts both permission and prohibition for pets', () => {
+    expect(resolveAccommodationFeaturesFromMessage('اقامتگاه پت فرندلی باشه')).toContainEqual({ id: 'policy.pets', value: true });
+    expect(resolveAccommodationFeaturesFromMessage('ورود حیوان خانگی ممنوع باشد')).toContainEqual({ id: 'policy.pets', value: false });
   });
 
   it('does not infer a pool from the word villa alone', () => {
