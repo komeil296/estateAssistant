@@ -48,7 +48,7 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     return { intent: null, rentalMode: null };
   }
 
-  if (/(?:اجاره\s*(?:بدم|بدهم|بدهیم|بدیم|بگذارم|بذارم)|اجاره\s*می ?دم|ملکم\s*(?:رو|را)\s*اجاره)/.test(text)) {
+  if (/(?:اجاره\s*(?:بدم|بدهم|بدهیم|بدیم|بده|بدید|بدهید|بگذارم|بذارم)|اجاره\s*می ?دم|ملکم\s*(?:رو|را)\s*اجاره)/.test(text)) {
     return {
       intent: 'lease_out',
       rentalMode: mentionsNightlyPrice ? 'short_term' : mentionsMonthlyPrice ? 'monthly' : null,
@@ -192,4 +192,34 @@ export function resolveNightsFromMessage(message: string): number | null {
   const wordDays = text.match(/(یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\s*روز/);
   if (wordDays) return Math.max(0, words[wordDays[1]] - 1);
   return null;
+}
+
+
+export interface PropertyTerms {
+  isInTownship: boolean | null;
+  hasMountainView: boolean | null;
+  hasSeaView: boolean | null;
+  viewProtectionClaim: boolean | null;
+  deedEra: 'pre_revolution' | 'post_revolution' | 'unknown' | null;
+}
+
+/** Extract domain terminology without inferring unstated property facts. */
+export function resolvePropertyTermsFromMessage(message: string): PropertyTerms {
+  const text = normalizePersianText(message);
+  const isInTownship = /(?:زمین|ویلا|ملک)?\s*(?:شهرکی|داخل\s*(?:یک\s*)?شهرک|توی\s*(?:یک\s*)?شهرک|داخل\s*شهرک)/.test(text);
+  const hasMountainView = /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*(?:به\s*)?کوه|کوه\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text);
+  const hasSeaView = /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:به\s*)?دریا|دریا\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text);
+  const viewProtectionClaim = /(?:ویو\s*ابدی|دید\s*ابدی|چشم\s*انداز\s*ابدی)/.test(text);
+  const deedEra = /(?:سند\s*)?(?:شاهنشاهی|قبل\s*از\s*انقلاب|پیش\s*از\s*انقلاب)/.test(text)
+    ? 'pre_revolution'
+    : /(?:سند\s*)?(?:بعد\s*از\s*انقلاب|پس\s*از\s*انقلاب)/.test(text)
+      ? 'post_revolution'
+      : null;
+  return {
+    isInTownship: isInTownship ? true : null,
+    hasMountainView: hasMountainView ? true : null,
+    hasSeaView: hasSeaView ? true : null,
+    viewProtectionClaim: viewProtectionClaim ? true : null,
+    deedEra,
+  };
 }
