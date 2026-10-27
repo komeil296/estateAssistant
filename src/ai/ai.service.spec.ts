@@ -44,6 +44,53 @@ describe('AiService', () => {
     expect(result.stay.nights).toBeNull();
   });
 
+  it('does not classify a Swiss cottage as an apartment when the model mislabels it', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'apartment',
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      requirements: {},
+      missingInformation: ['propertyType'],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('یه کلبه سوئیسی استخردار تو رامسر می‌خوام');
+
+    expect(result.propertyType).toBeNull();
+    expect(result.features).toContainEqual({
+      id: 'accommodation.type',
+      value: 'swiss_cottage',
+    });
+    expect(result.missingInformation).not.toContain('propertyType');
+  });
+
+  it('preserves villa as the broad type when the user explicitly asks for a villa-style Swiss cottage', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'apartment',
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('یه ویلای کلبه سوئیسی تو رامسر می‌خوام');
+
+    expect(result.propertyType).toBe('villa');
+    expect(result.features).toContainEqual({
+      id: 'accommodation.type',
+      value: 'swiss_cottage',
+    });
+  });
+
   it('normalizes an incomplete model response for a villa with a claimed eternal view', async () => {
     const modelOutput = {
       intent: 'buy',
