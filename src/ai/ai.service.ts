@@ -421,6 +421,17 @@ export class AiService {
       let actionableMissing = (result.missingInformation as string[])
         .filter((field) => actionableFields.has(field));
 
+      // Drop model-suggested missing fields that deterministic rules have now resolved.
+      if (result.stay?.checkInDate != null) {
+        actionableMissing = actionableMissing.filter((field) => field !== 'stay.checkInDate');
+      }
+      if (result.stay?.checkOutDate != null) {
+        actionableMissing = actionableMissing.filter((field) => field !== 'stay.checkOutDate');
+      }
+      if (result.stay?.guests != null) {
+        actionableMissing = actionableMissing.filter((field) => field !== 'stay.guests');
+      }
+
       if (explicitIntent === null && !actionableMissing.includes('intent')) {
         actionableMissing.push('intent');
       }
