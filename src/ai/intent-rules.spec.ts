@@ -67,6 +67,7 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
   it.each([
     ['یه ویلا می‌خوام، شبی ۵ میلیون هم می‌تونم بدم', { mode: 'short_term', amountToman: 5_000_000 }],
     ['یه ویلا می‌خوام، ماهی ۳۰ میلیون بودجه دارم', { mode: 'monthly', amountToman: 30_000_000 }],
+    ['یه ویلا برای اجاره می‌خوام، ماهی سی تومن', { mode: 'monthly', amountToman: 30_000_000 }],
     ['یه ویلا می‌خوام، شبی ۵ تومن', { mode: 'short_term', amountToman: 5_000_000 }],
     ['یه ویلا می‌خوام', null],
   ] as const)('%s', (message, expected) => {
