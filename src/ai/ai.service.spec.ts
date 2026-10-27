@@ -70,4 +70,33 @@ describe('AiService', () => {
     expect(result.stay.checkInDate).toBeNull();
   });
 
+  it('returns deterministic accommodation features alongside the search request', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'villa',
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'یه کلبه سوئیسی استخردار با جکوزی و صبحانه رایگان با ویوی جنگل می‌خوام',
+    );
+
+    expect(result.features).toEqual(
+      expect.arrayContaining([
+        { id: 'accommodation.type', value: 'swiss_cottage' },
+        { id: 'amenity.pool', value: true },
+        { id: 'amenity.jacuzzi', value: true },
+        { id: 'food.breakfast.price', value: 'free' },
+        { id: 'view.types', value: ['forest'] },
+      ]),
+    );
+  });
+
 });
