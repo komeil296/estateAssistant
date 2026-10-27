@@ -208,7 +208,7 @@ export function resolvePropertyTermsFromMessage(message: string): PropertyTerms 
   const text = normalizePersianText(message);
   const isInTownship = /(?:زمین|ویلا|ویلای|ملک)?\s*(?:شهرکی|داخل\s*(?:یک\s*)?شهرک|توی\s*(?:یک\s*)?شهرک|داخل\s*شهرک)/.test(text);
   const hasMountainView = /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*(?:ابدی\s*)?(?:به\s*)?کوه|کوه\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text);
-  const hasSeaView = /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:ابدی\s*)?(?:به\s*)?دریا|دریا\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text);
+  const hasSeaView = /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:ابدی\s*)?(?:به\s*)?دریا|دریا\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(text) || /دید\s*کوه\s*و\s*دریا/.test(text) || /(?:ویو(?:ی)?|چشم\s*انداز|دید)\s*ابدی\s*کوه\s*و\s*دریا/.test(text);
   const viewProtectionClaim = /(?:ویو\s*ابدی|دید\s*ابدی|چشم\s*انداز\s*ابدی)/.test(text);
   const deedEra = /(?:سند\s*)?(?:شاهنشاهی|قبل\s*از\s*انقلاب|پیش\s*از\s*انقلاب)/.test(text)
     ? 'pre_revolution'
