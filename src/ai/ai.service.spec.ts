@@ -68,6 +68,30 @@ describe('AiService', () => {
     expect(result.missingInformation).not.toContain('propertyType');
   });
 
+  it('preserves offered and wanted property types for an exchange request', async () => {
+    const modelOutput = {
+      intent: 'exchange',
+      propertyType: null,
+      offeredPropertyType: 'land',
+      wantedPropertyType: 'villa',
+      rentalMode: null,
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('زمینم رو با ویلا معاوضه می‌کنم');
+
+    expect(result.intent).toBe('exchange');
+    expect(result.offeredPropertyType).toBe('land');
+    expect(result.wantedPropertyType).toBe('villa');
+  });
+
   it('clears wanted and offered property types for a short-stay request', async () => {
     const modelOutput = {
       intent: null,
