@@ -129,8 +129,8 @@ export class SearchStayDto {
  * training examples. Prices are integer Rials; unknown values are null.
  */
 export class SearchRequestDto {
-  @ApiProperty({ enum: CUSTOMER_INTENTS, example: 'rent' })
-  intent!: CustomerIntent;
+  @ApiProperty({ enum: CUSTOMER_INTENTS, nullable: true, example: null })
+  intent!: CustomerIntent | null;
 
   @ApiProperty({ enum: PROPERTY_TYPES, nullable: true, example: 'villa' })
   propertyType!: PropertyType | null;
@@ -274,7 +274,7 @@ export function validateSearchRequest(value: unknown): SearchRequestDto {
   }
 
   const validated: SearchRequestDto = {
-    intent: requireEnum(root.intent, CUSTOMER_INTENTS, 'intent') as CustomerIntent,
+    intent: requireEnum(root.intent, CUSTOMER_INTENTS, 'intent', true) as CustomerIntent | null,
     propertyType: requireEnum(
       root.propertyType,
       PROPERTY_TYPES,
