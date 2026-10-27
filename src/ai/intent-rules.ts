@@ -92,3 +92,20 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
 
   return { intent: null, rentalMode: null };
 }
+
+
+export function resolveNightsFromMessage(message: string): number | null {
+  const text = normalizePersianText(message)
+    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)));
+  const explicitNights = text.match(/(\d+)\s*شب/);
+  if (explicitNights) return Number(explicitNights[1]);
+  const days = text.match(/(\d+)\s*روز/);
+  if (days) return Math.max(0, Number(days[1]) - 1);
+  const words: Record<string, number> = { یک: 1, یه: 1, دو: 2, سه: 3, چهار: 4, پنج: 5, شش: 6, شیش: 6, هفت: 7, هشت: 8, نه: 9, ده: 10 };
+  const wordNights = text.match(/(یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\s*شب/);
+  if (wordNights) return words[wordNights[1]];
+  const wordDays = text.match(/(یک|یه|دو|سه|چهار|پنج|شش|شیش|هفت|هشت|نه|ده)\s*روز/);
+  if (wordDays) return Math.max(0, words[wordDays[1]] - 1);
+  return null;
+}
