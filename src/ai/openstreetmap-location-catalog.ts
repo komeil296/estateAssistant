@@ -29,6 +29,13 @@ const CITY_COVERAGE: Record<string, string> = {
   'سلمان‌شهر': 'salman-shahr-area',
 };
 
+const CITY_ALIASES: Record<string, string[]> = {
+  'رامسر': ['رامسر', 'سخت سر', 'سختسر'],
+  'تنکابن': ['تنکابن', 'شهسوار', 'شهسواران'],
+  'نشتارود': ['نشتارود', 'نشتا رود'],
+  'سلمان‌شهر': ['سلمان شهر', 'سلمانشهر', 'متل قو', 'موتل قو'],
+};
+
 /**
  * OSM coverage rectangles overlap and are not administrative boundaries.
  * They are used only as a disambiguation hint when the user explicitly names
@@ -96,10 +103,13 @@ export function normalizeLocationFromOsm<T extends LocationResult>(
   if (!result.location || !dataset?.places?.length) return result;
 
   const message = ` ${normalizeText(originalMessage)} `;
-  const city = typeof result.location.city === 'string'
-    ? result.location.city
-    : null;
-  const requiredCoverage = city ? CITY_COVERAGE[normalizeText(city).replace(/ /g, '') === 'سلمانشهر' ? 'سلمان‌شهر' : city] : undefined;
+  const explicitCity = Object.entries(CITY_ALIASES).find(([, aliases]) =>
+    aliases.some((alias) => {
+      const normalizedAlias = normalizeText(alias);
+      return normalizedAlias.length >= 3 && message.includes(` ${normalizedAlias} `);
+    }),
+  )?.[0];
+  const requiredCoverage = explicitCity ? CITY_COVERAGE[explicitCity] : undefined;
 
   const candidates = dataset.places.flatMap((place) => {
     const kind = getPlaceKind(place.kind);
