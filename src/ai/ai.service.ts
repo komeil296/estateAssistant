@@ -47,7 +47,7 @@ documentType: six_dang, three_dang, official, end_user, other, unknown، یا nu
 ویژگی‌های اقامتگاه را در features به‌صورت آرایه‌ای از اشیای {id,value} استخراج کن. شناسه‌ها باید از فرهنگ استاندارد باشند؛ ویژگی‌هایی که کاربر صریحاً نخواسته را اضافه نکن و از نوع اقامتگاه امکانات را حدس نزن. مثال شناسه‌ها: amenity.pool، amenity.jacuzzi، food.breakfast.price، bathroom.types، connectivity.wifi، amenity.parking، view.types، accommodation.type. مقادیر چندگزینه‌ای باید آرایه رشته‌ای با مقادیر استاندارد باشند. اگر ویژگی مشخصی گفته نشده، در features قرار نده.
 «زمین/ویلای شهرکی» یعنی isInTownship=true. «ویو ابدی» یعنی viewProtectionClaim=true و فقط ادعای آگهی درباره حفظ چشم‌انداز است، نه تضمین حقوقی. «دید یا ویوی کوه» یعنی hasMountainView=true؛ «دید یا ویوی دریا» یعنی hasSeaView=true. «سند شاهنشاهی» یعنی deedEra=pre_revolution؛ این عبارت به‌تنهایی اعتبار حقوقی سند را ثابت نمی‌کند. اگر اشاره نشده، null بگذار.
 برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
-استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. عبارت‌هایی مثل «نزدیک دریا»، «ویو دریا»، «دید کوه» و «شهرکی» ویژگی یا شرط ملک هستند، نه نام شهر؛ هرگز آن‌ها را در location.city قرار نده. اگر نام شهر گفته نشده، location.city=null بگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
+استان، شهر، محله و خیابان را از هم جدا نگه دار. نام خیابان، بلوار یا کوچه را در location.street قرار بده و هرگز آن را در location.neighborhood نگذار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. عبارت‌هایی مثل «نزدیک دریا»، «ویو دریا»، «دید کوه» و «شهرکی» ویژگی یا شرط ملک هستند، نه نام شهر؛ هرگز آن‌ها را در location.city قرار نده. اگر نام شهر گفته نشده، location.city=null بگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 در requirements.nearSea فقط نزدیکی فیزیکی ملک به دریا یا ساحل را ثبت کن: «نزدیک دریا»، «نزدیک ساحل» و «پیاده تا ساحل» یعنی nearSea=true. اگر چنین شرطی گفته نشده، nearSea=null بگذار. «ویوی دریا» یا «چشم‌انداز دریا» به معنی requirements.hasView=true است و به‌تنهایی nearSea را true نکن؛ نزدیکی به دریا و چشم‌انداز دو شرط مستقل‌اند. اگر فقط نزدیکی به دریا گفته شده، hasView باید null باشد؛ اگر فقط چشم‌انداز دریا گفته شده، nearSea باید null باشد. فقط وقتی هر دو شرط صریحاً گفته شده‌اند، هر دو را true بگذار. اگر کاربر گفت «داخل شهر»، آن را به nearSea یا hasView تعبیر نکن.
 شهر را اگر در متن ذکر شده استخراج کن. محله را فقط وقتی کاربر نام محله‌ای را گفته استخراج کن؛ نبودن محله به‌تنهایی اطلاعات ناقص نیست و نباید در missingInformation قرار بگیرد. location.city را هم فقط وقتی واقعاً نام شهر از متن مشخص نیست در missingInformation قرار بده. برای «داخل شهر رامسر» city=«رامسر» ثبت کن و neighborhood را null بگذار.
@@ -61,7 +61,7 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
   "offeredPropertyType": null,
   "wantedPropertyType": null,
   "rentalMode": null,
-  "location": { "province": null, "city": null, "neighborhood": null },
+  "location": { "province": null, "city": null, "neighborhood": null, "street": null },
   "area": { "targetSqm": null, "minSqm": null, "maxSqm": null },
   "budget": {
     "maxTotalPriceRial": null,
@@ -198,6 +198,7 @@ export class AiService {
           province: nullableString(location.province),
           city: nullableString(location.city),
           neighborhood: nullableString(location.neighborhood),
+          street: nullableString(location.street),
         },
         area: {
           targetSqm: nullableNumber(area.targetSqm),
@@ -248,6 +249,7 @@ export class AiService {
         location: {
           city: string | null;
           neighborhood: string | null;
+          street: string | null;
           province: string | null;
         };
         area: Record<string, unknown>;
