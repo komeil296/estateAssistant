@@ -278,7 +278,11 @@ export class AiService {
         result.location.city = null;
       }
 
-      // Use deterministic feature extraction so explicit user preferences are not lost\n      // when the local model omits or mislabels the features array.\n      result.features = resolveAccommodationFeaturesFromMessage(message);\n\n      // Resolve high-confidence intent patterns from the original Persian message.
+      // Use deterministic feature extraction so explicit user preferences are not lost
+      // when the local model omits or mislabels the features array.
+      result.features = resolveAccommodationFeaturesFromMessage(message);
+
+      // Resolve high-confidence intent patterns from the original Persian message.
       // This keeps core domain rules deterministic and independently testable.
       const intentResolution = resolveIntentFromMessage(message);
       const landConstructionRequest = isLandForVillaConstructionRequest(message);
