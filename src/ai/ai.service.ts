@@ -336,7 +336,7 @@ export class AiService {
           /(?:دریا|ساحل)\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(normalizedMessage);
 
         const negatesNearSea =
-          /(?:ولی|اما|البته)?\\s*(?:نزدیک\\s*(?:به\\s*)?(?:دریا|ساحل)|نزدیکی\\s*(?:به\\s*)?(?:دریا|ساحل)|نزدیک\\s*ساحل\\s*بودن)\\s*(?:مهم\\s*نیست|اهمیت\\s*ندارد|نمی\\s*خوام|نمی\\s*خواهم|لازم\\s*نیست)/.test(normalizedMessage);
+          /(?:ولی|اما|البته)?\s*(?:نزدیک\s*(?:به\s*)?(?:دریا|ساحل)|نزدیکی\s*(?:به\s*)?(?:دریا|ساحل)|نزدیک\s*ساحل\s*بودن)\s*(?:مهم\s*نیست|اهمیت\s*ندارد|نمی\s*خوام|نمی\s*خواهم|لازم\s*نیست)/.test(normalizedMessage);
         result.requirements.nearSea = mentionsNearSea && !negatesNearSea ? true : null;
         result.requirements.hasView = mentionsSeaView ? true : null;
       }
