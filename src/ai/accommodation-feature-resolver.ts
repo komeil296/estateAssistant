@@ -85,13 +85,18 @@ export function resolveAccommodationFeaturesFromMessage(
   if (/نزدیک\s*(?:به\s*)?(?:دریا|ساحل)|پیاده.{0,10}(?:تا|به)\s*(?:دریا|ساحل)|فاصله.{0,10}(?:تا|از)\s*(?:دریا|ساحل)/.test(text)) {
     add('location.near_sea');
   }
+  // A lodging category such as "کلبه جنگلی" or "خانه روستایی" does not by itself
+  // mean the user explicitly requested a surrounding-area environment filter.
+  const environmentText = text
+    .replace(/کلبه\s*جنگلی/g, ' ')
+    .replace(/خانه\s*روستایی|خانه\s*روستا/g, ' ');
   const environments: string[] = [];
-  if (/جنگلی/.test(text)) environments.push('forest');
-  if (/ساحلی/.test(text)) environments.push('coastal');
-  if (/کوهستانی/.test(text)) environments.push('mountain');
-  if (/روستایی/.test(text)) environments.push('rural');
-  if (/داخل\s*شهر|مرکز\s*شهر/.test(text)) environments.push('urban');
-  if (/شهرکی/.test(text)) environments.push('township');
+  if (/جنگلی/.test(environmentText)) environments.push('forest');
+  if (/ساحلی/.test(environmentText)) environments.push('coastal');
+  if (/کوهستانی/.test(environmentText)) environments.push('mountain');
+  if (/روستایی/.test(environmentText)) environments.push('rural');
+  if (/داخل\s*شهر|مرکز\s*شهر/.test(environmentText)) environments.push('urban');
+  if (/شهرکی/.test(environmentText)) environments.push('township');
   if (environments.length) add('location.environment', [...new Set(environments)]);
 
   const heating: string[] = [];
