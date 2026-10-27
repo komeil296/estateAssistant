@@ -44,11 +44,11 @@ documentType: six_dang, three_dang, official, end_user, other, unknown، یا nu
 فیلدهای دامنه‌ای requirements: isInTownship، hasMountainView، hasSeaView، viewProtectionClaim، deedEra.
 «زمین/ویلای شهرکی» یعنی isInTownship=true. «ویو ابدی» یعنی viewProtectionClaim=true و فقط ادعای آگهی درباره حفظ چشم‌انداز است، نه تضمین حقوقی. «دید یا ویوی کوه» یعنی hasMountainView=true؛ «دید یا ویوی دریا» یعنی hasSeaView=true. «سند شاهنشاهی» یعنی deedEra=pre_revolution؛ این عبارت به‌تنهایی اعتبار حقوقی سند را ثابت نمی‌کند. اگر اشاره نشده، null بگذار.
 برای استخراج قیمت، همه مبالغ را ابتدا به عدد صحیح «تومان» تبدیل کن؛ حتی اگر کاربر ریال گفته، آن را به تومان تبدیل کن. در این خروجی موقت، مقدار فیلدهای budget را به تومان بنویس، نه ریال. کد سرور بعد از دریافت خروجی، همه مقادیر غیر null بخش budget را به ریال تبدیل می‌کند. برای مثال «۱۰ میلیارد تومان» باید در maxTotalPriceRial به‌صورت عدد 10000000000 نوشته شود؛ سرور آن را در ۱۰ ضرب می‌کند.
-استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
+استان، شهر و محله را از هم جدا نگه دار. نام شهر را هر جا در متن آمده استخراج کن و هرگز به دلیل نبودن نام استان آن را null نگذار. عبارت‌هایی مثل «نزدیک دریا»، «ویو دریا»، «دید کوه» و «شهرکی» ویژگی یا شرط ملک هستند، نه نام شهر؛ هرگز آن‌ها را در location.city قرار نده. اگر نام شهر گفته نشده، location.city=null بگذار. مثال: «تو تنکابن» یعنی location.city=«تنکابن»؛ «تو رامسر» یعنی location.city=«رامسر». اگر سادات‌شهر ذکر شد و شهر رامسر هم از متن یا زمینه روشن است، city را «رامسر» و neighborhood را «سادات‌شهر» بگذار؛ در غیر این صورت چیزی را حدس نزن. مدت اقامت را در stay.nights ثبت کن. «۳ شب» یعنی nights=3؛ «۳ شب و ۴ روز» یعنی nights=3؛ «برای ۴ روز» نیز معمولاً nights=3. تعداد شب را از متن استخراج کن اما تاریخ ورود و خروج را حدس نزن. برای اجاره کوتاه‌مدت اگر مدت اقامت مشخص است ولی تاریخ ورود و خروج مشخص نیست، checkInDate و checkOutDate را null بگذار و clarificationQuestion را با یک سؤال کوتاه درباره تاریخ ورود تنظیم کن. اگر اطلاعات لازم برای ادامه جست‌وجو ناقص است، نام فیلدهای مربوط را در missingInformation قرار بده.
 «حدود ۳۰۰ متر» را با targetSqm=300 ثبت کن و minSqm و maxSqm را null بگذار، مگر بازه دقیق گفته شده باشد.
 در requirements.nearSea فقط نزدیکی فیزیکی ملک به دریا یا ساحل را ثبت کن: «نزدیک دریا»، «نزدیک ساحل» و «پیاده تا ساحل» یعنی nearSea=true. اگر چنین شرطی گفته نشده، nearSea=null بگذار. «ویوی دریا» یا «چشم‌انداز دریا» به معنی requirements.hasView=true است و به‌تنهایی nearSea را true نکن؛ نزدیکی به دریا و چشم‌انداز دو شرط مستقل‌اند. اگر فقط نزدیکی به دریا گفته شده، hasView باید null باشد؛ اگر فقط چشم‌انداز دریا گفته شده، nearSea باید null باشد. فقط وقتی هر دو شرط صریحاً گفته شده‌اند، هر دو را true بگذار. اگر کاربر گفت «داخل شهر»، آن را به nearSea یا hasView تعبیر نکن.
 شهر را اگر در متن ذکر شده استخراج کن. محله را فقط وقتی کاربر نام محله‌ای را گفته استخراج کن؛ نبودن محله به‌تنهایی اطلاعات ناقص نیست و نباید در missingInformation قرار بگیرد. location.city را هم فقط وقتی واقعاً نام شهر از متن مشخص نیست در missingInformation قرار بده. برای «داخل شهر رامسر» city=«رامسر» ثبت کن و neighborhood را null بگذار.
-intent را با توجه به کل جمله، نقش مشتری و قواعد بازار تعیین کن: buy یعنی خرید، sell یعنی فروش، rent یعنی اجاره گرفتن، lease_out یعنی اجاره دادن ملک خود، و exchange یعنی تهاتر/معاوضه. عبارت «ملک دارم» همراه با نرخ شبی/ماهی یعنی معمولاً lease_out؛ «ملک دارم» همراه با قیمت متری یا قیمت کل، یا پرسش «می‌خوام ببینم چند می‌ارزه» یعنی sell؛ نرخ شبی در درخواست ملک یعنی rent با rentalMode=short_term؛ نرخ ماهی در درخواست ملک یعنی rent با rentalMode=monthly. «تهاتر» و «معاوضه» یعنی exchange. در exchange، نوع ملک ارائه‌شده را در offeredPropertyType و نوع ملک درخواستی را در wantedPropertyType بگذار و propertyType را null قرار بده. برای سایر موارد مبهم حدس نزن. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
+intent را با توجه به کل جمله، نقش مشتری و قواعد بازار تعیین کن: buy یعنی خرید، sell یعنی فروش، rent یعنی اجاره گرفتن، lease_out یعنی اجاره دادن ملک خود، و exchange یعنی تهاتر/معاوضه. عبارت «ملک دارم» همراه با نرخ شبی/ماهی یعنی معمولاً lease_out؛ «ملک دارم» همراه با قیمت متری یا قیمت کل، یا پرسش «می‌خوام ببینم چند می‌ارزه» یعنی sell؛ نرخ شبی در درخواست ملک یعنی rent با rentalMode=short_term؛ نرخ ماهی در درخواست ملک یعنی rent با rentalMode=monthly. «تهاتر» و «معاوضه» یعنی exchange. در exchange، نوع ملک ارائه‌شده را در offeredPropertyType و نوع ملک درخواستی را در wantedPropertyType بگذار و propertyType را null قرار بده. برای سایر موارد مبهم حدس نزن. اگر فقط نوع ملک، شهر، ویو یا امکانات را گفته و قصد معامله روشن نیست، intent=null بگذار؛ هرگز به‌طور پیش‌فرض buy انتخاب نکن. وجود عبارت «می‌خوام» یا «می‌خواهم» به‌تنهایی به معنی خرید نیست. در این حالت «intent» را در missingInformation قرار بده و clarificationQuestion کوتاهی بپرس که آیا قصد خرید، فروش یا اجاره دارد.
 بودجه کل را در maxTotalPriceRial و قیمت هر متر را فقط در maxPricePerSqmRial قرار بده.
 برای اجاره کوتاه‌مدت، maxRentNightlyRial را استفاده کن. تاریخ ورود و خروج را با قالب YYYY-MM-DD و تعداد نفرات را در stay.guests ثبت کن. اگر مشخص نیستند null بگذار و در صورت نیاز نام فیلد را در missingInformation بیاور.
 ساختار دقیق:
@@ -124,31 +124,153 @@ export class AiService {
       if (
         typeof parsed !== 'object' ||
         parsed === null ||
-        Array.isArray(parsed) ||
-        typeof (parsed as { budget?: unknown }).budget !== 'object' ||
-        (parsed as { budget?: unknown }).budget === null ||
-        Array.isArray((parsed as { budget: unknown }).budget)
+        Array.isArray(parsed)
       ) {
         throw new Error('ساختار خروجی مدل معتبر نیست.');
       }
 
-      const result = parsed as {
-        location?: {
-          city?: unknown;
-          neighborhood?: unknown;
-          province?: unknown;
+      // Treat model output as untrusted, incomplete data. Fill the API contract's
+      // required shape before applying deterministic domain rules and validation.
+      const parsedRecord = parsed as Record<string, unknown>;
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        typeof value === 'object' && value !== null && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const nullableString = (value: unknown): string | null =>
+        typeof value === 'string' ? value : null;
+      const nullableNumber = (value: unknown): number | null =>
+        typeof value === 'number' && Number.isFinite(value) && value >= 0
+          ? value
+          : null;
+      const nullableBoolean = (value: unknown): boolean | null =>
+        typeof value === 'boolean' ? value : null;
+      const location = asRecord(parsedRecord.location);
+      const area = asRecord(parsedRecord.area);
+      const budget = asRecord(parsedRecord.budget);
+      const rawRequirements = asRecord(parsedRecord.requirements);
+      const rawStay = asRecord(parsedRecord.stay);
+      const allowedPropertyTypes = ['land', 'apartment', 'villa'];
+      const nullablePropertyType = (value: unknown): string | null =>
+        typeof value === 'string' && allowedPropertyTypes.includes(value)
+          ? value
+          : null;
+      const allowedIntents = ['buy', 'sell', 'rent', 'lease_out', 'exchange'];
+      const nullableIntent = (value: unknown): string | null =>
+        typeof value === 'string' && allowedIntents.includes(value)
+          ? value
+          : null;
+      const allowedRentalModes = ['monthly', 'short_term'];
+      const nullableRentalMode = (value: unknown): string | null =>
+        typeof value === 'string' && allowedRentalModes.includes(value)
+          ? value
+          : null;
+      const allowedDocumentTypes = [
+        'six_dang',
+        'three_dang',
+        'official',
+        'end_user',
+        'other',
+        'unknown',
+      ];
+      const nullableDocumentType = (value: unknown): string | null =>
+        typeof value === 'string' && allowedDocumentTypes.includes(value)
+          ? value
+          : null;
+      const allowedDeedEras = ['pre_revolution', 'post_revolution', 'unknown'];
+      const nullableDeedEra = (value: unknown): string | null =>
+        typeof value === 'string' && allowedDeedEras.includes(value)
+          ? value
+          : null;
+      const rawCheckInDate = rawStay.checkInDate;
+      const rawCheckOutDate = rawStay.checkOutDate;
+      const result = {
+        ...parsedRecord,
+        intent: nullableIntent(parsedRecord.intent),
+        propertyType: nullablePropertyType(parsedRecord.propertyType),
+        offeredPropertyType: nullablePropertyType(parsedRecord.offeredPropertyType),
+        wantedPropertyType: nullablePropertyType(parsedRecord.wantedPropertyType),
+        rentalMode: nullableRentalMode(parsedRecord.rentalMode),
+        location: {
+          province: nullableString(location.province),
+          city: nullableString(location.city),
+          neighborhood: nullableString(location.neighborhood),
+        },
+        area: {
+          targetSqm: nullableNumber(area.targetSqm),
+          minSqm: nullableNumber(area.minSqm),
+          maxSqm: nullableNumber(area.maxSqm),
+        },
+        budget: {
+          maxTotalPriceRial: nullableNumber(budget.maxTotalPriceRial),
+          maxPricePerSqmRial: nullableNumber(budget.maxPricePerSqmRial),
+          maxDepositRial: nullableNumber(budget.maxDepositRial),
+          maxRentMonthlyRial: nullableNumber(budget.maxRentMonthlyRial),
+          maxRentNightlyRial: nullableNumber(budget.maxRentNightlyRial),
+        },
+        requirements: {
+          bedrooms: nullableNumber(rawRequirements.bedrooms),
+          documentType: nullableDocumentType(rawRequirements.documentType),
+          landUse: nullableString(rawRequirements.landUse),
+          nearSea: nullableBoolean(rawRequirements.nearSea),
+          hasView: nullableBoolean(rawRequirements.hasView),
+          isInTownship: nullableBoolean(rawRequirements.isInTownship),
+          hasMountainView: nullableBoolean(rawRequirements.hasMountainView),
+          hasSeaView: nullableBoolean(rawRequirements.hasSeaView),
+          viewProtectionClaim: nullableBoolean(rawRequirements.viewProtectionClaim),
+          deedEra: nullableDeedEra(rawRequirements.deedEra),
+        },
+        stay: {
+          checkInDate:
+            typeof rawCheckInDate === 'string' &&
+            /^\\d{4}-\\d{2}-\\d{2}$/.test(rawCheckInDate)
+              ? rawCheckInDate
+              : null,
+          checkOutDate:
+            typeof rawCheckOutDate === 'string' &&
+            /^\\d{4}-\\d{2}-\\d{2}$/.test(rawCheckOutDate)
+              ? rawCheckOutDate
+              : null,
+          guests: nullableNumber(rawStay.guests),
+          nights: nullableNumber(rawStay.nights),
+        },
+        missingInformation: Array.isArray(parsedRecord.missingInformation)
+          ? parsedRecord.missingInformation.filter(
+              (field): field is string => typeof field === 'string',
+            )
+          : [],
+        clarificationQuestion: nullableString(parsedRecord.clarificationQuestion),
+      } as {
+        location: {
+          city: string | null;
+          neighborhood: string | null;
+          province: string | null;
         };
+        area: Record<string, unknown>;
         budget: Record<string, unknown>;
-        requirements?: Record<string, unknown>;
-        intent?: unknown;
-        propertyType?: unknown;
-        offeredPropertyType?: unknown;
-        wantedPropertyType?: unknown;
-        rentalMode?: unknown;
-        stay?: Record<string, unknown>;
-        missingInformation?: unknown;
-        clarificationQuestion?: unknown;
+        requirements: Record<string, unknown>;
+        stay: Record<string, unknown>;
+        intent: unknown;
+        propertyType: unknown;
+        offeredPropertyType: unknown;
+        wantedPropertyType: unknown;
+        rentalMode: unknown;
+        missingInformation: unknown;
+        clarificationQuestion: unknown;
       };
+
+      // A property feature is not a city name. Some model outputs mistakenly
+      // put phrases such as "نزدیک دریا" into location.city.
+      if (
+        result.location.city &&
+        /نزدیک|دریا|ساحل|ویو|چشم\\s*انداز|کوه|شهرکی|خوابه/.test(
+          result.location.city
+            .replace(/[ي]/g, 'ی')
+            .replace(/[ك]/g, 'ک')
+            .replace(/‌/g, ' '),
+        )
+      ) {
+        result.location.city = null;
+      }
 
       // Resolve high-confidence intent patterns from the original Persian message.
       // This keeps core domain rules deterministic and independently testable.
