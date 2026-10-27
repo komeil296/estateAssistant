@@ -7,7 +7,7 @@
  */
 export type PlaceEntry = {
   canonical: string;
-  kind: 'city' | 'locality';
+  kind: 'city' | 'locality' | 'street';
   city: string;
   aliases: string[];
 };
@@ -33,7 +33,7 @@ export const PLACE_CATALOG: PlaceEntry[] = [
   { canonical: 'اشکورات', kind: 'locality', city: 'رامسر', aliases: ['اشکورات'] },
   { canonical: 'باغ‌صفا', kind: 'locality', city: 'رامسر', aliases: ['باغ صفا', 'باغ‌صفا'] },
   { canonical: 'باغ‌ملی', kind: 'locality', city: 'رامسر', aliases: ['باغ ملی', 'باغ‌ملی'] },
-  { canonical: 'بلوار معلم', kind: 'locality', city: 'رامسر', aliases: ['بلوار معلم'] },
+  { canonical: 'بلوار معلم', kind: 'street', city: 'رامسر', aliases: ['بلوار معلم'] },
   { canonical: 'پیازکش', kind: 'locality', city: 'رامسر', aliases: ['پیازکش'] },
   { canonical: 'چالکرود', kind: 'locality', city: 'رامسر', aliases: ['چالکرود', 'چال کرود'] },
   { canonical: 'چهارباغ', kind: 'locality', city: 'رامسر', aliases: ['چهار باغ', 'چهارباغ'] },
@@ -258,56 +258,56 @@ export const PLACE_CATALOG: PlaceEntry[] = [
   { canonical: 'امیردشت', kind: 'locality', city: 'سلمان‌شهر', aliases: ['امیردشت', 'امیر دشت'] },
   { canonical: 'ساقی‌کلایه', kind: 'locality', city: 'سلمان‌شهر', aliases: ['ساقی کلایه', 'ساقی‌کلایه'] },
   { canonical: 'کلارآباد', kind: 'city', city: 'کلارآباد', aliases: ['کلارآباد', 'کلار آباد'] },
-  { canonical: 'بلوار ساحل طلایی', kind: 'locality', city: 'تنکابن', aliases: ['ساحل طلایی'] },
-  { canonical: 'خیابان تختی', kind: 'locality', city: 'تنکابن', aliases: ['خیابان جهان‌پهلوان تختی'] },
-  { canonical: 'خیابان چشمه‌کیله شرقی', kind: 'locality', city: 'تنکابن', aliases: ['چشمه کیله شرقی'] },
-  { canonical: 'خیابان چشمه‌کیله غربی', kind: 'locality', city: 'تنکابن', aliases: ['چشمه کیله غربی'] },
-  { canonical: 'خیابان میرزای تنکابنی', kind: 'locality', city: 'تنکابن', aliases: ['میرزای تنکابنی'] },
-  { canonical: 'کوچه ایرج', kind: 'locality', city: 'تنکابن', aliases: ['ایرج'] },
-  { canonical: 'کوچه بهار', kind: 'locality', city: 'تنکابن', aliases: ['بهار'] },
-  { canonical: 'کوچه بهارستان', kind: 'locality', city: 'تنکابن', aliases: ['بهارستان'] },
-  { canonical: 'کوچه پامچال', kind: 'locality', city: 'تنکابن', aliases: ['پامچال'] },
-  { canonical: 'کوچه ساحل', kind: 'locality', city: 'تنکابن', aliases: ['ساحل'] },
-  { canonical: 'کوچه سروستان', kind: 'locality', city: 'تنکابن', aliases: ['سروستان'] },
-  { canonical: 'کوچه شقایق دریایی', kind: 'locality', city: 'تنکابن', aliases: ['شقایق دریایی'] },
-  { canonical: 'کوچه شهید تندگویان', kind: 'locality', city: 'تنکابن', aliases: ['شهید تندگویان'] },
-  { canonical: 'کوچه فرهنگ', kind: 'locality', city: 'تنکابن', aliases: ['فرهنگ'] },
-  { canonical: 'کوچه کانون صالحی', kind: 'locality', city: 'تنکابن', aliases: ['کانون صالحی ۱', 'کانون صالحی ۲'] },
-  { canonical: 'کوچه گل ارکیده', kind: 'locality', city: 'تنکابن', aliases: ['گل ارکیده'] },
-  { canonical: 'کوچه گل ختمی', kind: 'locality', city: 'تنکابن', aliases: ['گل ختمی ۱', 'گل ختمی ۲'] },
-  { canonical: 'کوچه لادن', kind: 'locality', city: 'تنکابن', aliases: ['لادن'] },
-  { canonical: 'کوچه مجتمع امپراتور', kind: 'locality', city: 'تنکابن', aliases: ['مجتمع امپراتور'] },
-  { canonical: 'کوچه مرجان', kind: 'locality', city: 'تنکابن', aliases: ['مرجان'] },
-  { canonical: 'کوچه مروارید', kind: 'locality', city: 'تنکابن', aliases: ['مروارید'] },
-  { canonical: 'کوچه مهتاب', kind: 'locality', city: 'تنکابن', aliases: ['مهتاب'] },
-  { canonical: 'کوچه مهستان', kind: 'locality', city: 'تنکابن', aliases: ['مهستان'] },
-  { canonical: 'کوچه میدان کریم‌آباد', kind: 'locality', city: 'تنکابن', aliases: ['میدان کریم آباد ۱', 'میدان کریم آباد ۲'] },
-  { canonical: 'کوچه نسترن', kind: 'locality', city: 'تنکابن', aliases: ['نسترن', 'کوچه نسترن سبزه میدان'] },
-  { canonical: 'کوچه یاسمن', kind: 'locality', city: 'تنکابن', aliases: ['یاسمن'] },
-  { canonical: 'بلوار امام خمینی', kind: 'locality', city: 'رامسر', aliases: ['خیابان امام خمینی'] },
-  { canonical: 'بلوار شهید باهنر', kind: 'locality', city: 'رامسر', aliases: ['خیابان شهید باهنر', 'بلوار باهنر'] },
-  { canonical: 'بلوار طالقانی', kind: 'locality', city: 'رامسر', aliases: ['خیابان طالقانی', 'بلوار آیت‌الله طالقانی'] },
-  { canonical: 'خیابان شهدا', kind: 'locality', city: 'رامسر', aliases: [] },
-  { canonical: 'خیابان شهید رزاقی', kind: 'locality', city: 'رامسر', aliases: ['خیابان رزاقی', 'شهید رزاقی'] },
-  { canonical: 'خیابان شهید عباس مفرد', kind: 'locality', city: 'رامسر', aliases: ['خیابان عباس مفرد', 'خیابان شهدای عباس مفرد'] },
-  { canonical: 'خیابان شهید مطهری', kind: 'locality', city: 'رامسر', aliases: ['خیابان مطهری', 'بلوار مطهری'] },
-  { canonical: 'خیابان فردوسی', kind: 'locality', city: 'رامسر', aliases: [] },
-  { canonical: 'خیابان کشاورزی', kind: 'locality', city: 'رامسر', aliases: [] },
-  { canonical: 'خیابان ولیعصر', kind: 'locality', city: 'رامسر', aliases: ['ولی عصر'] },
+  { canonical: 'بلوار ساحل طلایی', kind: 'street', city: 'تنکابن', aliases: ['ساحل طلایی'] },
+  { canonical: 'خیابان تختی', kind: 'street', city: 'تنکابن', aliases: ['خیابان جهان‌پهلوان تختی'] },
+  { canonical: 'خیابان چشمه‌کیله شرقی', kind: 'street', city: 'تنکابن', aliases: ['چشمه کیله شرقی'] },
+  { canonical: 'خیابان چشمه‌کیله غربی', kind: 'street', city: 'تنکابن', aliases: ['چشمه کیله غربی'] },
+  { canonical: 'خیابان میرزای تنکابنی', kind: 'street', city: 'تنکابن', aliases: ['میرزای تنکابنی'] },
+  { canonical: 'کوچه ایرج', kind: 'street', city: 'تنکابن', aliases: ['ایرج'] },
+  { canonical: 'کوچه بهار', kind: 'street', city: 'تنکابن', aliases: ['بهار'] },
+  { canonical: 'کوچه بهارستان', kind: 'street', city: 'تنکابن', aliases: ['بهارستان'] },
+  { canonical: 'کوچه پامچال', kind: 'street', city: 'تنکابن', aliases: ['پامچال'] },
+  { canonical: 'کوچه ساحل', kind: 'street', city: 'تنکابن', aliases: ['ساحل'] },
+  { canonical: 'کوچه سروستان', kind: 'street', city: 'تنکابن', aliases: ['سروستان'] },
+  { canonical: 'کوچه شقایق دریایی', kind: 'street', city: 'تنکابن', aliases: ['شقایق دریایی'] },
+  { canonical: 'کوچه شهید تندگویان', kind: 'street', city: 'تنکابن', aliases: ['شهید تندگویان'] },
+  { canonical: 'کوچه فرهنگ', kind: 'street', city: 'تنکابن', aliases: ['فرهنگ'] },
+  { canonical: 'کوچه کانون صالحی', kind: 'street', city: 'تنکابن', aliases: ['کانون صالحی ۱', 'کانون صالحی ۲'] },
+  { canonical: 'کوچه گل ارکیده', kind: 'street', city: 'تنکابن', aliases: ['گل ارکیده'] },
+  { canonical: 'کوچه گل ختمی', kind: 'street', city: 'تنکابن', aliases: ['گل ختمی ۱', 'گل ختمی ۲'] },
+  { canonical: 'کوچه لادن', kind: 'street', city: 'تنکابن', aliases: ['لادن'] },
+  { canonical: 'کوچه مجتمع امپراتور', kind: 'street', city: 'تنکابن', aliases: ['مجتمع امپراتور'] },
+  { canonical: 'کوچه مرجان', kind: 'street', city: 'تنکابن', aliases: ['مرجان'] },
+  { canonical: 'کوچه مروارید', kind: 'street', city: 'تنکابن', aliases: ['مروارید'] },
+  { canonical: 'کوچه مهتاب', kind: 'street', city: 'تنکابن', aliases: ['مهتاب'] },
+  { canonical: 'کوچه مهستان', kind: 'street', city: 'تنکابن', aliases: ['مهستان'] },
+  { canonical: 'کوچه میدان کریم‌آباد', kind: 'street', city: 'تنکابن', aliases: ['میدان کریم آباد ۱', 'میدان کریم آباد ۲'] },
+  { canonical: 'کوچه نسترن', kind: 'street', city: 'تنکابن', aliases: ['نسترن', 'کوچه نسترن سبزه میدان'] },
+  { canonical: 'کوچه یاسمن', kind: 'street', city: 'تنکابن', aliases: ['یاسمن'] },
+  { canonical: 'بلوار امام خمینی', kind: 'street', city: 'رامسر', aliases: ['خیابان امام خمینی'] },
+  { canonical: 'بلوار شهید باهنر', kind: 'street', city: 'رامسر', aliases: ['خیابان شهید باهنر', 'بلوار باهنر'] },
+  { canonical: 'بلوار طالقانی', kind: 'street', city: 'رامسر', aliases: ['خیابان طالقانی', 'بلوار آیت‌الله طالقانی'] },
+  { canonical: 'خیابان شهدا', kind: 'street', city: 'رامسر', aliases: [] },
+  { canonical: 'خیابان شهید رزاقی', kind: 'street', city: 'رامسر', aliases: ['خیابان رزاقی', 'شهید رزاقی'] },
+  { canonical: 'خیابان شهید عباس مفرد', kind: 'street', city: 'رامسر', aliases: ['خیابان عباس مفرد', 'خیابان شهدای عباس مفرد'] },
+  { canonical: 'خیابان شهید مطهری', kind: 'street', city: 'رامسر', aliases: ['خیابان مطهری', 'بلوار مطهری'] },
+  { canonical: 'خیابان فردوسی', kind: 'street', city: 'رامسر', aliases: [] },
+  { canonical: 'خیابان کشاورزی', kind: 'street', city: 'رامسر', aliases: [] },
+  { canonical: 'خیابان ولیعصر', kind: 'street', city: 'رامسر', aliases: ['ولی عصر'] },
   { canonical: 'آزادگان', kind: 'locality', city: 'سلمان‌شهر', aliases: ['شهرک آزادگان'] },
   { canonical: 'اسبچین', kind: 'locality', city: 'سلمان‌شهر', aliases: ['اسب چین', 'اسب‌چین'] },
-  { canonical: 'بلوار تختی', kind: 'locality', city: 'سلمان‌شهر', aliases: ['تختی'] },
-  { canonical: 'بلوار مطهری', kind: 'locality', city: 'سلمان‌شهر', aliases: ['بلوار شهید مطهری', 'مطهری'] },
+  { canonical: 'بلوار تختی', kind: 'street', city: 'سلمان‌شهر', aliases: ['تختی'] },
+  { canonical: 'بلوار مطهری', kind: 'street', city: 'سلمان‌شهر', aliases: ['بلوار شهید مطهری', 'مطهری'] },
   { canonical: 'تیلاکنار', kind: 'locality', city: 'سلمان‌شهر', aliases: ['تیلا کنار'] },
   { canonical: 'جیسا', kind: 'locality', city: 'سلمان‌شهر', aliases: ['جیسای سلمان‌شهر'] },
-  { canonical: 'خیابان آرا', kind: 'locality', city: 'سلمان‌شهر', aliases: ['آرا', 'کوی آرا'] },
-  { canonical: 'خیابان امام خمینی', kind: 'locality', city: 'سلمان‌شهر', aliases: ['امام خمینی'] },
-  { canonical: 'خیابان توسکا', kind: 'locality', city: 'سلمان‌شهر', aliases: ['توسکا'] },
-  { canonical: 'خیابان دریاگوشه', kind: 'locality', city: 'سلمان‌شهر', aliases: ['دریا گوشه', 'دریاگوشه'] },
-  { canonical: 'خیابان شالیزار', kind: 'locality', city: 'سلمان‌شهر', aliases: ['شالیزار'] },
-  { canonical: 'خیابان طالقانی', kind: 'locality', city: 'سلمان‌شهر', aliases: ['آیت الله طالقانی', 'آیت‌الله طالقانی'] },
-  { canonical: 'خیابان گل', kind: 'locality', city: 'سلمان‌شهر', aliases: [] },
-  { canonical: 'خیابان هتل قدیم', kind: 'locality', city: 'سلمان‌شهر', aliases: ['هتل قدیمی', 'هتل قدیم'] },
+  { canonical: 'خیابان آرا', kind: 'street', city: 'سلمان‌شهر', aliases: ['آرا', 'کوی آرا'] },
+  { canonical: 'خیابان امام خمینی', kind: 'street', city: 'سلمان‌شهر', aliases: ['امام خمینی'] },
+  { canonical: 'خیابان توسکا', kind: 'street', city: 'سلمان‌شهر', aliases: ['توسکا'] },
+  { canonical: 'خیابان دریاگوشه', kind: 'street', city: 'سلمان‌شهر', aliases: ['دریا گوشه', 'دریاگوشه'] },
+  { canonical: 'خیابان شالیزار', kind: 'street', city: 'سلمان‌شهر', aliases: ['شالیزار'] },
+  { canonical: 'خیابان طالقانی', kind: 'street', city: 'سلمان‌شهر', aliases: ['آیت الله طالقانی', 'آیت‌الله طالقانی'] },
+  { canonical: 'خیابان گل', kind: 'street', city: 'سلمان‌شهر', aliases: [] },
+  { canonical: 'خیابان هتل قدیم', kind: 'street', city: 'سلمان‌شهر', aliases: ['هتل قدیمی', 'هتل قدیم'] },
   { canonical: 'دریاگوشه', kind: 'locality', city: 'سلمان‌شهر', aliases: ['دریا گوشه', 'شهرک دریاگوشه'] },
   { canonical: 'سلامت‌سرا', kind: 'locality', city: 'سلمان‌شهر', aliases: ['سلامت سرا'] },
   { canonical: 'شمس‌آباد', kind: 'locality', city: 'سلمان‌شهر', aliases: ['شمس آباد'] },
@@ -320,15 +320,15 @@ export const PLACE_CATALOG: PlaceEntry[] = [
   { canonical: 'شهرک صنعتی سلمان‌شهر', kind: 'locality', city: 'سلمان‌شهر', aliases: ['شهرک صنعتی'] },
   { canonical: 'توبن', kind: 'locality', city: 'نشتارود', aliases: [] },
   { canonical: 'خشکداران', kind: 'locality', city: 'نشتارود', aliases: [] },
-  { canonical: 'خیابان ۱۵ خرداد', kind: 'locality', city: 'نشتارود', aliases: ['۱۵خرداد', 'پانزده خرداد'] },
-  { canonical: 'خیابان ۱۷ شهریور', kind: 'locality', city: 'نشتارود', aliases: ['۱۷شهریور', 'هفده شهریور'] },
-  { canonical: 'خیابان خشکداران', kind: 'locality', city: 'نشتارود', aliases: ['خشکداران'] },
-  { canonical: 'خیابان گاز شرقی', kind: 'locality', city: 'نشتارود', aliases: ['گاز شرقی'] },
+  { canonical: 'خیابان ۱۵ خرداد', kind: 'street', city: 'نشتارود', aliases: ['۱۵خرداد', 'پانزده خرداد'] },
+  { canonical: 'خیابان ۱۷ شهریور', kind: 'street', city: 'نشتارود', aliases: ['۱۷شهریور', 'هفده شهریور'] },
+  { canonical: 'خیابان خشکداران', kind: 'street', city: 'نشتارود', aliases: ['خشکداران'] },
+  { canonical: 'خیابان گاز شرقی', kind: 'street', city: 'نشتارود', aliases: ['گاز شرقی'] },
   { canonical: 'رودگر', kind: 'locality', city: 'نشتارود', aliases: ['رودگرمحله', 'رودگر محله'] },
   { canonical: 'ستاره خزر', kind: 'locality', city: 'نشتارود', aliases: ['شهرک ستاره خزر'] },
-  { canonical: 'کوچه میرچی', kind: 'locality', city: 'نشتارود', aliases: ['میرچی'] },
-  { canonical: 'کوچه وحدت', kind: 'locality', city: 'نشتارود', aliases: ['وحدت'] },
-  { canonical: 'کوچه ولیعصر', kind: 'locality', city: 'نشتارود', aliases: ['ولیعصر', 'ولی عصر'] },
+  { canonical: 'کوچه میرچی', kind: 'street', city: 'نشتارود', aliases: ['میرچی'] },
+  { canonical: 'کوچه وحدت', kind: 'street', city: 'نشتارود', aliases: ['وحدت'] },
+  { canonical: 'کوچه ولیعصر', kind: 'street', city: 'نشتارود', aliases: ['ولیعصر', 'ولی عصر'] },
   { canonical: 'مکارود', kind: 'locality', city: 'نشتارود', aliases: [] },
 ];
 
@@ -351,47 +351,59 @@ function normalizePlaceText(value: string): string {
  * an unrelated word such as «نقلیه». Prefer the longest explicit place name.
  */
 export function normalizeKnownLocation<T extends {
-  location?: { city?: unknown; neighborhood?: unknown; province?: unknown };
+  location?: {
+    city?: unknown;
+    neighborhood?: unknown;
+    street?: unknown;
+    province?: unknown;
+  };
 }>(result: T, originalMessage: string): T {
   if (!result.location || typeof result.location !== 'object') return result;
 
   const normalizedMessage = ` ${normalizePlaceText(originalMessage)} `;
   const matches = PLACE_CATALOG
-    .flatMap((entry) => entry.aliases.map((alias) => ({
-      entry,
-      alias,
-      normalizedAlias: normalizePlaceText(alias),
-    })))
+    .flatMap((entry) => {
+      const names = [...new Set([entry.canonical, ...entry.aliases])];
+      return names.map((alias) => ({
+        entry,
+        normalizedAlias: normalizePlaceText(alias),
+      }));
+    })
     .filter((item) =>
       item.normalizedAlias.length >= 3 &&
       normalizedMessage.includes(` ${item.normalizedAlias} `),
     )
-    .sort((a, b) => {
-      if (a.normalizedAlias.length !== b.normalizedAlias.length) {
-        return b.normalizedAlias.length - a.normalizedAlias.length;
-      }
-      if (a.entry.kind !== b.entry.kind) {
-        return a.entry.kind === 'locality' ? -1 : 1;
-      }
-      return 0;
-    });
+    .sort((a, b) => b.normalizedAlias.length - a.normalizedAlias.length);
 
-  const match = matches[0];
-  if (!match) return result;
+  const bestOfKind = (kind: PlaceEntry['kind']) =>
+    matches.find((item) => item.entry.kind === kind);
 
-  // This curated catalog currently contains places in Mazandaran province.
-  result.location.province = 'مازندران';
+  const cityMatch = bestOfKind('city');
+  const localityMatch = bestOfKind('locality');
+  const streetMatch = bestOfKind('street');
 
-  if (match.entry.kind === 'city') {
-    result.location.city = match.entry.canonical;
-    // A city match should not leave a model-invented neighborhood behind.
-    if (typeof result.location.neighborhood === 'string') {
-      result.location.neighborhood = null;
-    }
-    return result;
+  const resolvedCity =
+    cityMatch?.entry.canonical ??
+    localityMatch?.entry.city ??
+    streetMatch?.entry.city ??
+    null;
+
+  if (resolvedCity) {
+    result.location.city = resolvedCity;
+    result.location.province = 'مازندران';
   }
 
-  result.location.city = match.entry.city;
-  result.location.neighborhood = match.entry.canonical;
+  if (cityMatch) {
+    result.location.neighborhood = null;
+    result.location.street = null;
+  } else {
+    if (localityMatch && (!resolvedCity || localityMatch.entry.city === resolvedCity)) {
+      result.location.neighborhood = localityMatch.entry.canonical;
+    }
+    if (streetMatch && (!resolvedCity || streetMatch.entry.city === resolvedCity)) {
+      result.location.street = streetMatch.entry.canonical;
+    }
+  }
+
   return result;
 }
