@@ -7,7 +7,7 @@ import {
   validateSearchRequest,
 } from './dto/search-request.dto';
 import { normalizeKnownLocation } from './location-catalog';
-import { resolveIntentFromMessage, resolveNightsFromMessage } from './intent-rules';
+import {\n  isLandForVillaConstructionRequest,\n  resolveIntentFromMessage,\n  resolveNightsFromMessage,\n  resolvePricePerSqmTomanFromMessage,\n} from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای جست‌وجوی خرید، فروش، اجاره و واگذاری املاک و اقامتگاه در ایران هستی.
@@ -310,7 +310,7 @@ export class AiService {
         result.requirements.hasView = mentionsSeaView ? true : null;
       }
 
-      const budgetFields = [
+      // Deterministically extract a clear per-square-metre price from colloquial Persian.\n      // This value is in Toman here; the common conversion loop below changes it to Rial.\n      const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);\n      if (pricePerSqmToman !== null) {\n        result.budget.maxPricePerSqmRial = pricePerSqmToman;\n      }\n\n      const budgetFields = [
         'maxTotalPriceRial',
         'maxPricePerSqmRial',
         'maxDepositRial',
