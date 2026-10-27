@@ -17,6 +17,8 @@ function normalizePersianText(value: string): string {
     .replace(/[يى]/g, 'ی')
     .replace(/[ك]/g, 'ک')
     .replace(/[‌\u200c]/g, ' ')
+    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
     .replace(/\s+/g, ' ')
     .toLowerCase()
     .trim();
@@ -34,11 +36,16 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
 
   const mentionsNightlyPrice = /(?:شبی|هر\s*شب|شبانه)/.test(text);
   const mentionsMonthlyPrice = /(?:ماهی|ماهانه|هر\s*ماه)/.test(text);
-  const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*[\d۰-۹]|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
+  const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*\d|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
   const valuationIntent = /(?:ببینم|بدونم|بدونیم)\s*(?:که\s*)?(?:ملکم\s*)?(?:چند|چقدر)\s*می ?ارزه|(?:قیمت|ارزش)\s*(?:ملکم|ملک|زمین|ویلا)/.test(text);
 
   if (/(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text)) {
     return { intent: 'exchange', rentalMode: null };
+  }
+
+  // Valuation is a separate user goal; do not silently convert it into selling.
+  if (valuationIntent) {
+    return { intent: null, rentalMode: null };
   }
 
   if (/(?:اجاره\s*(?:بدم|بدهم|بدهیم|بدیم|بگذارم|بذارم)|اجاره\s*می ?دم|ملکم\s*(?:رو|را)\s*اجاره)/.test(text)) {
@@ -48,7 +55,7 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     };
   }
 
-  if (/(?:می ?خوام\s*بفروشم|می ?خواهم\s*بفروشم|بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش|می ?خوام\s*ببینم\s*(?:چند|چقدر)\s*می ?ارزه)/.test(text)) {
+  if (/(?:می ?خوام\s*بفروشم|می ?خواهم\s*بفروشم|بفروشم|بفروشیم|برای\s*فروش|قصد\s*فروش)/.test(text)) {
     return { intent: 'sell', rentalMode: null };
   }
 
@@ -59,8 +66,14 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     };
   }
 
-  if (ownsProperty && (valuationIntent || mentionsPrice)) {
+  if (ownsProperty && mentionsPrice) {
     return { intent: 'sell', rentalMode: null };
+  }
+
+  // Land wanted for building a villa is a high-confidence purchase request.
+  if (/(?:زمین).{0,45}(?:برای\s*)?(?:ساخت|ساختن).{0,20}ویلا/.test(text)
+      && /(?:می ?خوام|می ?خواهم|دنبال|لازم\s*دارم)/.test(text)) {
+    return { intent: 'buy', rentalMode: null };
   }
 
   if (
@@ -83,9 +96,8 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     };
   }
 
-  // Domain rule: a quoted nightly or monthly amount in a customer's request
-  // is treated as a rental budget; ownership above changes the role to landlord.
-  if (mentionsNightlyPrice || /(?:برای\s*)?[\d۰-۹]+\s*(?:شب|روز)/.test(text)) {
+  // A quoted nightly or monthly amount in a customer's request is treated as a rental budget.
+  if (mentionsNightlyPrice || /(?:برای\s*)?\d+\s*(?:شب|روز)/.test(text)) {
     return { intent: 'rent', rentalMode: 'short_term' };
   }
   if (mentionsMonthlyPrice) return { intent: 'rent', rentalMode: 'monthly' };
@@ -93,11 +105,40 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   return { intent: null, rentalMode: null };
 }
 
+/**
+ * Returns a per-square-metre amount in Toman. The service converts it to Rial
+ * alongside the other budget fields, so conversion happens exactly once.
+ */
+export function resolvePricePerSqmTomanFromMessage(message: string): number | null {
+  const text = normalizePersianText(message);
+  const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?\s*متری)/);
+  if (!match) return null;
+
+  const rawAmount = (match[1] ?? match[3]).replace(',', '.');
+  const unit = match[2] ?? match[4];
+  const amount = Number(rawAmount);
+  if (!Number.isFinite(amount) || amount < 0) return null;
+
+  const multiplier = unit === 'میلیارد'
+    ? 1_000_000_000
+    : unit === 'میلیون'
+      ? 1_000_000
+      : unit === 'هزار'
+        ? 1_000
+        : 1;
+
+  return Math.round(amount * multiplier);
+}
+
+export function isLandForVillaConstructionRequest(message: string): boolean {
+  const text = normalizePersianText(message);
+  return /زمین/.test(text)
+    && /(?:برای\s*)?(?:ساخت|ساختن)\s*ویلا/.test(text)
+    && /(?:می ?خوام|می ?خواهم|دنبال|لازم\s*دارم)/.test(text);
+}
 
 export function resolveNightsFromMessage(message: string): number | null {
-  const text = normalizePersianText(message)
-    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
-    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)));
+  const text = normalizePersianText(message);
   const explicitNights = text.match(/(\d+)\s*شب/);
   if (explicitNights) return Number(explicitNights[1]);
   const days = text.match(/(\d+)\s*روز/);
