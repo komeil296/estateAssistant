@@ -130,6 +130,39 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
   return Math.round(amount * multiplier);
 }
 
+/**
+ * Extract an explicitly stated nightly/monthly rent budget in Toman.
+ * In colloquial Persian, «تومن» without a scale is treated as million Toman
+ * only in this rental-price context (e.g. «شبی ۵ تومن»).
+ */
+export function resolveRentalBudgetTomanFromMessage(
+  message: string,
+): { mode: ResolvedRentalMode; amountToman: number } | null {
+  const text = normalizePersianText(message);
+  const match = text.match(
+    /(?:شبی|هر\s*شب|شبانه|ماهی|ماهانه|هر\s*ماه)\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومن|تومان|ریال)?/,
+  );
+  if (!match) return null;
+
+  const mode: ResolvedRentalMode = /(?:شبی|هر\s*شب|شبانه)/.test(match[0])
+    ? 'short_term'
+    : 'monthly';
+  const amount = Number(match[1].replace(',', '.'));
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+
+  const unit = match[2];
+  const multiplier = unit === 'میلیارد'
+    ? 1_000_000_000
+    : unit === 'میلیون' || unit === 'تومن' || unit === 'تومان' || unit === 'ریال' || !unit
+      ? 1_000_000
+      : 1_000;
+
+  return {
+    mode,
+    amountToman: Math.round(amount * multiplier),
+  };
+}
+
 export function isLandForVillaConstructionRequest(message: string): boolean {
   const text = normalizePersianText(message);
   return /زمین/.test(text)
