@@ -112,7 +112,35 @@ export class AiService {
 
       const result = parsed as {
         budget: Record<string, unknown>;
+        requirements?: Record<string, unknown>;
       };
+
+      // The model sometimes confuses physical proximity to the sea with a sea view.
+      // Resolve these two independent filters deterministically from the user's wording.
+      if (
+        result.requirements &&
+        typeof result.requirements === 'object' &&
+        !Array.isArray(result.requirements)
+      ) {
+        const normalizedMessage = message
+          .replace(/[ي]/g, 'ی')
+          .replace(/[ك]/g, 'ک')
+          .replace(/‌/g, ' ')
+          .toLowerCase();
+
+        const mentionsNearSea =
+          /نزدیک\s*(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /(?:پیاده|با\s*پیاده)\s*(?:تا|به)\s*(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /فاصله\s*(?:تا|از)\s*(?:دریا|ساحل)/.test(normalizedMessage);
+
+        const mentionsSeaView =
+          /(?:ویو(?:ی)?|چشم\s*انداز|دید|مشرف\s*به)\s*(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /(?:دریا|ساحل)\s*(?:ویو|ویوی|چشم\s*انداز|دید)/.test(normalizedMessage);
+
+        result.requirements.nearSea = mentionsNearSea ? true : null;
+        result.requirements.hasView = mentionsSeaView ? true : null;
+      }
+
       const budgetFields = [
         'maxTotalPriceRial',
         'maxPricePerSqmRial',
