@@ -144,7 +144,7 @@ export function resolveAccommodationFeaturesFromMessage(
 
   const bathrooms: string[] = [];
   if (/سرویس\s*(?:بهداشتی\s*)?ایرانی|توالت\s*ایرانی/.test(text)) bathrooms.push('iranian');
-  if (/سرویس\s*(?:بهداشتی\s*)?فرنگی|توالت\s*فرنگی/.test(text)) bathrooms.push('western');
+  if (/سرویس\s*(?:بهداشتی\s*)?فرنگی|توالت\s*فرنگی|ایرانی\\s*و\\s*فرنگی/.test(text)) bathrooms.push('western');
   if (bathrooms.length) add('bathroom.types', [...new Set(bathrooms)]);
   if (/سرویس.{0,12}(?:اختصاصی|خصوصی)/.test(text)) add('bathroom.sharing', 'private');
   else if (/سرویس.{0,12}(?:اشتراکی|مشترک)/.test(text) && !/سرویس.{0,16}(?:اشتراکی|مشترک).{0,12}(?:نباشه|نباشد|نمی ?خوام|نمی ?خواهم)/.test(text)) add('bathroom.sharing', 'shared');
