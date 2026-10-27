@@ -4,9 +4,14 @@ import {
   Controller,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AiService } from './ai.service';
 import { ChatDto } from './dto/chat.dto';
+import { SearchRequestDto } from './dto/search-request.dto';
 
 @ApiTags('AI')
 @Controller('ai')
@@ -29,7 +34,8 @@ export class AiController {
     description:
       'خروجی مدل اعتبارسنجی می‌شود؛ این endpoint فقط درخواست را تحلیل می‌کند و هنوز جست‌وجوی واقعی در پایگاه داده انجام نمی‌دهد.',
   })
-  async parseSearchRequest(@Body() body: ChatDto) {
+  @ApiOkResponse({ type: SearchRequestDto })
+  async parseSearchRequest(@Body() body: ChatDto): Promise<SearchRequestDto> {
     if (typeof body?.message !== 'string' || !body.message.trim()) {
       throw new BadRequestException('متن درخواست الزامی است.');
     }
