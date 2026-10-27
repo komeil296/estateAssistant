@@ -315,7 +315,14 @@ export class AiService {
         result.requirements.hasView = mentionsSeaView ? true : null;
       }
 
-      // Deterministically extract a clear per-square-metre price from colloquial Persian.\n      // This value is in Toman here; the common conversion loop below changes it to Rial.\n      const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);\n      if (pricePerSqmToman !== null) {\n        result.budget.maxPricePerSqmRial = pricePerSqmToman;\n      }\n\n      const budgetFields = [
+      // Deterministically extract a clear per-square-metre price from colloquial Persian.
+      // This value is in Toman here; the common conversion loop below changes it to Rial.
+      const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);
+      if (pricePerSqmToman !== null) {
+        result.budget.maxPricePerSqmRial = pricePerSqmToman;
+      }
+
+      const budgetFields = [
         'maxTotalPriceRial',
         'maxPricePerSqmRial',
         'maxDepositRial',
