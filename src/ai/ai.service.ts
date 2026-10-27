@@ -494,6 +494,7 @@ export class AiService {
       if (
         explicitIntent !== 'exchange' &&
         result.propertyType == null &&
+        !hasAccommodationType &&
         !actionableMissing.includes('propertyType')
       ) {
         actionableMissing.push('propertyType');
