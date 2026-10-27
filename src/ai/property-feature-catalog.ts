@@ -56,6 +56,7 @@ export const ACCOMMODATION_FEATURE_CATALOG = [
       'rural_house',
       'mansion',
       'hotel',
+      'motel',
       'hostel',
     ],
     filterable: true,
@@ -346,7 +347,7 @@ export const ACCOMMODATION_FEATURE_CATALOG = [
     category: 'policies',
     label: 'پذیرش حیوان خانگی',
     valueType: 'boolean',
-    aliases: ['حیوان خانگی', 'پت فرندلی', 'اجازه ورود حیوان'],
+    aliases: ['حیوان خانگی', 'پت فرندلی', 'اجازه ورود حیوان', 'ورود حیوان خانگی مجاز', 'با حیوان خانگی', 'بدون حیوان خانگی'],
     filterable: true,
   },
   {
