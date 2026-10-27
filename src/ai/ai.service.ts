@@ -354,7 +354,8 @@ export class AiService {
       // check-out. Never ask the user for a date they have already implied.
       if (
         typeof result.stay.checkInDate === 'string' &&
-        /^\\d{4}-\\d{2}-\\d{2}$/.test(result.stay.checkInDate) &&
+        Number.isFinite(Date.parse(result.stay.checkInDate + 'T00:00:00Z')) &&
+        result.stay.checkInDate.length === 10 &&
         typeof result.stay.nights === 'number' &&
         Number.isInteger(result.stay.nights) &&
         result.stay.nights >= 0
@@ -370,7 +371,10 @@ export class AiService {
         result.stay.checkInDate != null &&
         result.stay.checkOutDate != null &&
         typeof result.clarificationQuestion === 'string' &&
-        /تاریخ\\s*(?:خروج|ورود)|(?:خروج|ورود)\\s*را\\s*مشخص/.test(result.clarificationQuestion)
+        (result.clarificationQuestion.includes('تاریخ خروج') ||
+          result.clarificationQuestion.includes('تاریخ ورود') ||
+          result.clarificationQuestion.includes('خروج را مشخص') ||
+          result.clarificationQuestion.includes('ورود را مشخص'))
       ) {
         result.clarificationQuestion = null;
       }
