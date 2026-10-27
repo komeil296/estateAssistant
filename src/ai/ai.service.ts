@@ -7,7 +7,7 @@ import {
   validateSearchRequest,
 } from './dto/search-request.dto';
 import { normalizeKnownLocation } from './location-catalog';
-import { resolveIntentFromMessage } from './intent-rules';
+import { resolveIntentFromMessage, resolveNightsFromMessage } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
 تو یک دستیار فارسی‌زبان برای جست‌وجوی خرید، فروش، اجاره و واگذاری املاک و اقامتگاه در ایران هستی.
@@ -192,6 +192,8 @@ export class AiService {
       if (!result.stay || typeof result.stay !== 'object' || Array.isArray(result.stay)) {
         result.stay = {};
       }
+      const resolvedNights = resolveNightsFromMessage(message);
+      if (resolvedNights !== null) result.stay.nights = resolvedNights;
       if (result.stay.nights === undefined) result.stay.nights = null;
       if (result.offeredPropertyType === undefined) result.offeredPropertyType = null;
       if (result.wantedPropertyType === undefined) result.wantedPropertyType = null;
