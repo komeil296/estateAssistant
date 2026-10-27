@@ -1,0 +1,4069 @@
+{
+  "datasetName": "North Coast Place Name Seed Dataset",
+  "version": "0.1.0",
+  "generatedAt": "2026-10-27",
+  "language": "fa",
+  "coverage": {
+    "province": "مازندران",
+    "cities": [
+      "رامسر",
+      "تنکابن",
+      "نشتارود",
+      "سلمان‌شهر (متل قو)"
+    ]
+  },
+  "purpose": "کمک به نرمال‌سازی مکان‌های ذکرشده در درخواست‌های جست‌وجوی ملک؛ این داده‌ها مرجع رسمی مرزبندی یا کاربری زمین نیستند.",
+  "usageNotes": [
+    "این نسخه، دیتاست بذر (seed) است؛ فهرست کامل و رسمی همه خیابان‌ها و کوچه‌ها نیست.",
+    "نام‌های برگرفته از آگهی ملکی یا فهرست‌های آنلاین ممکن است قدیمی، تکراری یا مربوط به محدوده پیرامونی باشند.",
+    "برای تشخیص دقیق خیابان/محله، از شهر و نام مکان به‌صورت هم‌زمان استفاده شود؛ نام‌های عمومی مثل بهار، ساحل و آزادی به‌تنهایی مبهم‌اند.",
+    "برای مختصات و پوشش معابر بهتر است داده‌های OpenStreetMap/منابع باز یا استعلام مکانی زمان اجرا استفاده شود.",
+    "داده‌های Google Maps/Places را نباید بدون بررسی شرایط مجوز به‌صورت یک دیتابیس دائمی و قابل‌صدور مجدد ذخیره کرد؛ برای Google Place ID و نتایج زنده تابع شرایط Google Maps Platform باشید.",
+    "وجود یک مکان در این فهرست هیچ چیزی درباره کاربری رسمی، مجوز ساخت یا وضعیت حقوقی ملک ثابت نمی‌کند."
+  ],
+  "cities": [
+    {
+      "name": "رامسر",
+      "aliases": [
+        "رامسر",
+        "سخت‌سر",
+        "سخت سر"
+      ],
+      "county": "رامسر",
+      "province": "مازندران"
+    },
+    {
+      "name": "تنکابن",
+      "aliases": [
+        "تنکابن",
+        "شهسوار",
+        "شهسواران"
+      ],
+      "county": "تنکابن",
+      "province": "مازندران"
+    },
+    {
+      "name": "نشتارود",
+      "aliases": [
+        "نشتارود",
+        "نشتا رود"
+      ],
+      "county": "تنکابن",
+      "province": "مازندران"
+    },
+    {
+      "name": "سلمان‌شهر",
+      "aliases": [
+        "سلمان‌شهر",
+        "سلمان شهر",
+        "سلمانشهر",
+        "متل قو",
+        "متل‌قو",
+        "موتل قو"
+      ],
+      "county": "عباس‌آباد",
+      "province": "مازندران"
+    }
+  ],
+  "sources": {
+    "existing_location_catalog": {
+      "url": "https://github.com/komeil296/estateAssistant/blob/main/src/ai/location-catalog.ts",
+      "label": "فهرست اولیه داخل مخزن پروژه"
+    },
+    "ramsar_municipal_notice": {
+      "url": "https://t.me/s/ramsar11",
+      "label": "اطلاعیه‌های روابط عمومی شهرداری رامسر"
+    },
+    "tonekabon_municipal_channel": {
+      "url": "https://t.me/s/shahrdari_tonekabon",
+      "label": "کانال شهرداری تنکابن"
+    },
+    "online_locality_index": {
+      "url": "https://shishdong.com/cities/detail/MotelghooSalmanshahr",
+      "label": "فهرست آنلاین محله‌ها و معابر؛ نیازمند تطبیق"
+    },
+    "property_listing_index": {
+      "url": "https://www.bamsara.com/search.php?category_id=55&city=63&os=27",
+      "label": "آگهی‌های ملکی؛ نام‌ها از نشانی آگهی‌ها، نه مرجع رسمی"
+    },
+    "local_community_channel": {
+      "url": "https://t.me/s/shahre_man_salmanshahr",
+      "label": "کانال محلی سلمان‌شهر"
+    }
+  },
+  "places": [
+    {
+      "name": "آبکله‌سر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "آبکله سر",
+        "آبکله‌سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آخوندمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اخوندمحله",
+        "آخوندمحله",
+        "آخوند محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آرود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "آرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آسیابانسرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "آسیابانسرا",
+        "آسیابان سرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آش‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "آش محله",
+        "آش‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آهک‌چال",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اهک چال",
+        "آهک چال",
+        "آهک‌چال"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "احمدسرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "احمدسرا",
+        "احمد سرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "استخرسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "استخرسر",
+        "استخر سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اسدآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اسدآباد",
+        "اسد آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اشکورمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اشکورمحله",
+        "اشکور محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اغوزکتی",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اغوزکتی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اغوزکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اغوزکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اقامقیم‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اقامقیم محله",
+        "اقامقیم‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اکبرآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "اکبرآباد",
+        "اکبر آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "الکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "الکله",
+        "آلکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "امامزاده قاسم",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "امامزاده قاسم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "امام‌زمین",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "امام زمین",
+        "امام‌زمین"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "امیرآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "امیرآباد",
+        "امیر آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "امین‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "امین آباد",
+        "امین‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "ایثارده",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "ایثارده"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بابولات",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بابولات"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بازارمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بازارمحله",
+        "بازار محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "باغ‌نظر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "باغ نظر",
+        "باغ‌نظر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بالااشتوج",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بالا اشتوج",
+        "بالااشتوج"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بالاشیرود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بالاشیرود",
+        "بالا شیرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "برامسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "برامسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "برسه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "برسه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بلوار ساحل طلایی",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "ساحل طلایی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "بندبن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بندبن",
+        "بند بن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بهکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "بهکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پایین‌اشتوج",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "پایین اشتوج",
+        "پایین‌اشتوج"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پایین‌شیرود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "پایین شیرود",
+        "پایین‌شیرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پرده‌سر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "پرده سر",
+        "پرده‌سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پل‌سرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "پل سرا",
+        "پل‌سرا",
+        "پلسرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پلهمدشت",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "پلهمدشت"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تازه‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تازه آباد",
+        "تازه‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تسکا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تسکا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تشکون",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تشکون"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تقی‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تقی آباد",
+        "تقی‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تلوسرک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تلوسرک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تلوسرمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تلوسرمحله",
+        "تلوسر محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تمشکل",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تمشکل"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تمی‌جانک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تمی جانک",
+        "تمی‌جانک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تنکابن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تنکابن",
+        "شهسوار",
+        "شهسواران"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تنگدشت",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تنگدشت"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "توبن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "توبن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تودارک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تودارک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "توساکتی",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "توساکتی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "توساکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "توساکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "توکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "توکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تیل‌پردسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "تیل پرده سر",
+        "تیل پردسر",
+        "تیل‌پرده‌سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "جاده دوهزار",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "جاده دوهزار",
+        "جاده دو هزار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چالدره",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چال دره",
+        "چالدره"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چالو",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چالو"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چرخچی‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چرخچی محله",
+        "چرخچی‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چرستان",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چرستان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چلاسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چلاسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چناربن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "چناربن",
+        "چنار بن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "حاتم‌سرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "حاتم سرا",
+        "حاتم‌سرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "حاجی‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "حاجی آباد",
+        "حاجی‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "حبیب‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "حبیب آباد",
+        "حبیب‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خانیان",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خانیان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خرماکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خرماکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خزرکنار",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خزرکنار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خشکبور",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خشکبور"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خشکرود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خشکرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خلخال‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "خلخال محله",
+        "خلخال‌محله",
+        "خلخال محله جدید",
+        "خلخال محله قدیم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خیابان تختی",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان جهان‌پهلوان تختی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان چشمه‌کیله شرقی",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "چشمه کیله شرقی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان چشمه‌کیله غربی",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "چشمه کیله غربی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان میرزای تنکابنی",
+      "city": "تنکابن",
+      "kind": "street_or_road",
+      "aliases": [
+        "میرزای تنکابنی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "داربار",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "داربار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "درازلات",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "درازلات"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "درجان",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "درجان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "درویش‌سرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "درویش سرا",
+        "درویش‌سرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دریاسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "دریاسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دهگاه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "دهگاه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دیزپشت",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "دیزپشت"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دینارسرا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "دینارسرا",
+        "دینار سرا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رستم‌پشته",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "رستم پشته",
+        "رستم‌پشته"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رضامحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "رضامحله",
+        "رضا محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رودپشت",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "رودپشت"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رودگرمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "رودگرمحله",
+        "رودگر محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "زوار",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "زوار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سرپل",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سرپل"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سرفقیه‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سرفقیه آباد",
+        "سرفقیه‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سفیدآب",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سفید آب",
+        "سفیدآب"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سلیم‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سلیم آباد",
+        "سلیم‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سلیمان‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سلیمان آباد",
+        "سلیمان‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سنگرمال",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سنگرمال"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سیاه‌بند",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سیاه بند",
+        "سیاه‌بند"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سیف‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "سیف محله",
+        "سیف‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شریف‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شریف آباد",
+        "شریف‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شمس‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شمس آباد",
+        "شمس‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شهرستانک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شهرستانک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شیرج‌محله بزرگ",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شیرج محله بزرگ",
+        "شیرج‌محله بزرگ"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شیرج‌محله کوچک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شیرج محله کوچک",
+        "شیرج‌محله کوچک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شیروان‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "شیروان محله",
+        "شیروان‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "صادق‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "صادق آباد",
+        "صادق‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "طالش‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "طالش محله",
+        "طالش‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "طاهرک‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "طاهرک محله",
+        "طاهرک‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "عبدالله‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "عبدالله آباد",
+        "عبدالله‌آباد",
+        "عبداله آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "عزیزآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "عزیزآباد",
+        "عزیز آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "عسل‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "عسل محله",
+        "عسل‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "علی‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "علی اباد",
+        "علی‌آباد",
+        "علی آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "عماریه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "عماریه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "فقیه‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "فقیه آباد",
+        "فقیه‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "فقیه‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "فقیه محله",
+        "فقیه‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "قلعه‌سر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "قلعه سر",
+        "قلعه‌سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "قلعه‌گردن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "قلعه گردن",
+        "قلعه‌گردن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کاردگرمحله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "کاردگرمحله",
+        "کاردگر محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کاظم‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "کاظم آباد",
+        "کاظم‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کبودکلایه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "کبودکلایه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کوچه ایرج",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "ایرج"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه بهار",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "بهار"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه بهارستان",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "بهارستان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه پامچال",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "پامچال"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه ساحل",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "ساحل"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه سروستان",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "سروستان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه شقایق دریایی",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "شقایق دریایی"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه شهید تندگویان",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "شهید تندگویان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه فرهنگ",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "فرهنگ"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه کانون صالحی",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "کانون صالحی ۱",
+        "کانون صالحی ۲"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه گل ارکیده",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "گل ارکیده"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه گل ختمی",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "گل ختمی ۱",
+        "گل ختمی ۲"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه لادن",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "لادن"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه مجتمع امپراتور",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "مجتمع امپراتور"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه مرجان",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "مرجان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه مروارید",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "مروارید"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه مهتاب",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "مهتاب"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه مهستان",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "مهستان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه میدان کریم‌آباد",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "میدان کریم آباد ۱",
+        "میدان کریم آباد ۲"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه نسترن",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "نسترن",
+        "کوچه نسترن سبزه میدان"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "کوچه یاسمن",
+      "city": "تنکابن",
+      "kind": "alley",
+      "aliases": [
+        "یاسمن"
+      ],
+      "sourceIds": [
+        "tonekabon_municipal_channel"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "گاوپل",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گاوپل"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گراکو",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گراکو"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گرماپشته",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گرماپشته"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گلستان‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گلستان محله",
+        "گلستان‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گلیجان",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گلیجان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گیل‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "گیل محله",
+        "گیل‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لات‌کنار",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لات کنار",
+        "لات‌کنار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لاکتراشان",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لاکتراشان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لپاسر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لپاسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لتاک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لتاک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لزربن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لزربن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لشتو",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لشتو"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لشگرک",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لشگرک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لوله‌ده",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لوله ده",
+        "لوله‌ده"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لیه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "لیه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازندران‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مازندران محله",
+        "مازندران‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازوبن سفلی",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مازوبن سفلی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازوبن علیا",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مازوبن علیا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازوچال",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مازوچال"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "محمدآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "محمدآباد",
+        "محمد آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مران",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مران"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مرکز شهر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مرکز شهر تنکابن",
+        "مرکز شهر شهسوار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مسلم‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مسلم آباد",
+        "مسلم‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "معلم‌کوه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "معلم کوه",
+        "معلم‌کوه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مکرود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مکرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "ملاحاجی‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "ملاحاجی محله",
+        "ملاحاجی‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "منصورآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "منصورآباد",
+        "منصور آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مهاجرآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مهاجر آباد",
+        "مهاجرآباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مهدی‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "مهدی آباد",
+        "مهدی‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "میان‌رود",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "میان رود",
+        "میان‌رود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "میانکوه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "میانکوه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نارنج‌داربن",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "نارنج داربن",
+        "نارنج‌داربن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نصیرآباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "نصیرآباد",
+        "نصیر آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نعمت‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "نعمت آباد",
+        "نعمت‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نورالدین‌محله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "نورالدین محله",
+        "نورالدین‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نیل‌کلایه",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "نیل کلایه",
+        "نیل‌کلایه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "هراتبر",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "هراتبر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "هلوکله",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "هلوکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "همت‌آباد",
+      "city": "تنکابن",
+      "kind": "locality",
+      "aliases": [
+        "همت آباد",
+        "همت‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آخوند‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "آخوند محله",
+        "آخوند‌محله",
+        "اخوندمحله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آزادی",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "آزادی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آسیابسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "آسیابسر",
+        "آسیاب سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "ابریشم‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "ابریشم محله",
+        "ابریشم‌محله",
+        "ابریشممحله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اربه‌کله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "اربه کله",
+        "اربه‌کله",
+        "اربهکله",
+        "اربه گله",
+        "اربه‌گله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "استل‌کنار",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "استل کنار",
+        "استل‌کنار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "اشکورات",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "اشکورات"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "باغ‌صفا",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "باغ صفا",
+        "باغ‌صفا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "باغ‌ملی",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "باغ ملی",
+        "باغ‌ملی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بریشی",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "بریشی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بلوار امام خمینی",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "بلوار امام خمینی",
+        "خیابان امام خمینی"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "بلوار شهید باهنر",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان شهید باهنر",
+        "بلوار باهنر"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "بلوار طالقانی",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان طالقانی",
+        "بلوار آیت‌الله طالقانی"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "بلوار معلم",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "بلوار معلم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog",
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "پایین‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "پایین محله",
+        "پایین‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پوده",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "پوده"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پیازکش",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "پیازکش"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تلارسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "تلارسر",
+        "تلار سر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "جنت‌رودبار",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "جنت رودبار",
+        "جنت‌رودبار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "جواهرده",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "جواهرده"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چالکرود",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "چالکرود",
+        "چال کرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "چهارباغ",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "چهار باغ",
+        "چهارباغ"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خانسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "خانسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خیابان شهدا",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان شهدا"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان شهید رزاقی",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان رزاقی",
+        "شهید رزاقی"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان شهید عباس مفرد",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان عباس مفرد",
+        "خیابان شهدای عباس مفرد"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان شهید مطهری",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان مطهری",
+        "بلوار مطهری"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان فردوسی",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان فردوسی"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان کشاورزی",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان کشاورزی"
+      ],
+      "sourceIds": [
+        "ramsar_municipal_notice"
+      ],
+      "confidence": "source-backed"
+    },
+    {
+      "name": "خیابان ولیعصر",
+      "city": "رامسر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان ولیعصر",
+        "ولی عصر"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "دالخانی",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "دالخانی",
+        "دال خانی",
+        "دال‌خانی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دریاپشته",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "دریاپشته",
+        "دریا پشته"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دشت‌جلم",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "دشت جلم",
+        "دشت‌جلم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دهکده ساحلی",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "دهکده ساحلی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دیسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "دیسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "راجوب",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "راجوب"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رامسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "رامسر",
+        "سخت سر",
+        "سخت‌سر",
+        "سختسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رضی‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "رضی محله",
+        "رضی‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رمک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "رمک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سادات‌شهر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "سادات شهر",
+        "سادات‌شهر",
+        "ساداتشهر",
+        "سادات محله",
+        "سادات‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سرلیماک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "سرلیماک",
+        "سر لیماک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سفیدتمشک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "سفیدتمشک",
+        "سفید تمشک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سنگ‌پشته",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "سنگ پشته",
+        "سنگ‌پشته"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سیاسان",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "سیاسان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شادمرادمحله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "شادمرادمحله",
+        "شاد مراد محله",
+        "شادمراد محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شاه‌منصورمحله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "شاه منصور محله",
+        "شاه‌منصورمحله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شیعه‌کلایه",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "شیعه کلایه",
+        "شیعه‌کلایه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "طالش‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "طالش محله",
+        "طالش‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "طالش‌محله کتالم",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "طالش محله کتالم",
+        "طالش‌محله کتالم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "قلعه‌گردن",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "قلعه گردن",
+        "قلعه‌گردن"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کتالم",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "کتالم",
+        "کتالم و سادات شهر",
+        "کتالم و سادات‌شهر",
+        "گتل لم",
+        "گَتِ لَم"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کردمحله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "کردمحله",
+        "کرد محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کندسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "کندسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کوزه‌گرمحله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "کوزه گر محله",
+        "کوزه‌گرمحله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گاورمک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "گاورمک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "گاولیماک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "گاولیماک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لات‌محله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لات محله",
+        "لات‌محله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لپاسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لپاسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لپاسرک",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لپاسرک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لتر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لتر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لوسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لوسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "لیدو",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "لیدو"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازوباغسر",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "مازوباغسر",
+        "مازو باغسر",
+        "مازو‌باغسر"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مشاکلایه",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "مشاکلایه",
+        "مشاءکلايه",
+        "مشا کلايه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "میانحاله",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "میانحاله",
+        "میان حاله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "میان‌لات",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "میان لات",
+        "میان‌لات"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نارنج‌باغ",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "نارنج باغ",
+        "نارنج‌باغ"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نی‌استه",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "نیاسه",
+        "نیاسته",
+        "نی‌استه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نیاوران",
+      "city": "رامسر",
+      "kind": "locality",
+      "aliases": [
+        "نیاوران"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "آزادگان",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "شهرک آزادگان"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "اسبچین",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "اسب چین",
+        "اسب‌چین"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "امیردشت",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "امیردشت",
+        "امیر دشت"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بلوار تختی",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "تختی"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "بلوار مطهری",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "بلوار شهید مطهری",
+        "مطهری"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "تیلاکنار",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "تیلا کنار"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "جیسا",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "جیسا",
+        "جیسای سلمان‌شهر"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان آرا",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "آرا",
+        "کوی آرا"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان امام خمینی",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "امام خمینی"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان توسکا",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "توسکا"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان دریاگوشه",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "دریا گوشه",
+        "دریاگوشه"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان شالیزار",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "شالیزار"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان طالقانی",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "آیت الله طالقانی",
+        "آیت‌الله طالقانی"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان گل",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "خیابان گل"
+      ],
+      "sourceIds": [
+        "local_community_channel"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان هتل قدیم",
+      "city": "سلمان‌شهر",
+      "kind": "street_or_road",
+      "aliases": [
+        "هتل قدیمی",
+        "هتل قدیم"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "دانیال",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "غار دانیال",
+        "دانیال",
+        "روستای دانیال"
+      ],
+      "sourceIds": [
+        "existing_location_catalog",
+        "local_community_channel"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "دریاگوشه",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "دریا گوشه",
+        "شهرک دریاگوشه"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "ساقی‌کلایه",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "ساقی کلایه",
+        "ساقی‌کلایه"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سلامت‌سرا",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "سلامت سرا"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "سلمان‌شهر",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "سلمان شهر",
+        "سلمان‌شهر",
+        "سلمانشهر",
+        "متل قو",
+        "متل‌قو",
+        "موتل قو",
+        "موتل‌قو",
+        "ساقی‌کلایه",
+        "ساقی کلایه",
+        "دریاگوشه",
+        "دریا گوشه",
+        "جمشیدآباد",
+        "جمشید آباد",
+        "خرک‌آبرود",
+        "خرک آبرود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شمس‌آباد",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "شمس آباد"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک الهیه",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "الهیه"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک امیردشت",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "امیردشت"
+      ],
+      "sourceIds": [
+        "local_community_channel"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک پالم",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "پالم"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک توسکا",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "توسکا"
+      ],
+      "sourceIds": [
+        "online_locality_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک شقایق",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "شقایق"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک شیرین",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "دهکده شیرین",
+        "شیرین"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "شهرک صنعتی سلمان‌شهر",
+      "city": "سلمان‌شهر",
+      "kind": "locality",
+      "aliases": [
+        "شهرک صنعتی"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "کلارآباد",
+      "city": "کلارآباد",
+      "kind": "locality",
+      "aliases": [
+        "کلارآباد",
+        "کلار آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "باغ‌ملی",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "باغ ملی نشتارود",
+        "باغ‌ملی نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "بندبن",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "بندبن نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پلت‌کله",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "پلت کله",
+        "پلت‌کله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پلسرا",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "پلسرا نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "پلنگ‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "پلنگ آباد",
+        "پلنگ‌آباد"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "تمشکل",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "تمشکل نشتارود",
+        "تمشکل"
+      ],
+      "sourceIds": [
+        "existing_location_catalog",
+        "property_listing_index"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "توبن",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "توبن"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "چالو",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "چالو نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "خشکداران",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "خشکداران"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان ۱۵ خرداد",
+      "city": "نشتارود",
+      "kind": "street_or_road",
+      "aliases": [
+        "۱۵خرداد",
+        "پانزده خرداد"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان ۱۷ شهریور",
+      "city": "نشتارود",
+      "kind": "street_or_road",
+      "aliases": [
+        "۱۷شهریور",
+        "هفده شهریور"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان خشکداران",
+      "city": "نشتارود",
+      "kind": "street_or_road",
+      "aliases": [
+        "خشکداران"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "خیابان گاز شرقی",
+      "city": "نشتارود",
+      "kind": "street_or_road",
+      "aliases": [
+        "گاز شرقی"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "دینارسرا",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "دینارسرا نشتارود",
+        "دینارسرای نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رودپشت",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "رودپشت نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "رودگر",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "رودگرمحله",
+        "رودگر محله"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "زوار",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "زوار نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "ستاره خزر",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "شهرک ستاره خزر"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "سربود",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "سربود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سرفقیه‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "سرفقیه آباد نشتارود",
+        "سرفقیه‌آباد نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "سفیدآب‌جوکندان",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "سفیدآب جوکندان",
+        "سفیدآب‌جوکندان"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شالیزارک",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "شالیزارک"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "شمس‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "شمس آباد نشتارود",
+        "شمس‌آباد نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "عبدالله‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "عبدالله آباد نشتارود",
+        "هنگو"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "علی‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "علی آباد نشتارود",
+        "علی‌آباد نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "فقیه‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "فقیه آباد نشتارود",
+        "فقیه‌آباد نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کاظم‌آباد",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کاظم آباد نشتارود",
+        "پلنگ آباد سفلی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کپورکله",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کپور کله",
+        "کپورکله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کترا",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کترا"
+      ],
+      "sourceIds": [
+        "existing_location_catalog",
+        "property_listing_index"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کرات‌کوتی",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کراتکوتی",
+        "کرات‌کوتی"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کلنگه",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کلنگه نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کوتی‌بازار",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "کوتی بازار",
+        "کوتی‌بازار"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "کوچه میرچی",
+      "city": "نشتارود",
+      "kind": "alley",
+      "aliases": [
+        "میرچی"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "کوچه وحدت",
+      "city": "نشتارود",
+      "kind": "alley",
+      "aliases": [
+        "وحدت"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "کوچه ولیعصر",
+      "city": "نشتارود",
+      "kind": "alley",
+      "aliases": [
+        "ولیعصر",
+        "ولی عصر"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "مازوبن سفلی",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "مازوبن سفلی نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مازوبن علیا",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "مازوبن علیا نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "مکارود",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "مکارود"
+      ],
+      "sourceIds": [
+        "property_listing_index"
+      ],
+      "confidence": "needs-verification"
+    },
+    {
+      "name": "ملاحاجی",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "ملاحاجی نشتارود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نشتارود",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "نشتارود",
+        "نشتا رود",
+        "نشتا‌رود"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "نشتارودمحله",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "نشتارود محله",
+        "نشتارودمحله"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    },
+    {
+      "name": "همرودبن",
+      "city": "نشتارود",
+      "kind": "locality",
+      "aliases": [
+        "همرودبن",
+        "کرسمال"
+      ],
+      "sourceIds": [
+        "existing_location_catalog"
+      ],
+      "confidence": "seed"
+    }
+  ]
+}
