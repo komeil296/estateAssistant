@@ -217,6 +217,16 @@ export class DivarSearchService {
     }
 
     for (const feature of request.features ?? []) {
+      if (feature.id === 'view.types' && Array.isArray(feature.value)) {
+        const terms = feature.value.flatMap((item) => {
+          if (item === 'sea') return ['ویو دریا', 'ویوی دریا', 'چشم انداز دریا', 'دید دریا'];
+          if (item === 'mountain') return ['ویو کوه', 'ویوی کوه', 'چشم انداز کوه', 'دید کوه'];
+          if (item === 'forest') return ['ویو جنگل', 'ویوی جنگل', 'چشم انداز جنگل', 'دید جنگل'];
+          return [];
+        });
+        if (terms.length) addTextGroup(terms);
+        continue;
+      }
       const column = FEATURE_COLUMNS[feature.id];
       const value = boolValue(feature.value);
       if (column && value !== null) {
@@ -228,13 +238,36 @@ export class DivarSearchService {
       }
     }
 
+    if (request.requirements.hasView === true &&
+        request.requirements.hasSeaView !== true &&
+        request.requirements.hasMountainView !== true &&
+        !request.features.some((feature) => feature.id === 'view.types')) {
+      addTextGroup(['ویو', 'ویوی', 'چشم انداز', 'چشم‌انداز', 'مشرف به']);
+    }
+
+    if (request.requirements.landUse) {
+      const landUseTerms: Record<string, string[]> = {
+        residential: ['مسکونی'],
+        agricultural: ['کشاورزی', 'زراعی', 'باغی'],
+        commercial: ['تجاری', 'مغازه'],
+        construction: ['ساخت', 'پروانه ساخت', 'قابل ساخت'],
+      };
+      const terms = landUseTerms[request.requirements.landUse];
+      if (terms) addTextGroup(terms);
+    }
+
     const where = conditions.join(' AND ');
     const count = db.prepare('SELECT COUNT(*) AS total FROM divar_ads WHERE ' + where).get(...parameters) as { total: number };
     const rows = db.prepare(
       'SELECT source_row, cat2_slug, cat3_slug, city_slug, neighborhood_slug, created_at_month, user_type, title, description, rent_mode, rent_type, price_mode, credit_mode, deed_type, rooms_count, property_type, land_size, building_size, price_value, rent_value, credit_value, has_parking, has_pool, has_jacuzzi, has_elevator, has_warehouse, has_balcony, has_sauna, has_barbecue, regular_person_capacity, rent_price_on_regular_days, rent_price_on_special_days, rent_price_at_weekends, location_latitude, location_longitude FROM divar_ads WHERE ' + where + ' ORDER BY created_at_month DESC, source_row DESC LIMIT 20',
     ).all(...parameters) as unknown as DivarRow[];
 
+    const reply = count.total === 0
+      ? 'با شرط‌های فعلی در دیتاست تاریخی دیوار موردی پیدا نشد. ممکن است بعضی فیلدها در آگهی‌ها ثبت نشده باشند یا این نمونهٔ تاریخی آگهی مناسب نداشته باشد.'
+      : 'با شرط‌های فعلی ' + count.total.toLocaleString('fa-IR') + ' آگهی در دیتاست تاریخی پیدا شد؛ ' + rows.length.toLocaleString('fa-IR') + ' مورد اول برگردانده شده است.';
+
     return {
+      reply,
       parsedRequest: request,
       totalMatches: count.total,
       returned: rows.length,
