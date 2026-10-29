@@ -45,7 +45,7 @@ propertyType: land, apartment, villa, house، یا null
 offeredPropertyType: land, apartment, villa، یا null
 wantedPropertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
-documentType: six_dang, three_dang, official, end_user, other, unknown، یا null
+documentType: six_dang, three_dang, single_page, official, end_user, other, unknown، یا null
 فیلدهای دامنه‌ای requirements: isInTownship، hasMountainView، hasSeaView، viewProtectionClaim، deedEra.
 ویژگی‌های اقامتگاه را در features به‌صورت آرایه‌ای از اشیای {id,value} استخراج کن. شناسه‌ها باید از فرهنگ استاندارد باشند؛ ویژگی‌هایی که کاربر صریحاً نخواسته را اضافه نکن و از نوع اقامتگاه امکانات را حدس نزن. مثال شناسه‌ها: amenity.pool، amenity.jacuzzi، food.breakfast.price، bathroom.types، connectivity.wifi، amenity.parking، view.types، accommodation.type. مقادیر چندگزینه‌ای باید آرایه رشته‌ای با مقادیر استاندارد باشند. اگر ویژگی مشخصی گفته نشده، در features قرار نده.
 «زمین/ویلای شهرکی» یعنی isInTownship=true. «ویو ابدی» یعنی viewProtectionClaim=true و فقط ادعای آگهی درباره حفظ چشم‌انداز است، نه تضمین حقوقی. «دید یا ویوی کوه» یعنی hasMountainView=true؛ «دید یا ویوی دریا» یعنی hasSeaView=true. «سند شاهنشاهی» یعنی deedEra=pre_revolution؛ این عبارت به‌تنهایی اعتبار حقوقی سند را ثابت نمی‌کند. اگر اشاره نشده، null بگذار.
@@ -174,6 +174,7 @@ export class AiService {
       const allowedDocumentTypes = [
         'six_dang',
         'three_dang',
+        'single_page',
         'official',
         'end_user',
         'other',
@@ -576,6 +577,17 @@ export class AiService {
       const propertyTerms = resolvePropertyTermsFromMessage(message);
       Object.assign(result.requirements, propertyTerms);
 
+      // "Single-page deed" is not the same as a three-dang deed.
+      if (/سند\s*تک\s*برگ|تک\s*برگ\s*(?:سند)?/.test(message)) {
+        result.requirements.documentType = 'single_page';
+      }
+      // A negative requirement must not be stored as a positive agricultural-use filter.
+      if (/(?:کاربری\s*کشاورزی|کشاورزی).{0,12}(?:نباشه|نباشد|نمی\s*خوام|نمی\s*خواهم|نبودن)/.test(
+        message.replace(/[ي]/g, 'ی').replace(/[ك]/g, 'ک').replace(/‌/g, ' '),
+      )) {
+        result.requirements.landUse = null;
+      }
+
       // Use deterministic property type extraction when the model leaves a single explicit type blank.
       // Exchange is excluded because its offered and wanted property types are handled separately.
       if (explicitIntent !== 'exchange' && result.propertyType == null) {
@@ -630,6 +642,12 @@ export class AiService {
           result.budget.maxRentNightlyRial = rentalBudget.amountToman;
         } else {
           result.budget.maxRentMonthlyRial = rentalBudget.amountToman;
+        }
+        if (
+          (intentResolution.intent === 'rent' || intentResolution.intent === 'lease_out') &&
+          !/(?:قیمت\s*(?:کل|فروش)|قیمت\s*ملک|ارزش\s*کل|جمعاً|می\s*فروشم)/.test(message)
+        ) {
+          result.budget.maxTotalPriceRial = null;
         }
       }
 
