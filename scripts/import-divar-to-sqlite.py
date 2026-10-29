@@ -103,6 +103,7 @@ def import_csv(csv_path: Path, database_path: Path, replace: bool) -> int:
     temporary_path.parent.mkdir(parents=True, exist_ok=True)
 
     imported = 0
+    db: sqlite3.Connection | None = None
     try:
         with csv_path.open("r", encoding="utf-8-sig", newline="") as source:
             reader = csv.DictReader(source)
@@ -163,11 +164,22 @@ def import_csv(csv_path: Path, database_path: Path, replace: bool) -> int:
                 db.execute("ANALYZE")
                 db.commit()
 
+            # Close SQLite connection before replacing the file; required on Windows.
+            db.close()
+            db = None
+
         if database_path.exists():
             database_path.unlink()
         os.replace(temporary_path, database_path)
     except Exception:
-        temporary_path.unlink(missing_ok=True)
+        # Release SQLite's file handle before attempting cleanup on Windows.
+        if db is not None:
+            db.close()
+            db = None
+        try:
+            temporary_path.unlink(missing_ok=True)
+        except PermissionError:
+            print(f"Could not remove locked temporary database: {temporary_path}", file=sys.stderr)
         raise
 
     print(f"\nImported rows: {imported:,}")
