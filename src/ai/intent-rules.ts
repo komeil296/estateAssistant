@@ -311,7 +311,7 @@ export function resolveNightsFromMessage(message: string): number | null {
 /** Resolve a single explicit property type from colloquial Persian. */
 export function resolvePropertyTypeFromMessage(
   message: string,
-): 'land' | 'apartment' | 'villa' | null {
+): 'land' | 'apartment' | 'villa' | 'house' | null {
   const text = normalizePersianText(message);
 
   // In a land-for-construction request, the searched property is the land, not the future villa.
