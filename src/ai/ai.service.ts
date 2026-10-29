@@ -29,11 +29,17 @@ const REAL_ESTATE_SYSTEM_PROMPT = `
 - فقط فارسی روان، طبیعی و ساده بنویس. از واژه‌های نامأنوس و ترجمه‌های تحت‌اللفظی پرهیز کن.
 - منظور کاربر را دقیق رعایت کن: «دریا» با «دریاچه» فرق دارد؛ این دو را جایگزین هم نکن.
 - پاسخ را کوتاه و کاربردی نگه دار. معمولاً ۲ تا ۴ جمله کافی است.
-- اطلاعاتی را که کاربر گفته دوباره نپرس.
+- تاریخچه گفتگو را بخوان و اطلاعات قبلی را تا وقتی کاربر اصلاح نکرده حفظ کن.
+- در پیام‌های پیگیری، فقط همان شرطی را تغییر بده که کاربر تغییر داده است؛ بقیه شرط‌ها را حفظ کن.
+- اطلاعاتی را که کاربر گفته دوباره نپرس و اگر چیزی مبهم است، آن را از واقعیت قطعی جدا کن.
 - فقط مهم‌ترین اطلاعاتِ هنوز نامشخص را بپرس؛ در هر نوبت حداکثر دو سؤال.
 - برای اجاره کوتاه‌مدت معمولاً مقصد، تاریخ ورود و خروج، تعداد نفرات و بودجه مهم‌اند.
-- ادعا نکن که اقامتگاه واقعی پیدا کرده‌ای، موجودی را بررسی کرده‌ای یا رزرو انجام داده‌ای، مگر ابزار مربوطه واقعاً این کار را انجام داده باشد.
-- هیچ‌وقت درباره امکانات، قیمت یا موجودی یک اقامتگاه مشخص حدس نزن.
+- اگر کاربر می‌گوید «ارزون‌تر»، «بزرگ‌تر»، «همون ولی نزدیک‌تر» یا عبارتی مشابه، آن را با توجه به درخواست‌های قبلی تفسیر کن.
+- اگر کاربر فقط نوع ملک یا ویژگی‌ها را می‌گوید، بدون شواهد قصد خرید/فروش/اجاره را قطعی فرض نکن.
+- ادعا نکن که آگهی واقعی پیدا کرده‌ای، موجودی را بررسی کرده‌ای یا رزرو انجام داده‌ای، مگر ابزار مربوطه واقعاً این کار را انجام داده باشد.
+- هیچ‌وقت درباره امکانات، قیمت، آدرس یا موجودی یک ملک مشخص حدس نزن. اگر جست‌وجوی واقعی به داده‌ها متصل نیست، شفاف بگو که هنوز نتیجه زنده در اختیار نداری.
+- اگر درخواست شامل چند شرط است، آن‌ها را دقیق و بدون حذف یا جابه‌جایی بودجه، شهر، نوع معامله، متراژ و امکانات بازگو کن.
+- پاسخ طبیعی و مفید بده؛ کوتاه بودن مهم است اما از پاسخ مبهم و بی‌خاصیت پرهیز کن.
 `.trim();
 
 const SEARCH_EXTRACTION_PROMPT = `
@@ -99,9 +105,29 @@ intent را با توجه به کل جمله، نقش مشتری و قواعد �
 
 @Injectable()
 export class AiService {
-  async chat(message: string) {
+  async chat(
+    message: string,
+    history: Array<{ role: 'user' | 'assistant'; content: string }> = [],
+  ) {
+    // Keep a small, bounded conversational window for local models with limited context.
+    // The client cannot inject a system role through history.
+    const recentHistory = (Array.isArray(history) ? history : [])
+      .filter(
+        (item) =>
+          item &&
+          (item.role === 'user' || item.role === 'assistant') &&
+          typeof item.content === 'string' &&
+          item.content.trim().length > 0,
+      )
+      .slice(-8)
+      .map((item) => ({
+        role: item.role,
+        content: item.content.trim().slice(-1200),
+      }));
+
     const data = await this.callOllama([
       { role: 'system', content: REAL_ESTATE_SYSTEM_PROMPT },
+      ...recentHistory,
       { role: 'user', content: message },
     ]);
 
@@ -721,7 +747,7 @@ export class AiService {
   }
 
   private async callOllama(
-    messages: Array<{ role: 'system' | 'user'; content: string }>,
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     jsonFormat = false,
   ): Promise<{ message?: { content?: string } }> {
     let response: Response;
