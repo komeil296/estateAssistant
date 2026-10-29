@@ -233,6 +233,23 @@ export class AiService {
           : null;
       const rawCheckInDate = rawStay.checkInDate;
       const rawCheckOutDate = rawStay.checkOutDate;
+      const modelFeatures = Array.isArray(parsedRecord.features)
+        ? parsedRecord.features.flatMap((item) => {
+            const feature = asRecord(item);
+            const value = feature.value;
+            if (
+              typeof feature.id !== 'string' ||
+              !feature.id.trim() ||
+              (typeof value !== 'string' &&
+                typeof value !== 'boolean' &&
+                !(typeof value === 'number' && Number.isFinite(value)) &&
+                !(Array.isArray(value) && value.every((entry) => typeof entry === 'string')))
+            ) {
+              return [];
+            }
+            return [{ id: feature.id, value: value as string | boolean | number | string[] }];
+          })
+        : [];
       const result = {
         ...parsedRecord,
         intent: nullableIntent(parsedRecord.intent),
@@ -270,7 +287,7 @@ export class AiService {
           viewProtectionClaim: nullableBoolean(rawRequirements.viewProtectionClaim),
           deedEra: nullableDeedEra(rawRequirements.deedEra),
         },
-        features: [] as Array<{ id: string; value: string | boolean | number | string[] }>,
+        features: (history.length > 0 ? modelFeatures : []) as Array<{ id: string; value: string | boolean | number | string[] }>,
         stay: {
           checkInDate:
             typeof rawCheckInDate === 'string' &&
@@ -326,9 +343,16 @@ export class AiService {
         result.location.city = null;
       }
 
-      // Use deterministic feature extraction so explicit user preferences are not lost
-      // when the local model omits or mislabels the features array.
-      result.features = resolveAccommodationFeaturesFromMessage(message);
+      // Deterministic extraction wins for features explicitly mentioned in the current
+      // message; model-extracted features can carry constraints from earlier turns.
+      const explicitFeatures = resolveAccommodationFeaturesFromMessage(message);
+      if (history.length === 0) {
+        result.features = explicitFeatures;
+      } else {
+        const mergedFeatures = new Map(result.features.map((feature) => [feature.id, feature]));
+        for (const feature of explicitFeatures) mergedFeatures.set(feature.id, feature);
+        result.features = [...mergedFeatures.values()];
+      }
 
       // A specific lodging category (e.g. swiss_cottage or hotel) is not an apartment.
       // Prefer a broad property type only when the user's wording explicitly supports it.
