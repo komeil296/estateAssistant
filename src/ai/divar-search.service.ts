@@ -179,7 +179,7 @@ export class DivarSearchService {
       }
     } else if (intent === 'rent' || intent === 'lease_out') {
       if (request.rentalMode === 'short_term' && budget.maxRentNightlyRial !== null) {
-        conditions.push("COALESCE(NULLIF(rent_price_on_special_days, 0), NULLIF(rent_price_at_weekends, 0), NULLIF(rent_price_on_regular_days, 0), NULLIF(rent_value, 0)) <= ?");
+        conditions.push("MAX(COALESCE(rent_price_on_special_days, 0), COALESCE(rent_price_at_weekends, 0), COALESCE(rent_price_on_regular_days, 0), COALESCE(rent_value, 0)) > 0 AND MAX(COALESCE(rent_price_on_special_days, 0), COALESCE(rent_price_at_weekends, 0), COALESCE(rent_price_on_regular_days, 0), COALESCE(rent_value, 0)) <= ?");
         parameters.push(budget.maxRentNightlyRial / 10);
       } else if (budget.maxRentMonthlyRial !== null) {
         conditions.push('rent_value > 0 AND rent_value <= ?');
@@ -309,7 +309,7 @@ export class DivarSearchService {
         matchNotes: [
           ...(request.location.city ? ['شهر بر اساس شناسهٔ شهر یا متن آگهی تطبیق داده شده است.'] : []),
           ...(request.requirements.nearSea === true ? ['نزدیکی به دریا فقط از اشارهٔ متنی آگهی تشخیص داده شده؛ فاصلهٔ جغرافیایی اندازه‌گیری نشده است.'] : []),
-          ...(request.features.some((feature) => !FEATURE_COLUMNS[feature.id] && !FEATURE_TEXT_TERMS[feature.id]) ? ['برخی ویژگی‌های درخواستی در این نسخه فیلتر دقیق ندارند.'] : []),
+          ...(request.features.some((feature) => !FEATURE_COLUMNS[feature.id] && !FEATURE_TEXT_TERMS[feature.id] && feature.id !== 'view.types') ? ['برخی ویژگی‌های درخواستی در این نسخه فیلتر دقیق ندارند.'] : []),
         ],
       })),
     };
