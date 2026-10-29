@@ -696,7 +696,8 @@ export class AiService {
           .toLowerCase();
 
         const mentionsNearSea =
-          /نزدیک\s*(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /نزدیک\s*(?:تر\s*)?(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /نزدیکی\s*(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
           /(?:پیاده|با\s*پیاده)\s*(?:تا|به)\s*(?:دریا|ساحل)/.test(normalizedMessage) ||
           /فاصله\s*(?:تا|از)\s*(?:دریا|ساحل)/.test(normalizedMessage);
 
