@@ -54,6 +54,41 @@ describe('DivarSearchService', () => {
     rmSync(folder, { recursive: true, force: true });
   });
 
+  it('does not return a mixed-category result when transaction intent is unknown', async () => {
+    const request: SearchRequestDto = {
+      intent: null,
+      propertyType: 'villa',
+      offeredPropertyType: null,
+      wantedPropertyType: null,
+      rentalMode: null,
+      location: { province: null, city: null, neighborhood: null, street: null },
+      area: { targetSqm: null, minSqm: null, maxSqm: null },
+      budget: {
+        maxTotalPriceRial: 50000000000,
+        maxPricePerSqmRial: null,
+        maxDepositRial: null,
+        maxRentMonthlyRial: null,
+        maxRentNightlyRial: null,
+      },
+      requirements: {
+        bedrooms: null, documentType: null, landUse: null, nearSea: null,
+        hasView: null, isInTownship: null, hasMountainView: null,
+        hasSeaView: null, viewProtectionClaim: null, deedEra: null,
+      },
+      stay: { checkInDate: null, checkOutDate: null, guests: null, nights: null },
+      features: [],
+      missingInformation: ['intent'],
+      clarificationQuestion: 'قصد خرید، فروش یا اجاره دارید؟',
+    };
+
+    const result = await service.search(request);
+
+    expect(result.requiresClarification).toBe(true);
+    expect(result.reply).toContain('قصد خرید');
+    expect(result.totalMatches).toBe(0);
+    expect(result.listings).toEqual([]);
+  });
+
   it('filters real source rows by sale intent, property type, city and total budget', async () => {
     const request: SearchRequestDto = {
       intent: 'buy',
