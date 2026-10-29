@@ -324,6 +324,18 @@ export class AiService {
       const explicitIntent = intentResolution.intent ?? (landConstructionRequest ? 'buy' : null);
       result.intent = explicitIntent;
 
+      // If sale is primary and exchange is only an alternative, the first property
+      // type mentioned before the exchange clause is the property being sold.
+      if (
+        explicitIntent === 'sell' &&
+        /(?:تهاتر|معاوضه)/.test(message) &&
+        result.propertyType === null
+      ) {
+        const primaryListingText = message.split(/تهاتر|معاوضه/)[0];
+        const primaryType = resolvePropertyTypeFromMessage(primaryListingText);
+        if (primaryType !== null) result.propertyType = primaryType;
+      }
+
       // Offered/wanted property types describe an exchange only. Never trust the
       // model to populate these fields for ordinary purchase, sale, or rental requests.
       if (explicitIntent !== 'exchange') {
