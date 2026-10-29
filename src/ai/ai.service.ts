@@ -44,6 +44,7 @@ const REAL_ESTATE_SYSTEM_PROMPT = `
 
 const SEARCH_EXTRACTION_PROMPT = `
 درخواست مشتری را به یک شیء JSON مطابق ساختار زیر تبدیل کن. فقط JSON معتبر برگردان.
+اگر تاریخچهٔ گفتگو داده شده، درخواست جاری را در ادامهٔ همان گفتگو تفسیر کن و شرط‌های قبلی را که کاربر تغییر نداده حفظ کن؛ شرطی را که کاربر صریحاً اصلاح کرده با مقدار جدید جایگزین کن.
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
 intent: buy, sell, rent, lease_out, exchange، یا null
@@ -136,10 +137,25 @@ export class AiService {
     };
   }
 
-  async parseSearchRequest(message: string): Promise<SearchRequestDto> {
+  async parseSearchRequest(
+    message: string,
+    history: Array<{ role: 'user' | 'assistant'; content: string }> = [],
+  ): Promise<SearchRequestDto> {
+    const recentHistory = (Array.isArray(history) ? history : [])
+      .filter(
+        (item) =>
+          item &&
+          (item.role === 'user' || item.role === 'assistant') &&
+          typeof item.content === 'string' &&
+          item.content.trim().length > 0,
+      )
+      .slice(-8)
+      .map((item) => ({ role: item.role, content: item.content.trim().slice(-1200) }));
+
     const data = await this.callOllama(
       [
         { role: 'system', content: SEARCH_EXTRACTION_PROMPT },
+        ...recentHistory,
         { role: 'user', content: message },
       ],
       true,
