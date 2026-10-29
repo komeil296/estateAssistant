@@ -30,8 +30,8 @@ function normalizePersianText(value: string): string {
  */
 export function resolveIntentFromMessage(message: string): IntentResolution {
   const text = normalizePersianText(message);
-  const ownsProperty = /(?:\bمن\s+)?(?:ملک|ویلا|زمین|آپارتمان|خونه|خانه|مغازه)?\s*(?:رو|را)?\s*دارم\b/.test(text)
-    || /(?:ویلا|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\s+دارم/.test(text)
+  const ownsProperty = /(?:من\s+)?(?:ملک|ویلا|ویلای|زمین|آپارتمان|خونه|خانه|مغازه)?\s*(?:رو|را)?\s*دارم/.test(text)
+    || /(?:ویلا|ویلای|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\s+دارم/.test(text)
     || /دارم\s+(?:که\s+)?(?:می ?خوام|می ?خواهم)/.test(text);
 
   const mentionsNightlyPrice = /(?:شبی|هر\s*شب|شبانه)/.test(text);
@@ -41,7 +41,13 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
 
   const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش)/.test(text);
   const exchangeMention = /(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text);
-  if (exchangeMention && !explicitSale) {
+
+  // A clearly stated sale is the primary intent even when the user says
+  // they may also consider an exchange. Do this before the exchange shortcut.
+  if (explicitSale) {
+    return { intent: 'sell', rentalMode: null };
+  }
+  if (exchangeMention) {
     return { intent: 'exchange', rentalMode: null };
   }
 
