@@ -4,6 +4,7 @@ import {
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
+  resolveDepositBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
   resolvePropertyTypeFromMessage,
 } from './intent-rules';
@@ -49,6 +50,9 @@ describe('resolvePricePerSqmTomanFromMessage', () => {
     ['زمین متری 2 میلیارد', 2_000_000_000],
     ['زمین دارم، متری یک و نیم میلیارد', 1_500_000_000],
     ['زمین دارم', null],
+    ['یه آپارتمان ۱۲۰ متری دارم، برای فروش', null],
+    ['یه آپارتمان ۱۰۰ متری برای فروش دارم', null],
+    ['زمین دارم، متری ۲۰ تومن', 20_000_000],
   ])('%s', (message, expected) => {
     expect(resolvePricePerSqmTomanFromMessage(message)).toBe(expected);
   });
@@ -78,8 +82,19 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
 });
 
 
+describe('resolveDepositBudgetTomanFromMessage', () => {
+  it.each([
+    ['یه آپارتمان دارم، رهن کامل ۲ میلیارد تومن', 2_000_000_000],
+    ['رهن ۵۰۰ میلیون تومان، ماهی ۱۵ میلیون اجاره', 500_000_000],
+    ['رهن کامل ۲', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolveDepositBudgetTomanFromMessage(message)).toBe(expected);
+  });
+});
+
 describe('resolvePropertyTypeFromMessage', () => {
   it.each([
+    ['یه خونه تو تنکابن می‌خوام', 'house'],
     ['یه زمین دارم، متری ۲۰ میلیون', 'land'],
     ['زمین دارم، متری ۲ میلیارد', 'land'],
     ['ویلای من رو برای تعطیلات نوروز شبی ۱۰ میلیون اجاره بده', 'villa'],
