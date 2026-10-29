@@ -90,6 +90,27 @@ describe('AiService', () => {
     expect(result.intent).toBe('lease_out');
   });
 
+  it('does not treat a negative agricultural-use condition as a positive filter', async () => {
+    const modelOutput = {
+      intent: 'buy',
+      propertyType: 'land',
+      location: { province: null, city: null, neighborhood: null },
+      requirements: { landUse: 'agricultural', documentType: 'three_dang' },
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('زمین می‌خوام که سند تک‌برگ داشته باشه و کاربری کشاورزی نباشه');
+
+    expect(result.requirements.landUse).toBeNull();
+    expect(result.requirements.documentType).toBe('single_page');
+  });
+
   it('does not invent a seven-night stay for the phrase آخر هفته', async () => {
     const modelOutput = {
       intent: null,
