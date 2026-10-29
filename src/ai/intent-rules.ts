@@ -30,9 +30,9 @@ function normalizePersianText(value: string): string {
  */
 export function resolveIntentFromMessage(message: string): IntentResolution {
   const text = normalizePersianText(message);
-  const ownsProperty = /(?:ملک|ویلا|ویلای|زمین|آپارتمان|خونه|خانه|مغازه)\\s*(?:رو|را)?\\s*دارم/.test(text)
-    || /(?:ویلا|ویلای|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\\s+دارم/.test(text)
-    || /دارم\\s+(?:که\\s+)?(?:می ?خوام|می ?خواهم)/.test(text);
+  const ownsProperty = /(?:ملک|ویلا|ویلای|زمین|آپارتمان|خونه|خانه|مغازه)\s*(?:رو|را)?\s*دارم/.test(text)
+    || /(?:ویلا|ویلای|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\s+دارم/.test(text)
+    || /دارم\s+(?:که\s+)?(?:می ?خوام|می ?خواهم)/.test(text);
 
   const mentionsNightlyPrice = /(?:شبی|هر\s*شب|شبانه)/.test(text);
   const mentionsMonthlyPrice = /(?:ماهی|ماهانه|هر\s*ماه)/.test(text);
