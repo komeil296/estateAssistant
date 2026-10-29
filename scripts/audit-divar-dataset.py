@@ -140,7 +140,7 @@ def audit(csv_path: Path, sample_limit: int) -> dict[str, Any]:
         if absent:
             raise ValueError(f"Unexpected dataset schema; missing columns: {absent}")
 
-        for row in reader:
+        for source_row, row in enumerate(reader, start=2):
             rows_seen += 1
             for column in KEY_COLUMNS:
                 if column in available and not is_present(row.get(column)):
@@ -159,6 +159,9 @@ def audit(csv_path: Path, sample_limit: int) -> dict[str, Any]:
             example = make_weak_example(row)
             if example is None:
                 continue
+
+            # Physical CSV row number (header is row 1); not a listing ID.
+            example["sourceRow"] = source_row
 
             # Focus the sample on listings most relevant to our property parser:
             # villa/land records plus rows where land/building size or deed is known.
