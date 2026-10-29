@@ -26,8 +26,22 @@ PRICE_PER_UNIT_RE = re.compile(
     r"\d[\d۰-۹٠-٩,،.]*\s*تومان\s*(?:به\s*)?ازای\s*هر\s*متر)",
     re.IGNORECASE,
 )
-RENT_CUE_RE = re.compile(r"اجاره|رهن|ودیعه|روزانه|شبانه|ماهانه")
-SELL_CUE_RE = re.compile(r"فروش|فروشی|به\s*فروش|فروشنده")
+# Generic words such as "رهن" can describe an existing tenant in a sale listing.
+# Only strong offer/transaction phrases should trigger intent-mismatch flags.
+EXPLICIT_RENT_OFFER_RE = re.compile(
+    r"به\s*اجاره\s*(?:می\s*رسد|داده\s*می\s*شود|واگذار)|"
+    r"اجاره\s*(?:داده\s*می\s*شود|می\s*شود|می\s*دهم|می\s*دهیم|"
+    r"می\s*گردد|روزانه\s*اجاره|ماهانه\s*اجاره)|"
+    r"جهت\s*اجاره|برای\s*اجاره|مورد\s*اجاره",
+    re.IGNORECASE,
+)
+EXPLICIT_SELL_OFFER_RE = re.compile(
+    r"به\s*فروش\s*(?:می\s*رسد|می\s*رساند)|"
+    r"فروش\s*(?:آپارتمان|خانه|ویلا|زمین|مغازه|ملک|واحد)|"
+    r"(?:آپارتمان|خانه|ویلا|زمین|مغازه|ملک|واحد)\s*فروشی|"
+    r"فروشنده\s*(?:واقعی|مالک)",
+    re.IGNORECASE,
+)
 LAND_CUE_RE = re.compile(r"زمین|قطعه|پلاک|باغ(?:\s*ویلا)?|قصب")
 BUILDING_CUE_RE = re.compile(
     r"بنا|زیربنا|زیر\s*بنا|ساختمان|آپارتمان|اتاق|خواب|دوبلکس|طبقه|مغازه|واحد"
@@ -80,14 +94,14 @@ def inspect(item: dict[str, Any]) -> list[str]:
         flags.append("both_land_and_building_area_present_check_meaning")
 
     intent = labels.get("intent")
-    has_rent = bool(RENT_CUE_RE.search(text))
-    has_sell = bool(SELL_CUE_RE.search(text))
-    if has_rent and has_sell:
-        flags.append("text_contains_rent_and_sell_cues")
-    elif intent == "sell" and has_rent:
-        flags.append("sell_label_text_contains_rent_cue")
-    elif intent == "rent" and has_sell:
-        flags.append("rent_label_text_contains_sell_cue")
+    explicit_rent_offer = bool(EXPLICIT_RENT_OFFER_RE.search(text))
+    explicit_sell_offer = bool(EXPLICIT_SELL_OFFER_RE.search(text))
+    if explicit_rent_offer and explicit_sell_offer:
+        flags.append("text_contains_explicit_rent_and_sell_offers")
+    elif intent == "sell" and explicit_rent_offer and not explicit_sell_offer:
+        flags.append("sell_label_conflicts_with_explicit_rent_offer")
+    elif intent == "rent" and explicit_sell_offer and not explicit_rent_offer:
+        flags.append("rent_label_conflicts_with_explicit_sell_offer")
 
     if PRICE_PER_UNIT_RE.search(text):
         flags.append("explicit_price_per_unit_phrase")
