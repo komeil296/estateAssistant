@@ -66,6 +66,10 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
     };
   }
 
+  if (ownsProperty && /(?:رهن|ودیعه)/.test(text)) {
+    return { intent: 'lease_out', rentalMode: 'monthly' };
+  }
+
   if (ownsProperty && mentionsPrice) {
     return { intent: 'sell', rentalMode: null };
   }
@@ -137,9 +141,11 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
       ? 1_000_000
       : unit === 'هزار'
         ? 1_000
-        : unit === 'ریال'
-          ? 0.1
-          : 1;
+        : unit === 'تومان' || unit === 'تومن'
+          ? 1_000_000
+          : unit === 'ریال'
+            ? 0.1
+            : 1;
 
   return Math.round(amount * multiplier);
 }
@@ -319,6 +325,26 @@ export function resolvePropertyTypeFromMessage(
   ].filter(({ pattern }) => pattern.test(text));
 
   return mentionedTypes.length === 1 ? mentionedTypes[0].type : null;
+}
+
+/** Extract the offered and wanted broad property types for explicit exchanges. */
+export function resolveExchangePropertyTypesFromMessage(
+  message: string,
+): { offeredPropertyType: 'land' | 'apartment' | 'villa' | 'house'; wantedPropertyType: 'land' | 'apartment' | 'villa' | 'house' } | null {
+  const text = normalizePersianText(message);
+  if (!/(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text)) return null;
+  const terms: Array<{ type: 'land' | 'apartment' | 'villa' | 'house'; pattern: RegExp }> = [
+    { type: 'land', pattern: /زمین|قطعه\s*زمین/ },
+    { type: 'apartment', pattern: /آپارتمان|واحد\s*(?:مسکونی)?/ },
+    { type: 'villa', pattern: /ویلا|ویلای/ },
+    { type: 'house', pattern: /خانه|خونه|منزل/ },
+  ];
+  const mentions = terms
+    .map(({ type, pattern }) => ({ type, index: text.search(pattern) }))
+    .filter((item) => item.index >= 0)
+    .sort((a, b) => a.index - b.index);
+  if (mentions.length !== 2 || mentions[0].type === mentions[1].type) return null;
+  return { offeredPropertyType: mentions[0].type, wantedPropertyType: mentions[1].type };
 }
 
 export interface PropertyTerms {
