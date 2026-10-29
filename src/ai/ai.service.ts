@@ -561,7 +561,10 @@ export class AiService {
         result.missingInformation = (result.missingInformation as string[]).filter(
           (field) => field !== 'intent',
         );
-        if (result.clarificationQuestion === 'قصد خرید، فروش یا اجاره دارید؟') {
+        if (
+          result.clarificationQuestion === 'قصد خرید، فروش یا اجاره دارید؟' ||
+          result.clarificationQuestion === 'قصد خرید، فروش، اجاره یا معاوضه دارید؟'
+        ) {
           result.clarificationQuestion = null;
         }
       }
