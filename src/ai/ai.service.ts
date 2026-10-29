@@ -19,6 +19,7 @@ import {
   resolveDepositBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
   resolvePropertyTypeFromMessage,
+  resolveExchangePropertyTypesFromMessage,
 } from './intent-rules';
 
 const REAL_ESTATE_SYSTEM_PROMPT = `
@@ -327,6 +328,12 @@ export class AiService {
       if (explicitIntent !== 'exchange') {
         result.offeredPropertyType = null;
         result.wantedPropertyType = null;
+      } else {
+        const exchangeTypes = resolveExchangePropertyTypesFromMessage(message);
+        if (exchangeTypes !== null) {
+          result.offeredPropertyType = exchangeTypes.offeredPropertyType;
+          result.wantedPropertyType = exchangeTypes.wantedPropertyType;
+        }
       }
 
       if (intentResolution.rentalMode) {
