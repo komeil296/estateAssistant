@@ -440,13 +440,13 @@ export class AiService {
         'موقت',
       ]);
 
-      if (effectiveIntent !== 'rent' && effectiveIntent !== 'lease_out') {
+      if (effectiveIntent !== null && effectiveIntent !== 'rent' && effectiveIntent !== 'lease_out') {
         result.rentalMode = null;
       } else if (monthlyRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'monthly';
       } else if (shortTermRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'short_term';
-      } else {
+      } else if (effectiveIntent === 'rent' || effectiveIntent === 'lease_out' || history.length === 0) {
         result.rentalMode = null;
       }
 
@@ -712,6 +712,9 @@ export class AiService {
         ) {
           result.budget.maxTotalPriceRial = null;
         }
+      } else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') {
+        result.budget.maxRentNightlyRial = null;
+        result.budget.maxRentMonthlyRial = null;
       }
 
       // Distinguish a rental deposit from the total purchase price.
