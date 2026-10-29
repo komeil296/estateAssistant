@@ -370,4 +370,61 @@ describe('AiService', () => {
     );
   });
 
+
+  it('uses recent user/assistant history so follow-up messages keep prior constraints', async () => {
+    const fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(
+      async (_input, init) => {
+        const requestBody = JSON.parse(String(init?.body)) as {
+          messages: Array<{ role: string; content: string }>;
+        };
+        expect(requestBody.messages[0]).toEqual(
+          expect.objectContaining({ role: 'system' }),
+        );
+        expect(requestBody.messages.slice(1)).toEqual([
+          { role: 'user', content: 'یه ویلا تو رامسر می‌خوام' },
+          { role: 'assistant', content: 'حتماً؛ بودجه‌ات چقدره؟' },
+          { role: 'user', content: 'شبی تا ۵ میلیون' },
+          { role: 'assistant', content: 'پس سقف بودجه شبی ۵ میلیون است.' },
+          { role: 'user', content: 'نزدیک‌تر به دریا باشه' },
+        ]);
+        return {
+          ok: true,
+          json: async () => ({ message: { content: 'حتماً؛ شرط نزدیک دریا را هم اضافه می‌کنم.' } }),
+        } as Response;
+      },
+    );
+
+    const result = await service.chat('نزدیک‌تر به دریا باشه', [
+      { role: 'user', content: 'یه ویلا تو رامسر می‌خوام' },
+      { role: 'assistant', content: 'حتماً؛ بودجه‌ات چقدره؟' },
+      { role: 'user', content: 'شبی تا ۵ میلیون' },
+      { role: 'assistant', content: 'پس سقف بودجه شبی ۵ میلیون است.' },
+    ]);
+
+    expect(result.reply).toContain('نزدیک دریا');
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('bounds chat history to the most recent eight messages and trims oversized turns', async () => {
+    jest.spyOn(global, 'fetch').mockImplementation(async (_input, init) => {
+      const requestBody = JSON.parse(String(init?.body)) as {
+        messages: Array<{ role: string; content: string }>;
+      };
+      const historyMessages = requestBody.messages.slice(1, -1);
+      expect(historyMessages).toHaveLength(8);
+      expect(historyMessages[0].content).toBe('turn-2');
+      expect(historyMessages[7].content).toHaveLength(1200);
+      return {
+        ok: true,
+        json: async () => ({ message: { content: 'باشه.' } }),
+      } as Response;
+    });
+
+    const history = Array.from({ length: 10 }, (_, index) => ({
+      role: index % 2 === 0 ? 'user' as const : 'assistant' as const,
+      content: index === 9 ? 'x'.repeat(1500) : `turn-${index}`,
+    }));
+    await service.chat('شرط جدید', history);
+  });
+
 });
