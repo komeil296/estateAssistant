@@ -590,7 +590,12 @@ export class AiService {
       Object.assign(result.requirements, propertyTerms);
 
       // "Single-page deed" is not the same as a three-dang deed.
-      if (/سند\s*تک\s*برگ|تک\s*برگ\s*(?:سند)?/.test(message)) {
+      const normalizedDocumentText = message
+        .replace(/[ي]/g, 'ی')
+        .replace(/[ك]/g, 'ک')
+        .replace(/[‌\u200c]/g, ' ')
+        .replace(/\s+/g, ' ');
+      if (/سند\s*تک\s*برگ|تک\s*برگ\s*(?:سند)?/.test(normalizedDocumentText)) {
         result.requirements.documentType = 'single_page';
       }
       // A negative requirement must not be stored as a positive agricultural-use filter.
