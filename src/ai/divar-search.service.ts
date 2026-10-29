@@ -95,6 +95,24 @@ export class DivarSearchService {
   }
 
   async search(request: SearchRequestDto) {
+    // Never run an unscoped search when the user has not specified whether
+    // they want to buy, sell, rent, lease out, or exchange. Otherwise the
+    // API can mix sale/rental listings and skip the relevant budget filters.
+    if (request.intent === null) {
+      return {
+        reply: request.clarificationQuestion ?? 'قصد خرید، فروش، اجاره یا معاوضه دارید؟',
+        parsedRequest: request,
+        totalMatches: 0,
+        returned: 0,
+        source: 'divarofficial/real_estate_ads',
+        sourceUrl: 'https://huggingface.co/datasets/divarofficial/real_estate_ads',
+        latestSourceMonth: '2025-03',
+        dataNotice: 'برای جست‌وجوی دقیق ابتدا باید قصد معامله مشخص شود. این دیتاست تاریخی است و آگهی زنده نیست.',
+        requiresClarification: true,
+        listings: [],
+      };
+    }
+
     const db = this.getDatabase();
     const conditions: string[] = ['1 = 1'];
     const parameters: SqlValue[] = [];
@@ -275,6 +293,7 @@ export class DivarSearchService {
       sourceUrl: 'https://huggingface.co/datasets/divarofficial/real_estate_ads',
       latestSourceMonth: '2025-03',
       dataNotice: 'این‌ها آگهی‌های تاریخی و ناشناس‌شدهٔ دیتاست هستند؛ قیمت و موجودی فعلی یا امکان تماس با آگهی‌دهنده را تضمین نمی‌کنند.',
+      requiresClarification: false,
       listings: rows.map((row) => ({
         sourceRow: row.source_row,
         title: row.title,
