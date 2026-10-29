@@ -39,7 +39,9 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*\d|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
   const valuationIntent = /(?:ببینم|بدونم|بدونیم)\s*(?:که\s*)?(?:ملکم\s*)?(?:چند|چقدر)\s*می ?ارزه|(?:قیمت|ارزش)\s*(?:ملکم|ملک|زمین|ویلا)/.test(text);
 
-  if (/(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text)) {
+  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش)/.test(text);
+  const exchangeMention = /(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text);
+  if (exchangeMention && !explicitSale) {
     return { intent: 'exchange', rentalMode: null };
   }
 
