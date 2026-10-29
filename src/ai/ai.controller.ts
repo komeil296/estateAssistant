@@ -61,7 +61,24 @@ export class AiController {
       throw new BadRequestException('متن درخواست الزامی است.');
     }
 
-    return this.aiService.parseSearchRequest(body.message.trim());
+    const history = body.history ?? [];
+    if (!Array.isArray(history)) {
+      throw new BadRequestException('تاریخچه گفتگو باید آرایه باشد.');
+    }
+    for (const item of history) {
+      if (
+        !item ||
+        (item.role !== 'user' && item.role !== 'assistant') ||
+        typeof item.content !== 'string' ||
+        !item.content.trim()
+      ) {
+        throw new BadRequestException(
+          'هر پیام تاریخچه باید نقش user یا assistant و متن معتبر داشته باشد.',
+        );
+      }
+    }
+
+    return this.aiService.parseSearchRequest(body.message.trim(), history);
   }
   @Post('search')
   @ApiOperation({
