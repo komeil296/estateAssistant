@@ -39,7 +39,7 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*\d|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
   const valuationIntent = /(?:ببینم|بدونم|بدونیم)\s*(?:که\s*)?(?:ملکم\s*)?(?:چند|چقدر)\s*می ?ارزه|(?:قیمت|ارزش)\s*(?:ملکم|ملک|زمین|ویلا)/.test(text);
 
-  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش)/.test(text);
+  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش|فروشی\s*(?:دارم|است|هست))/.test(text);
   const wantsListedProperty =
     !ownsProperty &&
     /(?:فروشی|برای\s*فروش)/.test(text) &&
