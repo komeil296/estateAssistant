@@ -4,6 +4,8 @@ import {
   resolveNightsFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
+  resolveDepositBudgetTomanFromMessage,
+  resolveExchangePropertyTypesFromMessage,
   resolvePropertyTermsFromMessage,
   resolvePropertyTypeFromMessage,
 } from './intent-rules';
@@ -20,6 +22,7 @@ describe('resolveIntentFromMessage', () => {
     ['دنبال خرید یه ویلا هستم', 'buy', null],
     ['یه ویلا می‌خوام بگیرم، ۸ میلیارد هم دارم', 'buy', null],
     ['یه ویلا دارم، می‌خوام تهاتر کنم با آپارتمان', 'exchange', null],
+    ['یه ویلای ۲۰۰ متری دارم، قیمت فروش ۱۵ میلیارد؛ اگر تهاتر با آپارتمان هم بشه بررسی می‌کنم', 'sell', null],
     ['برای ۴ روز یه ویلا می‌خوام', 'rent', 'short_term'],
     ['یه کلبه سوئیسی برای دو شب تو رامسر می‌خوام', 'rent', 'short_term'],
     ['یه ویلا برای سه شب می‌خوام بخرم', 'buy', null],
@@ -49,6 +52,9 @@ describe('resolvePricePerSqmTomanFromMessage', () => {
     ['زمین متری 2 میلیارد', 2_000_000_000],
     ['زمین دارم، متری یک و نیم میلیارد', 1_500_000_000],
     ['زمین دارم', null],
+    ['یه آپارتمان ۱۲۰ متری دارم، برای فروش', null],
+    ['یه آپارتمان ۱۰۰ متری برای فروش دارم', null],
+    ['زمین دارم، متری ۲۰ تومن', 20_000_000],
   ])('%s', (message, expected) => {
     expect(resolvePricePerSqmTomanFromMessage(message)).toBe(expected);
   });
@@ -78,8 +84,29 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
 });
 
 
+describe('resolveExchangePropertyTypesFromMessage', () => {
+  it.each([
+    ['یه ویلا تو رامسر دارم، می‌خوام تهاتر کنم با آپارتمان', { offeredPropertyType: 'villa', wantedPropertyType: 'apartment' }],
+    ['زمینم رو با ویلا معاوضه می‌کنم', { offeredPropertyType: 'land', wantedPropertyType: 'villa' }],
+    ['می‌خوام تهاتر کنم', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolveExchangePropertyTypesFromMessage(message)).toEqual(expected);
+  });
+});
+
+describe('resolveDepositBudgetTomanFromMessage', () => {
+  it.each([
+    ['یه آپارتمان دارم، رهن کامل ۲ میلیارد تومن', 2_000_000_000],
+    ['رهن ۵۰۰ میلیون تومان، ماهی ۱۵ میلیون اجاره', 500_000_000],
+    ['رهن کامل ۲', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolveDepositBudgetTomanFromMessage(message)).toBe(expected);
+  });
+});
+
 describe('resolvePropertyTypeFromMessage', () => {
   it.each([
+    ['یه خونه تو تنکابن می‌خوام', 'house'],
     ['یه زمین دارم، متری ۲۰ میلیون', 'land'],
     ['زمین دارم، متری ۲ میلیارد', 'land'],
     ['ویلای من رو برای تعطیلات نوروز شبی ۱۰ میلیون اجاره بده', 'villa'],

@@ -1,12 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type PropertyType = 'land' | 'apartment' | 'villa';
+export type PropertyType = 'land' | 'apartment' | 'villa' | 'house';
 export type RentalMode = 'monthly' | 'short_term';
 export type CustomerIntent = 'buy' | 'sell' | 'rent' | 'lease_out' | 'exchange';
 export type DocumentType =
   | 'six_dang'
   | 'three_dang'
+  | 'single_page'
   | 'official'
   | 'end_user'
   | 'other'
@@ -14,7 +15,7 @@ export type DocumentType =
 export type DeedEra = 'pre_revolution' | 'post_revolution' | 'unknown';
 const DEED_ERAS: DeedEra[] = ['pre_revolution', 'post_revolution', 'unknown'];
 
-const PROPERTY_TYPES: PropertyType[] = ['land', 'apartment', 'villa'];
+const PROPERTY_TYPES: PropertyType[] = ['land', 'apartment', 'villa', 'house'];
 const RENTAL_MODES: RentalMode[] = ['monthly', 'short_term'];
 const CUSTOMER_INTENTS: CustomerIntent[] = [
   'buy',
@@ -26,6 +27,7 @@ const CUSTOMER_INTENTS: CustomerIntent[] = [
 const DOCUMENT_TYPES: DocumentType[] = [
   'six_dang',
   'three_dang',
+  'single_page',
   'official',
   'end_user',
   'other',

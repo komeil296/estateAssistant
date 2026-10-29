@@ -44,6 +44,122 @@ describe('AiService', () => {
     expect(result.stay.nights).toBeNull();
   });
 
+  it('does not turn the area of a listing into a per-square-metre price', async () => {
+    const modelOutput = {
+      intent: 'sell',
+      propertyType: 'apartment',
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      area: { targetSqm: 120, minSqm: null, maxSqm: null },
+      budget: { maxTotalPriceRial: null, maxPricePerSqmRial: 120 },
+      requirements: {},
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('یه آپارتمان ۱۲۰ متری تو رامسر دارم، برای فروش');
+
+    expect(result.area.targetSqm).toBe(120);
+    expect(result.budget.maxPricePerSqmRial).toBeNull();
+  });
+
+  it('separates a full rental deposit from the total property price', async () => {
+    const modelOutput = {
+      intent: 'sell',
+      propertyType: 'apartment',
+      location: { province: null, city: null, neighborhood: null },
+      budget: { maxTotalPriceRial: 2000000000, maxDepositRial: null },
+      requirements: {},
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('یه آپارتمان دارم، رهن کامل ۲ میلیارد تومن');
+
+    expect(result.budget.maxDepositRial).toBe(20_000_000_000);
+    expect(result.budget.maxTotalPriceRial).toBeNull();
+    expect(result.intent).toBe('lease_out');
+  });
+
+  it('keeps the listed property type when exchange is only an alternative to sale', async () => {
+    const modelOutput = {
+      intent: 'exchange',
+      propertyType: null,
+      offeredPropertyType: null,
+      wantedPropertyType: null,
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      area: { targetSqm: 200, minSqm: null, maxSqm: null },
+      requirements: { bedrooms: 3 },
+      budget: { maxTotalPriceRial: 15000000000 },
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'یه ویلای ۲۰۰ متری تو رامسر دارم، سه خواب، قیمت فروش ۱۵ میلیارد؛ اگر تهاتر با آپارتمان هم بشه بررسی می‌کنم',
+    );
+
+    expect(result.intent).toBe('sell');
+    expect(result.propertyType).toBe('villa');
+    expect(result.offeredPropertyType).toBeNull();
+    expect(result.wantedPropertyType).toBeNull();
+  });
+
+  it('does not treat a negative agricultural-use condition as a positive filter', async () => {
+    const modelOutput = {
+      intent: 'buy',
+      propertyType: 'land',
+      location: { province: null, city: null, neighborhood: null },
+      requirements: { landUse: 'agricultural', documentType: 'three_dang' },
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('زمین می‌خوام که سند تک‌برگ داشته باشه و کاربری کشاورزی نباشه');
+
+    expect(result.requirements.landUse).toBeNull();
+    expect(result.requirements.documentType).toBe('single_page');
+  });
+
+  it('does not invent a seven-night stay for the phrase آخر هفته', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'villa',
+      location: { province: null, city: null, neighborhood: null },
+      stay: { checkInDate: null, checkOutDate: null, guests: 10, nights: 7 },
+      requirements: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('برای آخر هفته ویلا می‌خوام، ما ۸ بزرگسال و ۲ بچه هستیم');
+
+    expect(result.stay.nights).toBeNull();
+  });
+
   it('does not classify a Swiss cottage as an apartment when the model mislabels it', async () => {
     const modelOutput = {
       intent: null,

@@ -30,8 +30,8 @@ function normalizePersianText(value: string): string {
  */
 export function resolveIntentFromMessage(message: string): IntentResolution {
   const text = normalizePersianText(message);
-  const ownsProperty = /(?:\bمن\s+)?(?:ملک|ویلا|زمین|آپارتمان|خونه|خانه|مغازه)?\s*(?:رو|را)?\s*دارم\b/.test(text)
-    || /(?:ویلا|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\s+دارم/.test(text)
+  const ownsProperty = /(?:من\s+)?(?:ملک|ویلا|ویلای|زمین|آپارتمان|خونه|خانه|مغازه)?\s*(?:رو|را)?\s*دارم/.test(text)
+    || /(?:ویلا|ویلای|زمین|آپارتمان|خونه|خانه|ملک|مغازه)\s+دارم/.test(text)
     || /دارم\s+(?:که\s+)?(?:می ?خوام|می ?خواهم)/.test(text);
 
   const mentionsNightlyPrice = /(?:شبی|هر\s*شب|شبانه)/.test(text);
@@ -39,7 +39,15 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*\d|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
   const valuationIntent = /(?:ببینم|بدونم|بدونیم)\s*(?:که\s*)?(?:ملکم\s*)?(?:چند|چقدر)\s*می ?ارزه|(?:قیمت|ارزش)\s*(?:ملکم|ملک|زمین|ویلا)/.test(text);
 
-  if (/(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text)) {
+  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش)/.test(text);
+  const exchangeMention = /(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text);
+
+  // A clearly stated sale is the primary intent even when the user says
+  // they may also consider an exchange. Do this before the exchange shortcut.
+  if (explicitSale) {
+    return { intent: 'sell', rentalMode: null };
+  }
+  if (exchangeMention) {
     return { intent: 'exchange', rentalMode: null };
   }
 
@@ -64,6 +72,10 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
       intent: 'lease_out',
       rentalMode: mentionsNightlyPrice ? 'short_term' : 'monthly',
     };
+  }
+
+  if (ownsProperty && /(?:رهن|ودیعه)/.test(text)) {
+    return { intent: 'lease_out', rentalMode: 'monthly' };
   }
 
   if (ownsProperty && mentionsPrice) {
@@ -123,7 +135,7 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
     return Math.round(1.5 * multiplier);
   }
 
-  const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?\s*متری)/);
+  const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)\s*متری)/);
   if (!match) return null;
 
   const rawAmount = (match[1] ?? match[3]).replace(',', '.');
@@ -137,13 +149,43 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
       ? 1_000_000
       : unit === 'هزار'
         ? 1_000
-        : 1;
+        : unit === 'تومان' || unit === 'تومن'
+          ? 1_000_000
+          : unit === 'ریال'
+            ? 0.1
+            : 1;
 
   return Math.round(amount * multiplier);
 }
 
-/**
- * Extract an explicitly stated nightly/monthly rent budget in Toman.
+/** Extract an explicitly stated rental deposit/rahn amount in Toman. */
+export function resolveDepositBudgetTomanFromMessage(message: string): number | null {
+  const text = normalizePersianText(message);
+  const match = text.match(
+    /(?:رهن\s*کامل|ودیعه|رهن)\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)?/,
+  );
+  if (!match) return null;
+
+  const amount = Number(match[1].replace(',', '.'));
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+
+  const unit = match[2];
+  // A bare amount after "رهن" is ambiguous; require a scale or currency marker.
+  if (!unit) return null;
+  const multiplier = unit === 'میلیارد'
+    ? 1_000_000_000
+    : unit === 'میلیون'
+      ? 1_000_000
+      : unit === 'هزار'
+        ? 1_000
+        : unit === 'ریال'
+          ? 0.1
+          : 1_000_000;
+
+  return Math.round(amount * multiplier);
+}
+
+/** Extract an explicitly stated nightly/monthly rent budget in Toman.
  * In colloquial Persian, «تومن» without a scale is treated as million Toman
  * only in this rental-price context (e.g. «شبی ۵ تومن»).
  */
@@ -275,7 +317,7 @@ export function resolveNightsFromMessage(message: string): number | null {
 /** Resolve a single explicit property type from colloquial Persian. */
 export function resolvePropertyTypeFromMessage(
   message: string,
-): 'land' | 'apartment' | 'villa' | null {
+): 'land' | 'apartment' | 'villa' | 'house' | null {
   const text = normalizePersianText(message);
 
   // In a land-for-construction request, the searched property is the land, not the future villa.
@@ -287,9 +329,30 @@ export function resolvePropertyTypeFromMessage(
     { type: 'land' as const, pattern: /زمین|قطعه\s*زمین/ },
     { type: 'apartment' as const, pattern: /آپارتمان|واحد\s*(?:مسکونی)?/ },
     { type: 'villa' as const, pattern: /ویلا|ویلای/ },
+    { type: 'house' as const, pattern: /خانه|خونه|منزل/ },
   ].filter(({ pattern }) => pattern.test(text));
 
   return mentionedTypes.length === 1 ? mentionedTypes[0].type : null;
+}
+
+/** Extract the offered and wanted broad property types for explicit exchanges. */
+export function resolveExchangePropertyTypesFromMessage(
+  message: string,
+): { offeredPropertyType: 'land' | 'apartment' | 'villa' | 'house'; wantedPropertyType: 'land' | 'apartment' | 'villa' | 'house' } | null {
+  const text = normalizePersianText(message);
+  if (!/(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text)) return null;
+  const terms: Array<{ type: 'land' | 'apartment' | 'villa' | 'house'; pattern: RegExp }> = [
+    { type: 'land', pattern: /زمین|قطعه\s*زمین/ },
+    { type: 'apartment', pattern: /آپارتمان|واحد\s*(?:مسکونی)?/ },
+    { type: 'villa', pattern: /ویلا|ویلای/ },
+    { type: 'house', pattern: /خانه|خونه|منزل/ },
+  ];
+  const mentions = terms
+    .map(({ type, pattern }) => ({ type, index: text.search(pattern) }))
+    .filter((item) => item.index >= 0)
+    .sort((a, b) => a.index - b.index);
+  if (mentions.length !== 2 || mentions[0].type === mentions[1].type) return null;
+  return { offeredPropertyType: mentions[0].type, wantedPropertyType: mentions[1].type };
 }
 
 export interface PropertyTerms {
