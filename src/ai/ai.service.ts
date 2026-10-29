@@ -364,7 +364,9 @@ export class AiService {
       const intentResolution = resolveIntentFromMessage(message);
       const landConstructionRequest = isLandForVillaConstructionRequest(message);
       const explicitIntent = intentResolution.intent ?? (landConstructionRequest ? 'buy' : null);
-      result.intent = explicitIntent;
+      if (explicitIntent !== null) result.intent = explicitIntent;
+      else if (history.length === 0) result.intent = null;
+      const effectiveIntent = explicitIntent ?? result.intent;
 
       // If sale is primary and exchange is only an alternative, the first property
       // type mentioned before the exchange clause is the property being sold.
@@ -380,7 +382,7 @@ export class AiService {
 
       // Offered/wanted property types describe an exchange only. Never trust the
       // model to populate these fields for ordinary purchase, sale, or rental requests.
-      if (explicitIntent !== 'exchange') {
+      if (effectiveIntent !== 'exchange') {
         result.offeredPropertyType = null;
         result.wantedPropertyType = null;
       } else {
@@ -438,7 +440,7 @@ export class AiService {
         'موقت',
       ]);
 
-      if (explicitIntent !== 'rent' && explicitIntent !== 'lease_out') {
+      if (effectiveIntent !== 'rent' && effectiveIntent !== 'lease_out') {
         result.rentalMode = null;
       } else if (monthlyRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'monthly';
@@ -452,8 +454,10 @@ export class AiService {
         result.stay = {};
       }
       const resolvedNights = resolveNightsFromMessage(message);
-      // Never accept a model-invented duration (e.g. seven nights for "last weekend").
-      result.stay.nights = resolvedNights;
+      // A follow-up may rely on a duration from earlier user messages. Without history,
+      // discard model-invented durations; explicit current-message durations always win.
+      if (resolvedNights !== null) result.stay.nights = resolvedNights;
+      else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') result.stay.nights = null;
 
       // Resolve Solar Hijri dates from the original message; do not trust a
       // model-generated Gregorian date when the user explicitly gave a Persian date.
@@ -687,15 +691,15 @@ export class AiService {
       const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);
       // Never trust the model for a per-square-metre price unless the original
       // message contains an explicit monetary amount tied to "متری".
-      result.budget.maxPricePerSqmRial =
-        pricePerSqmToman === null ? null : pricePerSqmToman;
+      if (pricePerSqmToman !== null) result.budget.maxPricePerSqmRial = pricePerSqmToman;
+      else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') result.budget.maxPricePerSqmRial = null;
 
-      // Rental amounts must be grounded in an explicit nightly/monthly amount.
-      // This clears hallucinated rent values inferred from dates or area numbers.
-      result.budget.maxRentNightlyRial = null;
-      result.budget.maxRentMonthlyRial = null;
+      // Explicit values in the current message override prior context. Otherwise the
+      // model may preserve a budget from earlier user messages in the same search.
       const rentalBudget = resolveRentalBudgetTomanFromMessage(message);
       if (rentalBudget !== null) {
+        result.budget.maxRentNightlyRial = null;
+        result.budget.maxRentMonthlyRial = null;
         result.rentalMode = rentalBudget.mode;
         if (rentalBudget.mode === 'short_term') {
           result.budget.maxRentNightlyRial = rentalBudget.amountToman;
