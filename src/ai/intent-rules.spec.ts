@@ -5,6 +5,7 @@ import {
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
   resolveDepositBudgetTomanFromMessage,
+  resolveExchangePropertyTypesFromMessage,
   resolvePropertyTermsFromMessage,
   resolvePropertyTypeFromMessage,
 } from './intent-rules';
@@ -81,6 +82,16 @@ describe('resolveRentalBudgetTomanFromMessage', () => {
   });
 });
 
+
+describe('resolveExchangePropertyTypesFromMessage', () => {
+  it.each([
+    ['یه ویلا تو رامسر دارم، می‌خوام تهاتر کنم با آپارتمان', { offeredPropertyType: 'villa', wantedPropertyType: 'apartment' }],
+    ['زمینم رو با ویلا معاوضه می‌کنم', { offeredPropertyType: 'land', wantedPropertyType: 'villa' }],
+    ['می‌خوام تهاتر کنم', null],
+  ] as const)('%s', (message, expected) => {
+    expect(resolveExchangePropertyTypesFromMessage(message)).toEqual(expected);
+  });
+});
 
 describe('resolveDepositBudgetTomanFromMessage', () => {
   it.each([
