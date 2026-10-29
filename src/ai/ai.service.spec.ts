@@ -493,8 +493,8 @@ describe('AiService', () => {
       },
       stay: { checkInDate: null, checkOutDate: null, guests: 4, nights: 3 },
       features: [{ id: 'amenity.pool', value: true }],
-      missingInformation: [],
-      clarificationQuestion: null,
+      missingInformation: ['intent'],
+      clarificationQuestion: 'قصد خرید، فروش، اجاره یا معاوضه دارید؟',
     };
     jest.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
