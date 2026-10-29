@@ -112,15 +112,15 @@ def import_csv(csv_path: Path, database_path: Path, replace: bool) -> int:
             if missing:
                 raise ValueError(f"Unexpected CSV schema; missing columns: {missing}")
 
-            columns_present = [column for column in COLUMNS if column in available]
+            # Keep a stable schema even if optional source columns are absent.
+            columns_present = COLUMNS
             definitions = ["source_row INTEGER PRIMARY KEY"] + [
                 f'"{column}" {column_type(column)}' for column in columns_present
             ]
             placeholders = ",".join("?" for _ in range(len(columns_present) + 1))
-            insert_sql = (
-                f'INSERT INTO divar_ads ({",".join(["source_row"] + [f"\"{c}\"" for c in columns_present])}) '
-                f"VALUES ({placeholders})"
-            )
+            quoted_columns = ",".join(["source_row"] + ['"' + column + '"' for column in columns_present])
+            insert_sql = "INSERT INTO divar_ads (" + quoted_columns + ") VALUES (" + placeholders + ")"
+
 
             with sqlite3.connect(temporary_path) as db:
                 db.execute("PRAGMA journal_mode=OFF")
