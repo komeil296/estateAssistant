@@ -16,3 +16,8 @@ Thumbs.db
 
 *.gguf
 *.bin
+
+# Local copy of the public Divar dataset and generated audit artifacts
+/data/raw/
+/data/processed/divar_dataset_audit.json
+/data/processed/divar_weak_label_sample.jsonl
