@@ -20,6 +20,49 @@ describe('AiService', () => {
     jest.restoreAllMocks();
   });
 
+  it('resolves a for-sale villa request as a purchase and keeps the 5-billion-Toman budget', async () => {
+    const modelOutput = {
+      intent: null,
+      propertyType: 'villa',
+      offeredPropertyType: null,
+      wantedPropertyType: null,
+      rentalMode: null,
+      location: { province: 'مازندران', city: 'رامسر', neighborhood: null, street: null },
+      area: { targetSqm: null, minSqm: null, maxSqm: null },
+      budget: {
+        maxTotalPriceRial: 5000000000,
+        maxPricePerSqmRial: null,
+        maxDepositRial: null,
+        maxRentMonthlyRial: null,
+        maxRentNightlyRial: null,
+      },
+      requirements: {
+        bedrooms: null, documentType: null, landUse: null, nearSea: null,
+        hasView: null, isInTownship: null, hasMountainView: null,
+        hasSeaView: null, viewProtectionClaim: null, deedEra: null,
+      },
+      stay: { checkInDate: null, checkOutDate: null, guests: null, nights: null },
+      features: [],
+      missingInformation: ['intent'],
+      clarificationQuestion: 'قصد خرید، فروش یا اجاره دارید؟',
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'یه ویلای فروشی تو رامسر تا ۵ میلیارد تومان می‌خوام',
+    );
+
+    expect(result.intent).toBe('buy');
+    expect(result.propertyType).toBe('villa');
+    expect(result.location.city).toBe('رامسر');
+    expect(result.budget.maxTotalPriceRial).toBe(50_000_000_000);
+    expect(result.missingInformation).not.toContain('intent');
+    expect(result.clarificationQuestion).not.toBe('قصد خرید، فروش یا اجاره دارید؟');
+  });
+
   it('normalizes an incomplete model response for a villa near the sea', async () => {
     const modelOutput = {
       intent: 'buy',
