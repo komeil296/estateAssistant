@@ -90,6 +90,35 @@ describe('AiService', () => {
     expect(result.intent).toBe('lease_out');
   });
 
+  it('keeps the listed property type when exchange is only an alternative to sale', async () => {
+    const modelOutput = {
+      intent: 'exchange',
+      propertyType: null,
+      offeredPropertyType: null,
+      wantedPropertyType: null,
+      location: { province: null, city: 'رامسر', neighborhood: null },
+      area: { targetSqm: 200, minSqm: null, maxSqm: null },
+      requirements: { bedrooms: 3 },
+      budget: { maxTotalPriceRial: 15000000000 },
+      stay: {},
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest(
+      'یه ویلای ۲۰۰ متری تو رامسر دارم، سه خواب، قیمت فروش ۱۵ میلیارد؛ اگر تهاتر با آپارتمان هم بشه بررسی می‌کنم',
+    );
+
+    expect(result.intent).toBe('sell');
+    expect(result.propertyType).toBe('villa');
+    expect(result.offeredPropertyType).toBeNull();
+    expect(result.wantedPropertyType).toBeNull();
+  });
+
   it('does not treat a negative agricultural-use condition as a positive filter', async () => {
     const modelOutput = {
       intent: 'buy',
