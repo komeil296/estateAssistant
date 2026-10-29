@@ -165,8 +165,12 @@ def audit(csv_path: Path, sample_limit: int) -> dict[str, Any]:
             relevant = (
                 "villa" in property_type.lower()
                 or "land" in property_type.lower()
+                or "apartment" in property_type.lower()
+                or "house" in property_type.lower()
                 or is_present(row.get("land_size"))
+                or is_present(row.get("building_size"))
                 or is_present(row.get("deed_type"))
+                or is_present(row.get("rooms_count"))
             )
             if not relevant:
                 continue
