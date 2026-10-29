@@ -16,6 +16,7 @@ import {
   resolveSolarHijriCheckInDateFromMessage,
   resolvePricePerSqmTomanFromMessage,
   resolveRentalBudgetTomanFromMessage,
+  resolveDepositBudgetTomanFromMessage,
   resolvePropertyTermsFromMessage,
   resolvePropertyTypeFromMessage,
 } from './intent-rules';
@@ -39,7 +40,7 @@ const SEARCH_EXTRACTION_PROMPT = `
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
 intent: buy, sell, rent, lease_out, exchange، یا null
-propertyType: land, apartment, villa، یا null
+propertyType: land, apartment, villa, house، یا null
 offeredPropertyType: land, apartment, villa، یا null
 wantedPropertyType: land, apartment, villa، یا null
 rentalMode: monthly, short_term، یا null
@@ -154,7 +155,7 @@ export class AiService {
       const budget = asRecord(parsedRecord.budget);
       const rawRequirements = asRecord(parsedRecord.requirements);
       const rawStay = asRecord(parsedRecord.stay);
-      const allowedPropertyTypes = ['land', 'apartment', 'villa'];
+      const allowedPropertyTypes = ['land', 'apartment', 'villa', 'house'];
       const nullablePropertyType = (value: unknown): string | null =>
         typeof value === 'string' && allowedPropertyTypes.includes(value)
           ? value
@@ -389,14 +390,29 @@ export class AiService {
         result.stay = {};
       }
       const resolvedNights = resolveNightsFromMessage(message);
-      if (resolvedNights !== null) result.stay.nights = resolvedNights;
-      if (result.stay.nights === undefined) result.stay.nights = null;
+      // Never accept a model-invented duration (e.g. seven nights for "last weekend").
+      result.stay.nights = resolvedNights;
 
       // Resolve Solar Hijri dates from the original message; do not trust a
       // model-generated Gregorian date when the user explicitly gave a Persian date.
       const resolvedCheckInDate = resolveSolarHijriCheckInDateFromMessage(message);
       if (resolvedCheckInDate !== null) {
         result.stay.checkInDate = resolvedCheckInDate;
+      }
+
+      // If both dates were explicitly stated or reliably extracted, derive the
+      // duration from the date range; otherwise leave nights unknown.
+      if (
+        resolvedNights === null &&
+        typeof result.stay.checkInDate === 'string' &&
+        typeof result.stay.checkOutDate === 'string'
+      ) {
+        const start = Date.parse(`${result.stay.checkInDate}T00:00:00Z`);
+        const end = Date.parse(`${result.stay.checkOutDate}T00:00:00Z`);
+        result.stay.nights =
+          Number.isFinite(start) && Number.isFinite(end) && end > start
+            ? Math.round((end - start) / (24 * 60 * 60 * 1000))
+            : null;
       }
 
       // A known check-in date plus an explicit number of nights fully determines
@@ -591,12 +607,15 @@ export class AiService {
       // Deterministically extract a clear per-square-metre price from colloquial Persian.
       // This value is in Toman here; the common conversion loop below changes it to Rial.
       const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);
-      if (pricePerSqmToman !== null) {
-        result.budget.maxPricePerSqmRial = pricePerSqmToman;
-      }
+      // Never trust the model for a per-square-metre price unless the original
+      // message contains an explicit monetary amount tied to "متری".
+      result.budget.maxPricePerSqmRial =
+        pricePerSqmToman === null ? null : pricePerSqmToman;
 
-      // Use explicit nightly/monthly amounts from the original message instead of
-      // relying on the model to populate the correct budget field.
+      // Rental amounts must be grounded in an explicit nightly/monthly amount.
+      // This clears hallucinated rent values inferred from dates or area numbers.
+      result.budget.maxRentNightlyRial = null;
+      result.budget.maxRentMonthlyRial = null;
       const rentalBudget = resolveRentalBudgetTomanFromMessage(message);
       if (rentalBudget !== null) {
         result.rentalMode = rentalBudget.mode;
@@ -605,6 +624,25 @@ export class AiService {
         } else {
           result.budget.maxRentMonthlyRial = rentalBudget.amountToman;
         }
+      }
+
+      // Distinguish a rental deposit from the total purchase price.
+      const depositToman = resolveDepositBudgetTomanFromMessage(message);
+      if (depositToman !== null) {
+        result.budget.maxDepositRial = depositToman;
+        if (!/(?:قیمت\s*(?:کل|فروش)|قیمت\s*ملک|ارزش\s*کل|جمعاً)/.test(message)) {
+          result.budget.maxTotalPriceRial = null;
+        }
+      }
+
+      // Bare "۵ تومن" attached to a sale price has no reliable scale. Ask rather
+      // than silently interpreting it as five million or five billion Toman.
+      if (
+        /(?:قیمت(?:ش)?|قیمت\s*کل|می\s*فروشم|می\s*ارزه)\s*\d+(?:[.,]\d+)?\s*(?:تومن|تومان)(?!\s*(?:میلیون|میلیارد|هزار))/.test(
+          message.replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))),
+        )
+      ) {
+        result.budget.maxTotalPriceRial = null;
       }
 
       const budgetFields = [
