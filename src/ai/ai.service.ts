@@ -551,7 +551,7 @@ export class AiService {
           result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
         }
       }
-      if (explicitIntent === null) {
+      if (effectiveIntent === null) {
         const missing = result.missingInformation as string[];
         if (!missing.includes('intent')) {
           missing.push('intent');
@@ -602,7 +602,7 @@ export class AiService {
         actionableMissing = actionableMissing.filter((field) => field !== 'stay.guests');
       }
 
-      if (explicitIntent === null && !actionableMissing.includes('intent')) {
+      if (effectiveIntent === null && !actionableMissing.includes('intent')) {
         actionableMissing.push('intent');
       }
       if (result.location?.city == null && !actionableMissing.includes('location.city')) {
@@ -616,7 +616,7 @@ export class AiService {
       ) {
         actionableMissing.push('propertyType');
       }
-      if (explicitIntent === 'rent' && result.rentalMode === 'short_term') {
+      if (effectiveIntent === 'rent' && result.rentalMode === 'short_term') {
         for (const field of ['stay.checkInDate', 'stay.checkOutDate', 'stay.guests']) {
           const key = field.split('.')[1];
           const checkoutDerivable =
@@ -632,7 +632,7 @@ export class AiService {
           }
         }
       }
-      if (explicitIntent === 'exchange') {
+      if (effectiveIntent === 'exchange') {
         if (result.offeredPropertyType == null && !actionableMissing.includes('offeredPropertyType')) {
           actionableMissing.push('offeredPropertyType');
         }
@@ -642,10 +642,10 @@ export class AiService {
       }
       result.missingInformation = [...new Set(actionableMissing)];
 
-      if (explicitIntent === null) {
+      if (effectiveIntent === null) {
         result.clarificationQuestion = 'قصد خرید، فروش، اجاره یا معاوضه دارید؟';
       } else if (
-        explicitIntent === 'exchange' &&
+        effectiveIntent === 'exchange' &&
         (result.offeredPropertyType == null || result.wantedPropertyType == null)
       ) {
         result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
