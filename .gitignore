@@ -21,3 +21,5 @@ Thumbs.db
 /data/raw/
 /data/processed/divar_dataset_audit.json
 /data/processed/divar_weak_label_sample.jsonl
+/data/processed/divar_ads.sqlite
+/data/processed/divar_ads.sqlite.building

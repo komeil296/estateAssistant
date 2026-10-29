@@ -10,13 +10,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AiService } from './ai.service';
+import { DivarSearchService } from './divar-search.service';
 import { ChatDto } from './dto/chat.dto';
 import { SearchRequestDto } from './dto/search-request.dto';
 
 @ApiTags('AI')
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly divarSearchService: DivarSearchService,
+  ) {}
 
   @Post('chat')
   @ApiOperation({ summary: 'ارسال پیام به دستیار هوشمند املاک' })
@@ -57,6 +61,58 @@ export class AiController {
       throw new BadRequestException('متن درخواست الزامی است.');
     }
 
-    return this.aiService.parseSearchRequest(body.message.trim());
+    const history = body.history ?? [];
+    if (!Array.isArray(history)) {
+      throw new BadRequestException('تاریخچه گفتگو باید آرایه باشد.');
+    }
+    for (const item of history) {
+      if (
+        !item ||
+        (item.role !== 'user' && item.role !== 'assistant') ||
+        typeof item.content !== 'string' ||
+        !item.content.trim()
+      ) {
+        throw new BadRequestException(
+          'هر پیام تاریخچه باید نقش user یا assistant و متن معتبر داشته باشد.',
+        );
+      }
+    }
+
+    return this.aiService.parseSearchRequest(body.message.trim(), history);
   }
+  @Post('search')
+  @ApiOperation({
+    summary: 'جست‌وجوی آگهی‌های دیتاست دیوار با درخواست فارسی',
+    description:
+      'درخواست فارسی به فیلتر استاندارد تبدیل و روی دیتابیس محلی دیتاست تاریخی دیوار اجرا می‌شود. این نتایج آگهی زنده نیستند.',
+  })
+  async searchListings(@Body() body: ChatDto) {
+    if (typeof body?.message !== 'string' || !body.message.trim()) {
+      throw new BadRequestException('متن درخواست الزامی است.');
+    }
+
+    const history = body.history ?? [];
+    if (!Array.isArray(history)) {
+      throw new BadRequestException('تاریخچه گفتگو باید آرایه باشد.');
+    }
+    for (const item of history) {
+      if (
+        !item ||
+        (item.role !== 'user' && item.role !== 'assistant') ||
+        typeof item.content !== 'string' ||
+        !item.content.trim()
+      ) {
+        throw new BadRequestException(
+          'هر پیام تاریخچه باید نقش user یا assistant و متن معتبر داشته باشد.',
+        );
+      }
+    }
+
+    const parsedRequest = await this.aiService.parseSearchRequest(
+      body.message.trim(),
+      history,
+    );
+    return this.divarSearchService.search(parsedRequest);
+  }
+
 }

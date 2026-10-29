@@ -44,6 +44,7 @@ const REAL_ESTATE_SYSTEM_PROMPT = `
 
 const SEARCH_EXTRACTION_PROMPT = `
 درخواست مشتری را به یک شیء JSON مطابق ساختار زیر تبدیل کن. فقط JSON معتبر برگردان.
+اگر تاریخچهٔ گفتگو داده شده، درخواست جاری را در ادامهٔ همان گفتگو تفسیر کن و شرط‌های قبلی را که کاربر تغییر نداده حفظ کن؛ شرطی را که کاربر صریحاً اصلاح کرده با مقدار جدید جایگزین کن.
 هیچ فیلدی را حذف نکن. اطلاعات نامشخص را null بگذار. برای آرایه missingInformation فقط نام فیلدهای مهمی را بنویس که برای ادامه کار واقعاً لازم‌اند.
 مقادیر مجاز:
 intent: buy, sell, rent, lease_out, exchange، یا null
@@ -136,10 +137,25 @@ export class AiService {
     };
   }
 
-  async parseSearchRequest(message: string): Promise<SearchRequestDto> {
+  async parseSearchRequest(
+    message: string,
+    history: Array<{ role: 'user' | 'assistant'; content: string }> = [],
+  ): Promise<SearchRequestDto> {
+    const recentHistory = (Array.isArray(history) ? history : [])
+      .filter(
+        (item) =>
+          item &&
+          (item.role === 'user' || item.role === 'assistant') &&
+          typeof item.content === 'string' &&
+          item.content.trim().length > 0,
+      )
+      .slice(-8)
+      .map((item) => ({ role: item.role, content: item.content.trim().slice(-1200) }));
+
     const data = await this.callOllama(
       [
         { role: 'system', content: SEARCH_EXTRACTION_PROMPT },
+        ...recentHistory,
         { role: 'user', content: message },
       ],
       true,
@@ -217,6 +233,23 @@ export class AiService {
           : null;
       const rawCheckInDate = rawStay.checkInDate;
       const rawCheckOutDate = rawStay.checkOutDate;
+      const modelFeatures = Array.isArray(parsedRecord.features)
+        ? parsedRecord.features.flatMap((item) => {
+            const feature = asRecord(item);
+            const value = feature.value;
+            if (
+              typeof feature.id !== 'string' ||
+              !feature.id.trim() ||
+              (typeof value !== 'string' &&
+                typeof value !== 'boolean' &&
+                !(typeof value === 'number' && Number.isFinite(value)) &&
+                !(Array.isArray(value) && value.every((entry) => typeof entry === 'string')))
+            ) {
+              return [];
+            }
+            return [{ id: feature.id, value: value as string | boolean | number | string[] }];
+          })
+        : [];
       const result = {
         ...parsedRecord,
         intent: nullableIntent(parsedRecord.intent),
@@ -254,7 +287,7 @@ export class AiService {
           viewProtectionClaim: nullableBoolean(rawRequirements.viewProtectionClaim),
           deedEra: nullableDeedEra(rawRequirements.deedEra),
         },
-        features: [] as Array<{ id: string; value: string | boolean | number | string[] }>,
+        features: (history.length > 0 ? modelFeatures : []) as Array<{ id: string; value: string | boolean | number | string[] }>,
         stay: {
           checkInDate:
             typeof rawCheckInDate === 'string' &&
@@ -310,9 +343,16 @@ export class AiService {
         result.location.city = null;
       }
 
-      // Use deterministic feature extraction so explicit user preferences are not lost
-      // when the local model omits or mislabels the features array.
-      result.features = resolveAccommodationFeaturesFromMessage(message);
+      // Deterministic extraction wins for features explicitly mentioned in the current
+      // message; model-extracted features can carry constraints from earlier turns.
+      const explicitFeatures = resolveAccommodationFeaturesFromMessage(message);
+      if (history.length === 0) {
+        result.features = explicitFeatures;
+      } else {
+        const mergedFeatures = new Map(result.features.map((feature) => [feature.id, feature]));
+        for (const feature of explicitFeatures) mergedFeatures.set(feature.id, feature);
+        result.features = [...mergedFeatures.values()];
+      }
 
       // A specific lodging category (e.g. swiss_cottage or hotel) is not an apartment.
       // Prefer a broad property type only when the user's wording explicitly supports it.
@@ -348,7 +388,9 @@ export class AiService {
       const intentResolution = resolveIntentFromMessage(message);
       const landConstructionRequest = isLandForVillaConstructionRequest(message);
       const explicitIntent = intentResolution.intent ?? (landConstructionRequest ? 'buy' : null);
-      result.intent = explicitIntent;
+      if (explicitIntent !== null) result.intent = explicitIntent;
+      else if (history.length === 0) result.intent = null;
+      const effectiveIntent = explicitIntent ?? result.intent;
 
       // If sale is primary and exchange is only an alternative, the first property
       // type mentioned before the exchange clause is the property being sold.
@@ -364,7 +406,7 @@ export class AiService {
 
       // Offered/wanted property types describe an exchange only. Never trust the
       // model to populate these fields for ordinary purchase, sale, or rental requests.
-      if (explicitIntent !== 'exchange') {
+      if (effectiveIntent !== 'exchange') {
         result.offeredPropertyType = null;
         result.wantedPropertyType = null;
       } else {
@@ -422,13 +464,13 @@ export class AiService {
         'موقت',
       ]);
 
-      if (explicitIntent !== 'rent' && explicitIntent !== 'lease_out') {
+      if (effectiveIntent !== null && effectiveIntent !== 'rent' && effectiveIntent !== 'lease_out') {
         result.rentalMode = null;
       } else if (monthlyRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'monthly';
       } else if (shortTermRentalModes.has(rawRentalMode)) {
         result.rentalMode = 'short_term';
-      } else {
+      } else if (effectiveIntent === 'rent' || effectiveIntent === 'lease_out' || history.length === 0) {
         result.rentalMode = null;
       }
 
@@ -436,8 +478,10 @@ export class AiService {
         result.stay = {};
       }
       const resolvedNights = resolveNightsFromMessage(message);
-      // Never accept a model-invented duration (e.g. seven nights for "last weekend").
-      result.stay.nights = resolvedNights;
+      // A follow-up may rely on a duration from earlier user messages. Without history,
+      // discard model-invented durations; explicit current-message durations always win.
+      if (resolvedNights !== null) result.stay.nights = resolvedNights;
+      else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') result.stay.nights = null;
 
       // Resolve Solar Hijri dates from the original message; do not trust a
       // model-generated Gregorian date when the user explicitly gave a Persian date.
@@ -507,7 +551,7 @@ export class AiService {
           result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
         }
       }
-      if (explicitIntent === null) {
+      if (effectiveIntent === null) {
         const missing = result.missingInformation as string[];
         if (!missing.includes('intent')) {
           missing.push('intent');
@@ -517,7 +561,10 @@ export class AiService {
         result.missingInformation = (result.missingInformation as string[]).filter(
           (field) => field !== 'intent',
         );
-        if (result.clarificationQuestion === 'قصد خرید، فروش یا اجاره دارید؟') {
+        if (
+          result.clarificationQuestion === 'قصد خرید، فروش یا اجاره دارید؟' ||
+          result.clarificationQuestion === 'قصد خرید، فروش، اجاره یا معاوضه دارید؟'
+        ) {
           result.clarificationQuestion = null;
         }
       }
@@ -558,7 +605,7 @@ export class AiService {
         actionableMissing = actionableMissing.filter((field) => field !== 'stay.guests');
       }
 
-      if (explicitIntent === null && !actionableMissing.includes('intent')) {
+      if (effectiveIntent === null && !actionableMissing.includes('intent')) {
         actionableMissing.push('intent');
       }
       if (result.location?.city == null && !actionableMissing.includes('location.city')) {
@@ -572,7 +619,7 @@ export class AiService {
       ) {
         actionableMissing.push('propertyType');
       }
-      if (explicitIntent === 'rent' && result.rentalMode === 'short_term') {
+      if (effectiveIntent === 'rent' && result.rentalMode === 'short_term') {
         for (const field of ['stay.checkInDate', 'stay.checkOutDate', 'stay.guests']) {
           const key = field.split('.')[1];
           const checkoutDerivable =
@@ -588,7 +635,7 @@ export class AiService {
           }
         }
       }
-      if (explicitIntent === 'exchange') {
+      if (effectiveIntent === 'exchange') {
         if (result.offeredPropertyType == null && !actionableMissing.includes('offeredPropertyType')) {
           actionableMissing.push('offeredPropertyType');
         }
@@ -598,10 +645,10 @@ export class AiService {
       }
       result.missingInformation = [...new Set(actionableMissing)];
 
-      if (explicitIntent === null) {
+      if (effectiveIntent === null) {
         result.clarificationQuestion = 'قصد خرید، فروش، اجاره یا معاوضه دارید؟';
       } else if (
-        explicitIntent === 'exchange' &&
+        effectiveIntent === 'exchange' &&
         (result.offeredPropertyType == null || result.wantedPropertyType == null)
       ) {
         result.clarificationQuestion = 'چه ملکی برای معاوضه دارید و در مقابل چه ملکی می‌خواهید؟';
@@ -652,7 +699,8 @@ export class AiService {
           .toLowerCase();
 
         const mentionsNearSea =
-          /نزدیک\s*(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /نزدیک\s*(?:تر\s*)?(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
+          /نزدیکی\s*(?:به\s*)?(?:دریا|ساحل)/.test(normalizedMessage) ||
           /(?:پیاده|با\s*پیاده)\s*(?:تا|به)\s*(?:دریا|ساحل)/.test(normalizedMessage) ||
           /فاصله\s*(?:تا|از)\s*(?:دریا|ساحل)/.test(normalizedMessage);
 
@@ -671,15 +719,15 @@ export class AiService {
       const pricePerSqmToman = resolvePricePerSqmTomanFromMessage(message);
       // Never trust the model for a per-square-metre price unless the original
       // message contains an explicit monetary amount tied to "متری".
-      result.budget.maxPricePerSqmRial =
-        pricePerSqmToman === null ? null : pricePerSqmToman;
+      if (pricePerSqmToman !== null) result.budget.maxPricePerSqmRial = pricePerSqmToman;
+      else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') result.budget.maxPricePerSqmRial = null;
 
-      // Rental amounts must be grounded in an explicit nightly/monthly amount.
-      // This clears hallucinated rent values inferred from dates or area numbers.
-      result.budget.maxRentNightlyRial = null;
-      result.budget.maxRentMonthlyRial = null;
+      // Explicit values in the current message override prior context. Otherwise the
+      // model may preserve a budget from earlier user messages in the same search.
       const rentalBudget = resolveRentalBudgetTomanFromMessage(message);
       if (rentalBudget !== null) {
+        result.budget.maxRentNightlyRial = null;
+        result.budget.maxRentMonthlyRial = null;
         result.rentalMode = rentalBudget.mode;
         if (rentalBudget.mode === 'short_term') {
           result.budget.maxRentNightlyRial = rentalBudget.amountToman;
@@ -692,6 +740,9 @@ export class AiService {
         ) {
           result.budget.maxTotalPriceRial = null;
         }
+      } else if (history.length === 0 || explicitIntent === 'buy' || explicitIntent === 'sell') {
+        result.budget.maxRentNightlyRial = null;
+        result.budget.maxRentMonthlyRial = null;
       }
 
       // Distinguish a rental deposit from the total purchase price.

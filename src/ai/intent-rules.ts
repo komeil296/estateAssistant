@@ -39,8 +39,19 @@ export function resolveIntentFromMessage(message: string): IntentResolution {
   const mentionsPrice = /(?:میلیارد|میلیون|تومن|تومان|ریال|متری\s*\d|قیمت|چند\s*می ?ارزه|چقدر\s*می ?ارزه)/.test(text);
   const valuationIntent = /(?:ببینم|بدونم|بدونیم)\s*(?:که\s*)?(?:ملکم\s*)?(?:چند|چقدر)\s*می ?ارزه|(?:قیمت|ارزش)\s*(?:ملکم|ملک|زمین|ویلا)/.test(text);
 
-  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش)/.test(text);
+  const explicitSale = /(?:برای\s*فروش|قیمت\s*فروش|می\s*فروشم|می\s*خواهم\s*بفروشم|می\s*خوام\s*بفروشم|قصد\s*فروش|فروشی\s*(?:دارم|است|هست))/.test(text);
+  const wantsListedProperty =
+    !ownsProperty &&
+    /(?:فروشی|برای\s*فروش)/.test(text) &&
+    /(?:می\s*خوام|می\s*خواهم|دنبال|می\s*گردم|لازم\s*دارم)/.test(text);
   const exchangeMention = /(?:تهاتر|معاوضه|عوض\s*کنم|تعویض\s*کنم)/.test(text);
+
+  // "A villa for sale, I want one" is a purchase search, not an offer
+  // to sell. Resolve that explicit buyer phrasing before the generic
+  // "for sale" pattern, while preserving owner/seller phrasing below.
+  if (wantsListedProperty) {
+    return { intent: 'buy', rentalMode: null };
+  }
 
   // A clearly stated sale is the primary intent even when the user says
   // they may also consider an exchange. Do this before the exchange shortcut.
