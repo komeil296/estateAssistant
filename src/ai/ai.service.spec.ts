@@ -427,4 +427,49 @@ describe('AiService', () => {
     await service.chat('شرط جدید', history);
   });
 
+  it('preserves the earlier property, rental budget and amenities on a follow-up search', async () => {
+    const modelOutput = {
+      intent: 'rent',
+      propertyType: 'villa',
+      offeredPropertyType: null,
+      wantedPropertyType: null,
+      rentalMode: 'short_term',
+      location: { province: 'مازندران', city: 'رامسر', neighborhood: null, street: null },
+      area: { targetSqm: null, minSqm: null, maxSqm: null },
+      budget: {
+        maxTotalPriceRial: null,
+        maxPricePerSqmRial: null,
+        maxDepositRial: null,
+        maxRentMonthlyRial: null,
+        maxRentNightlyRial: 5000000,
+      },
+      requirements: {
+        bedrooms: null, documentType: null, landUse: null, nearSea: null,
+        hasView: null, isInTownship: null, hasMountainView: null,
+        hasSeaView: null, viewProtectionClaim: null, deedEra: null,
+      },
+      stay: { checkInDate: null, checkOutDate: null, guests: 4, nights: 3 },
+      features: [{ id: 'amenity.pool', value: true }],
+      missingInformation: [],
+      clarificationQuestion: null,
+    };
+    jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: { content: JSON.stringify(modelOutput) } }),
+    } as Response);
+
+    const result = await service.parseSearchRequest('نزدیک‌تر به دریا', [
+      { role: 'user', content: 'یه ویلای اجاره‌ای شبی ۵ میلیون تو رامسر برای ۳ شب می‌خوام، استخر هم داشته باشه' },
+      { role: 'assistant', content: 'حتماً، نزدیک دریا هم بررسی می‌کنم.' },
+    ]);
+
+    expect(result.intent).toBe('rent');
+    expect(result.propertyType).toBe('villa');
+    expect(result.location.city).toBe('رامسر');
+    expect(result.budget.maxRentNightlyRial).toBe(50000000);
+    expect(result.stay.nights).toBe(3);
+    expect(result.requirements.nearSea).toBe(true);
+    expect(result.features).toContainEqual({ id: 'amenity.pool', value: true });
+  });
+
 });
