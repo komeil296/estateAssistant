@@ -7,6 +7,7 @@ export type CustomerIntent = 'buy' | 'sell' | 'rent' | 'lease_out' | 'exchange';
 export type DocumentType =
   | 'six_dang'
   | 'three_dang'
+  | 'single_page'
   | 'official'
   | 'end_user'
   | 'other'
@@ -26,6 +27,7 @@ const CUSTOMER_INTENTS: CustomerIntent[] = [
 const DOCUMENT_TYPES: DocumentType[] = [
   'six_dang',
   'three_dang',
+  'single_page',
   'official',
   'end_user',
   'other',
