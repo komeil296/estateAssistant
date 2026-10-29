@@ -513,6 +513,8 @@ describe('AiService', () => {
     expect(result.stay.nights).toBe(3);
     expect(result.requirements.nearSea).toBe(true);
     expect(result.features).toContainEqual({ id: 'amenity.pool', value: true });
+    expect(result.missingInformation).not.toContain('intent');
+    expect(result.clarificationQuestion).not.toBe('قصد خرید، فروش، اجاره یا معاوضه دارید؟');
   });
 
 });
