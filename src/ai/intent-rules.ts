@@ -123,7 +123,7 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
     return Math.round(1.5 * multiplier);
   }
 
-  const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار)?\s*متری)/);
+  const match = text.match(/(?:متری\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)|(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)\s*متری)/);
   if (!match) return null;
 
   const rawAmount = (match[1] ?? match[3]).replace(',', '.');
@@ -137,13 +137,41 @@ export function resolvePricePerSqmTomanFromMessage(message: string): number | nu
       ? 1_000_000
       : unit === 'هزار'
         ? 1_000
-        : 1;
+        : unit === 'ریال'
+          ? 0.1
+          : 1;
 
   return Math.round(amount * multiplier);
 }
 
-/**
- * Extract an explicitly stated nightly/monthly rent budget in Toman.
+/** Extract an explicitly stated rental deposit/rahn amount in Toman. */
+export function resolveDepositBudgetTomanFromMessage(message: string): number | null {
+  const text = normalizePersianText(message);
+  const match = text.match(
+    /(?:رهن\s*کامل|ودیعه|رهن)\s*(\d+(?:[.,]\d+)?)\s*(میلیارد|میلیون|هزار|تومان|تومن|ریال)?/,
+  );
+  if (!match) return null;
+
+  const amount = Number(match[1].replace(',', '.'));
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+
+  const unit = match[2];
+  // A bare amount after "رهن" is ambiguous; require a scale or currency marker.
+  if (!unit) return null;
+  const multiplier = unit === 'میلیارد'
+    ? 1_000_000_000
+    : unit === 'میلیون'
+      ? 1_000_000
+      : unit === 'هزار'
+        ? 1_000
+        : unit === 'ریال'
+          ? 0.1
+          : 1_000_000;
+
+  return Math.round(amount * multiplier);
+}
+
+/** Extract an explicitly stated nightly/monthly rent budget in Toman.
  * In colloquial Persian, «تومن» without a scale is treated as million Toman
  * only in this rental-price context (e.g. «شبی ۵ تومن»).
  */
@@ -287,6 +315,7 @@ export function resolvePropertyTypeFromMessage(
     { type: 'land' as const, pattern: /زمین|قطعه\s*زمین/ },
     { type: 'apartment' as const, pattern: /آپارتمان|واحد\s*(?:مسکونی)?/ },
     { type: 'villa' as const, pattern: /ویلا|ویلای/ },
+    { type: 'house' as const, pattern: /خانه|خونه|منزل/ },
   ].filter(({ pattern }) => pattern.test(text));
 
   return mentionedTypes.length === 1 ? mentionedTypes[0].type : null;
